@@ -3,18 +3,19 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { loginRoute, signupRoute } from "./routes/user.route.js";
 import { jobPostRoute } from "./routes/jobPost.route.js";
+import cors from 'cors'
+
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 const MONGO_URL = process.env.MONGO_URL;
-try {
-  mongoose.connect(MONGO_URL);
-  console.log("database connected");
-} catch (err) {
-  console.log("not able to connect", err);
-}
+app.use(cors({origin:true}))
+mongoose
+  .connect(MONGO_URL)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("Connection error:", err));
 
 app.use(express.json());
 app.use(signupRoute);

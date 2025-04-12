@@ -18,6 +18,7 @@
     "@mui/material": "^6.4.7",
     "@tailwindcss/vite": "^4.0.17",
     "antd": "^5.24.6",
+    "axios": "^1.8.4",
     "mui-tel-input": "^8.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

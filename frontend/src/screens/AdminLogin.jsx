@@ -1,12 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import login from "../assets/imgs/login.jpg";
 import { useNavigate } from "react-router-dom";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const AdminLogin = ({ setLoggedBy }) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const adminLoginHandler = () => {
-    setLoggedBy("admin");
+  const userLoginHandler = () => {
+    console.log(email,password)
+    if (!email || !password) {
+      alert("please enter email and password");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email?.trim())) {
+      alert("Email is not in proper format.");
+      return;
+    }
+
+    if (password.length < 8) {
+      alert("password must be of atleast 8 characters");
+      return;
+    }
+    setLoggedBy("employer");
     navigate("dashboard");
   };
   return (
@@ -32,9 +53,10 @@ const AdminLogin = ({ setLoggedBy }) => {
               <input
                 type="email"
                 id="email"
-                className="p-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="name@flowbite.com"
-                required=""
+                className="p-2  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="name@xyz.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="mb-5">
@@ -44,13 +66,27 @@ const AdminLogin = ({ setLoggedBy }) => {
               >
                 Your password
               </label>
-              <input
-                type="password"
-                id="password"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                required=""
-                placeholder="..........................."
-              />
+
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  placeholder="..............."
+                  className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {showPassword ? (
+                  <VisibilityOffIcon
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                    onClick={() => setShowPassword(!showPassword)}
+                  />
+                ) : (
+                  <VisibilityOutlinedIcon
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                    onClick={() => setShowPassword(!showPassword)}
+                  />
+                )}
+              </div>
             </div>
             <div className="flex justify-between  mb-5">
               <div className="flex items-start">
@@ -86,7 +122,7 @@ const AdminLogin = ({ setLoggedBy }) => {
             <button
               type="submit"
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              onClick={adminLoginHandler}
+              onClick={userLoginHandler}
             >
               Submit
             </button>

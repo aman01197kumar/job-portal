@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import login from "../assets/imgs/login.jpg";
 import { useNavigate } from "react-router-dom";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const UserLogin = ({ setLoggedBy }) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const userLoginHandler = () => {
+    if (!email || !password) {
+      alert("please enter email and password");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email?.trim())) {
+      alert("Email is not in proper format.");
+      return;
+    }
+
+    if (password.length < 8) {
+      alert("password must be of atleast 8 characters");
+      return;
+    }
     setLoggedBy("job-seeker");
     navigate("dashboard");
   };
@@ -32,9 +52,10 @@ const UserLogin = ({ setLoggedBy }) => {
               <input
                 type="email"
                 id="email"
-                className="p-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="name@flowbite.com"
-                required=""
+                className="p-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="name@xyz.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="mb-5">
@@ -44,13 +65,27 @@ const UserLogin = ({ setLoggedBy }) => {
               >
                 Your password
               </label>
-              <input
-                type="password"
-                id="password"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                required=""
-                placeholder="..........................."
-              />
+
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  placeholder="..............."
+                  className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {showPassword ? (
+                  <VisibilityOffIcon
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                    onClick={() => setShowPassword(!showPassword)}
+                  />
+                ) : (
+                  <VisibilityOutlinedIcon
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                    onClick={() => setShowPassword(!showPassword)}
+                  />
+                )}
+              </div>
             </div>
             <div className="flex justify-between  mb-5">
               <div className="flex items-start">
@@ -59,7 +94,7 @@ const UserLogin = ({ setLoggedBy }) => {
                     id="remember"
                     type="checkbox"
                     defaultValue=""
-                    className="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+                    className="w-4 h-4 border border-gray-300 rounded-sm  focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                     required=""
                   />
                 </div>
