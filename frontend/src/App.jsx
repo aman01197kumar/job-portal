@@ -7,9 +7,8 @@ import JobPosting from "./screens/JobPosting";
 import Sidebar from "./components/Sidbar";
 import Header from "./components/Header";
 import ViewJobDescription from "./screens/ViewJobDescription";
-import Login from "./screens/Login";
-import AdminDashboard from "./screens/AdminDashboard";
 import JobTable from "./components/JobTable";
+import UserLogin from "./screens/UserLogin";
 
 const dashboardJobPosted = [
   {
@@ -104,7 +103,7 @@ const App = () => {
       <Sidebar openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
       <JobContext.Provider value={dashboardJobPosted}>
         <Routes>
-          <Route path="/" element={<Login setLoggedBy={setLoggedBy} />} />
+          <Route path="/" element={<UserLogin setLoggedBy={setLoggedBy} />} />
           <Route path="signup" element={<Signup />} />
           <Route path="dashboard" element={<Dashboard loggedBy={loggedBy} />} />
           <Route path="user-profile" element={<UserProfile />} />

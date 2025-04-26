@@ -3,31 +3,57 @@ import login from "../assets/imgs/login.jpg";
 import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import axios from "axios";
+import { message } from "antd";
+import { toast, ToastContainer } from "react-toastify";
 
 const UserLogin = ({ setLoggedBy }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const userLoginHandler = () => {
+  const userLoginHandler = async () => {
     if (!email || !password) {
-      alert("please enter email and password");
+      toast.warn("please enter email and password");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email?.trim())) {
-      alert("Email is not in proper format.");
+      toast.warn("Email is not in proper format.");
       return;
     }
 
     if (password.length < 8) {
-      alert("password must be of atleast 8 characters");
+      toast.warn("password must be of atleast 8 characters");
       return;
     }
-    setLoggedBy("job-seeker");
-    navigate("dashboard");
+
+    const user = {
+      email: email,
+      password: password,
+    };
+
+    const response = await axios.post("http://localhost:3000/login", user);
+    console.log(response?.data);
+
+    if (response?.data?.status === 400) {
+      toast.warn(response?.data?.message);
+      return;
+    }
+    if (response?.data?.status === 401) {
+      toast.warn(response?.data?.message);
+      return;
+    }
+    if (response?.data?.status === 404) {
+      toast.error(response?.data?.message);
+      return;
+    }
+    if (response?.data?.status === 200) {
+      setLoggedBy(response?.data?.user);
+      navigate("dashboard");
+    }
   };
   return (
     <>
@@ -128,6 +154,7 @@ const UserLogin = ({ setLoggedBy }) => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

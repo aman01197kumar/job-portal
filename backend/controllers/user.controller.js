@@ -1,5 +1,5 @@
 import { User } from "../models/user.schema.js";
-
+import bcrypt from "bcrypt";
 const userSignup = async (req, res) => {
   try {
     const { firstName, lastName, email, password, contactNumber, user } =
@@ -13,23 +13,26 @@ const userSignup = async (req, res) => {
       !password ||
       !user
     )
-      return res.status(200).json({status:401, message: "fill all the fields" });
+      return res
+        .status(200)
+        .json({ status: 401, message: "fill all the fields" });
 
-    const userData = await User.findOne({ email:email });
-    
-    console.log(userData,'nk')
+    const userData = await User.findOne({ email: email });
+
     if (userData)
       return res
         .status(200)
         .json({ status: 409, message: "User already exists" });
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const users = new User({
-      email,
+      email: email,
       first_name: firstName,
       last_name: lastName,
       phone_number: contactNumber,
-      password,
-      user,
+      password: hashedPassword,
+      user: user,
     });
 
     await users.save();
@@ -46,13 +49,21 @@ const userSignup = async (req, res) => {
 
 const userLogin = async (req, res) => {
   const { email, password } = req.body;
-  const data = await User.findOne({ email, password });
 
-  if (!data)
-    return res.status(400).json({ message: "User not found", status: 400 });
+  if (!email || !password)
+    return res
+      .status(200)
+      .json({ message: "Fill all the details", status: 400 });
+  const user = await User.findOne({ email });
 
+  if (!user)
+    return res.status(200).json({ message: "User not found", status: 404 });
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch)
+    return res.status(200).json({ message: "Incorrect password", status: 401 });
   return res
     .status(200)
-    .json({ message: "login successful", status: 200, user: data.user });
+    .json({ message: "login successful", status: 200, user: user.user });
 };
 export { userSignup, userLogin };
