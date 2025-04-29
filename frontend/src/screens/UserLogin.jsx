@@ -4,10 +4,9 @@ import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
-import { message } from "antd";
 import { toast, ToastContainer } from "react-toastify";
 
-const UserLogin = ({ setLoggedBy }) => {
+const UserLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,7 +35,6 @@ const UserLogin = ({ setLoggedBy }) => {
     };
 
     const response = await axios.post("http://localhost:3000/login", user);
-    console.log(response?.data);
 
     if (response?.data?.status === 400) {
       toast.warn(response?.data?.message);
@@ -51,8 +49,16 @@ const UserLogin = ({ setLoggedBy }) => {
       return;
     }
     if (response?.data?.status === 200) {
-      setLoggedBy(response?.data?.user);
+      const userData = JSON.stringify({
+        userId: response?.data?.userId,
+        user_type: response?.data?.user,
+        token: response?.data?.token,
+      });
+
+      
+      localStorage.setItem("userData", userData);
       navigate("dashboard");
+      window.location.reload()
     }
   };
   return (
@@ -78,7 +84,7 @@ const UserLogin = ({ setLoggedBy }) => {
               <input
                 type="email"
                 id="email"
-                className="p-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="p-2 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@xyz.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -97,7 +103,7 @@ const UserLogin = ({ setLoggedBy }) => {
                   type={showPassword ? "text" : "password"}
                   id="password"
                   placeholder="..............."
-                  className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 {showPassword ? (

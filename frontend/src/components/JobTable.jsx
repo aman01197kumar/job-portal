@@ -1,14 +1,39 @@
-import React, { useContext, useState } from "react";
-import { JobContext } from "../App";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { addJobDescription } from "../redux/jobDescription";
 
 const JobTable = ({ loggedBy }) => {
-  const dashboardJobPosted = useContext(JobContext);
-  const [showJobPosted, setShowJobPosted] = useState(dashboardJobPosted);
+  const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
   const [isApplied, setIsApplied] = useState(false);
 
-  const removeJobHandler = (index) => {
-    const filterJob = showJobPosted.filter((_, id) => id !== index);
-    setShowJobPosted(filterJob);
+  const dispatch = useDispatch();
+  const fetchJobs = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/jobs");
+      console.log(response?.data);
+      const allJobs = response?.data?.data?.flatMap((item) => item.jobs) || [];
+      setDashboardJobPosted(allJobs);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  useEffect(() => {
+    dispatch(addJobDescription(dashboardJobPosted));
+  }, [dashboardJobPosted]);
+
+  const removeJobHandler = async (index) => {
+    // const filterJob = dashboardJobPosted.filter((job) => job?._id !== index);
+    // setDashboardJobPosted(filterJob);
+    console.log(typeof index,'index')
+    console.log(dashboardJobPosted,'dah')
+    const response = await axios.delete(`http://localhost:3000/jobs/${index}`);
+    console.log(response?.data)
   };
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -200,9 +225,9 @@ const JobTable = ({ loggedBy }) => {
           </tr>
         </thead>
         <tbody>
-          {showJobPosted.map((job, index) => (
+          {dashboardJobPosted.map((job) => (
             <tr
-              key={index}
+              key={job?._id}
               className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
               <td className="w-4 p-4">
@@ -221,14 +246,14 @@ const JobTable = ({ loggedBy }) => {
                 scope="row"
                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                {job["company_name"]}
+                {job["organisation_name"]}
               </th>
               <td className="px-6 py-4">{job["job_profile"]}</td>
               <td className="px-6 py-4">{job["job_type"]}</td>
 
               <td className="px-6 py-4 flex">
                 <a
-                  href={`/job-details/${index}`}
+                  href={`/job-details/${job?._id}`}
                   target="_blank"
                   className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                 >
@@ -247,7 +272,7 @@ const JobTable = ({ loggedBy }) => {
                   <div
                     className="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer"
                     style={{ minWidth: "70px" }}
-                    onClick={() => removeJobHandler(index)}
+                    onClick={() => removeJobHandler(job?._id)}
                   >
                     Remove
                   </div>

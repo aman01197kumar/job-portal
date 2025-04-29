@@ -1,29 +1,45 @@
-import * as React from "react";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import Typography from "@mui/material/Typography";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import { useEffect, useState } from "react";
+import AdminHeader from "../components/AdminHeader";
+import axios from "axios";
+import JobPostedCard from "../components/JobPostedCard";
 
-const JobPosted = () => {
+const JobPosted = ({userid}) => {
+  const [jobDetails, setJobDetails] = useState([]);
+
+  const fetchJobDetails = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/jobs/user/${userid}`
+      );
+      console.log(response?.data);
+
+      // Ye important hai ab:
+      const allJobs = response?.data?.data?.flatMap((item) => item.jobs) || [];
+      setJobDetails(allJobs);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobDetails();
+  }, []);
+
   return (
     <div>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ArrowDownwardIcon />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-        >
-          <Typography component="span">Accordion 1</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            malesuada lacus ex, sit amet blandit leo lobortis eget.
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
-      
+      <AdminHeader />
+      <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 space-y-5 mt-5 ml-7">
+        {jobDetails.length > 0 ? (
+          jobDetails.map(({ organisation_name, job_profile }) => (
+            <JobPostedCard
+              organisation_name={organisation_name}
+              job_profile={job_profile}
+            />
+          ))
+        ) : (
+          <p className="text-center mt-8">No jobs posted yet!</p>
+        )}
+      </div>
     </div>
   );
 };

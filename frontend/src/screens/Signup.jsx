@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { ToastContainer } from "react-toastify";
 
 const Signup = () => {
   const [fname, setFname] = useState("");
@@ -59,23 +60,20 @@ const Signup = () => {
         userSignupDetails
       );
 
-      if(response.status == 409){
-        console.log("somthing went wrong abhihsek")
+      if (response.status == 409) {
+        console.log("somthing went wrong abhihsek");
       }
 
-    
-
       if (response?.data?.status === 401) {
-        alert(response?.data?.message);
+        toast.error(response?.data?.message);
       } else if (response?.data?.status === 409) {
-        alert(response?.data?.message);
-        navigate('/')
-      } 
-        alert(response?.data?.message);
+        toast.error(response?.data?.message);
         navigate("/");
-      
+      }
+      toast.success(response?.data?.message);
+      navigate("/");
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   };
 
@@ -162,13 +160,15 @@ const Signup = () => {
               />
             </div>
             <div className="relative z-0 w-full mb-2 group">
-              <input
-                type="text"
+              <select
                 value={user}
-                placeholder="Job-Seeker/Employer"
-                className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 onChange={(e) => setUser(e.target.value)}
-              />
+                className=" border border-gray-900 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+              >
+                <option selected="">User</option>
+                <option value="employer">Employer</option>
+                <option value="job-seeker">Job Seeker</option>
+              </select>
             </div>
           </div>
           <div className="mb-3">
@@ -189,6 +189,7 @@ const Signup = () => {
           </button>
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 };

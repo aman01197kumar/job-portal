@@ -1,10 +1,12 @@
 import { FaPlusCircle, FaSearch } from "react-icons/fa";
 import JobTable from "./JobTable";
 import { useNavigate } from "react-router-dom";
+import Header from "./Header";
 
 const MainContent = () => {
   return (
     <>
+    <Header/>
       <div className="space-y-8">
         <header className="flex justify-between items-center">
           <h1 className="text-3xl font-semibold">Dashboard</h1>
