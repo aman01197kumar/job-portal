@@ -28,7 +28,7 @@ export const createJobPost = async (req, res) => {
 // Get all Job Posts
 export const getAllJobPosts = async (req, res) => {
   try {
-    const jobPosts = await JobPosting.find().populate("userId", "name email");
+    const jobPosts = await JobPosting.find().sort({ createdAt: -1 }).populate("userId", "name email");
     res.status(200).json({ success: true, data: jobPosts });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

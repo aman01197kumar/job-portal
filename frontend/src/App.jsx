@@ -30,12 +30,16 @@ const App = () => {
       <Routes>
         {userData?.token ? (
           <Route
-            path="dashboard"
+            path="/"
             element={<Dashboard user_type={userData?.user_type} />}
           />
         ) : (
           <Route path="/" element={<UserLogin />} />
         )}
+        <Route
+            path="/dashboard"
+            element={<Dashboard user_type={userData?.user_type} />}
+          />
         <Route path="signup" element={<Signup />} />
 
         <Route path="user-profile" element={<UserProfile />} />
