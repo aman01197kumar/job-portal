@@ -1,123 +1,94 @@
-// ProfilePage.jsx
+import { useEffect, useRef, useState } from "react";
+import UserProfileEdit from "../components/UserProfileEdit";
+import axios from "axios";
+import { esbuildVersion } from "vite";
+const skills = [
+  "HTML",
+  "CSS",
+  "JavaScript",
+  "React.js",
+  "Node.js",
+  "Responsive Design",
+  "RESTful APIs",
+  "Version Control (Git)",
+  "Database Management (MongoDB)",
+  "Database Management (SQL)",
+  "Debugging & Browser Dev Tools",
+];
 
-import React, { useState } from 'react';
-import Header from '../components/Header';
-import DropdownButton from '../components/DropdownButton';
-import { MuiTelInput } from 'mui-tel-input';
+export default function UserProfile({ email }) {
+  const [userProfile, setUserProfile] = useState({
+    user_image: null,
+    user_name: "Aman",
 
-const UserProfile = () => {
-  const [image, setImage] = useState(null);
-  const [userName, setUserName] = useState("John Doe");
-  const [email, setEmail] = useState('user-email')
-  const [contactDetails, setContactDetails] = useState({
-    phone: "",
-    college_name: '',
-    course: '',
-    skills: ['Java', 'Reactjs', 'Javascript', 'HTML and CSS', 'Nodejs', 'MongoDB'],
-
+    user_desciption:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut justo libero. Fusce et finibus tellus. Aliquam et nibh nibh. Donec tristique placerat odio. Sed elementum imperdiet odio in porttitor. Nunc est arcu, iaculis ac elit quis, viverra sollicitudin nisi. Aliquam et elit quis est faucibus mollis.",
+    skills: [],
   });
-  const [value, setValue] = React.useState('')
+  const { user_image, user_name, user_desciption } = userProfile;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleChange = (newValue) => {
-    setValue(newValue)
-  }
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(URL.createObjectURL(file));
+  const fetchUserData = async () => {
+    try {
+      if (email) {
+        const response = await axios.get(
+          `http://localhost:3000/getuser?email=${email}`
+        );
+        console.log(response?.data);
+      }
+      // else console.log('nooo')
+    } catch (err) {
+      console.log(err);
     }
   };
 
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
   return (
-    <>
-      
-      <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg ">
-        <div className="flex items-center space-x-6">
-          <div className="relative">
+    <main className="px-4 py-6 ">
+      <div className="max-w-screen-md flex gap-y-5 flex-col mx-auto p-6 shadow-md rounded-lg bg-white">
+        <header className="flex flex-col md:flex-row items-center gap-6">
+          <div className="flex-shrink-0">
             <img
-              src={image || "https://via.placeholder.com/150"}
-              alt="User"
-              className="w-32 h-32 rounded-full object-cover bg-red-500"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="absolute bottom-0 right-0 opacity-0 cursor-pointer w-8 h-8 bg-blue-500 rounded-full"
+              src={user_image}
+              alt="user-profile"
+              className="w-32 h-32 rounded-full object-cover"
             />
           </div>
-          <div>
-            <h1 className="text-3xl font-semibold">{userName}</h1>
-            <h2 className=" font-semibold text-gray-500">{email}</h2>
-            <p>User profile</p>
+          <div className="text-center md:text-left">
+            <h2 className="text-2xl font-semibold">{user_name}</h2>
+            <p className="text-gray-500 text-sm mt-1">{email}</p>
+            <p className="text-gray-600">{user_desciption}</p>
           </div>
-        </div>
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold">Contact Information</h2>
+        </header>
 
-          <div>
-
-            <label className="block text-sm font-medium text-gray-700 my-3">Contact Number</label>
-            <form className="flex flex-col sm:flex-row md:space-x-4 w-full">
-
-              <div className="flex-1 md:w-4/5">
-                <MuiTelInput className='w-full' value={value} onChange={handleChange} />
-              </div>
-
-              <button
-                type="submit"
-                className="flex-shrink-0 w-1/2 my-3 p-3 md:w-1/5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-              >
-                Send verification code
-              </button>
-            </form>
-
-
-          </div>
-
-
-          <label htmlFor='skill_dropdown' className="mt-3 block mb-2 text-sm font-medium text-gray-700 dark:text-white">Add your skills</label>
-          <DropdownButton />
-
-          <div className="relative mt-3">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-700 dark:text-white"
-              htmlFor="large_size"
+        <ul className="flex flex-wrap gap-2 mt-4">
+          {skills.map((skill) => (
+            <li
+              key={skill}
+              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
             >
-              Upload Resume
-            </label>
-
-
-            <input
-              className="absolute inset-0 opacity-0 cursor-pointer"
-              id="large_size"
-              type="file"
-            />
-
-
-            <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg py-2 px-4 cursor-pointer">
-              <span>Choose a file</span>
-              <span className="text-sm text-gray-400 text-center">No file chosen</span>
-            </div>
-          </div>
-
-
-          
-
-            <button
-              type="button"
-              className="mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            >
-              Submit
-            </button>
-          </div>
-
-      
-
+              {skill}
+            </li>
+          ))}
+        </ul>
+        <span className="text-blue-600 underline font-semibold w-fit cursor-pointer">
+          Resume.pdf
+        </span>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded w-30"
+        >
+          Edit Profile
+        </button>
       </div>
-    </>
+      <UserProfileEdit
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        email={email}
+      />
+    </main>
   );
-};
-
-export default UserProfile;
+}

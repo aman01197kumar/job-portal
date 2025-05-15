@@ -41,7 +41,7 @@ const AdminHeader = () => {
           <Typography
             className="hover:cursor-pointer"
             sx={{ minWidth: 100 }}
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/")}
           >
             Home
           </Typography>

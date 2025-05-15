@@ -36,13 +36,13 @@ const App = () => {
         ) : (
           <Route path="/" element={<UserLogin />} />
         )}
-        <Route
-            path="/dashboard"
-            element={<Dashboard user_type={userData?.user_type} />}
-          />
+
         <Route path="signup" element={<Signup />} />
 
-        <Route path="user-profile" element={<UserProfile />} />
+        <Route
+          path="user-profile"
+          element={<UserProfile email={userData?.email} />}
+        />
         <Route
           path="/admin/job-posting"
           element={<JobPosting userId={userData?.userId} />}

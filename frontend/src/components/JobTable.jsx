@@ -30,18 +30,6 @@ const JobTable = ({ loggedBy }) => {
     fetchJobs();
   }, []);
 
-  const removeJobHandler = async (index) => {
-    try {
-      const response = await axios.delete(
-        `http://localhost:3000/jobs/${index}`
-      );
-      console.log("Remove Job Response:", response?.data);
-      fetchJobs();
-    } catch (err) {
-      console.error("Error removing job:", err);
-    }
-  };
-
   if (loading) {
     return (
       <div className="text-center mt-4 text-gray-500">
@@ -53,7 +41,15 @@ const JobTable = ({ loggedBy }) => {
   if (error) {
     return <div className="text-center mt-4 text-red-500">{error}</div>;
   }
-  console.log(dashboardJobPosted, "third vikas");
+
+  const applyJobHandler = async (job) => {
+    console.log(job._id, dashboardJobPosted);
+    try {
+      setIsApplied(dashboardJobPosted.some((item) => item?._id === job._id));
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <div className="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
@@ -123,8 +119,9 @@ const JobTable = ({ loggedBy }) => {
                 <div
                   className="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer"
                   style={{ minWidth: "70px" }}
+                  onClick={() => applyJobHandler(job)}
                 >
-                  Apply
+                  {isApplied ? "Applied" : "Apply"}
                 </div>
               </td>
             </tr>

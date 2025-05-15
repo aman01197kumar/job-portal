@@ -3,17 +3,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const userSignup = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, contactNumber, user } =
-      req.body;
+    const { full_name, email, password, contactNumber, user } = req.body;
 
-    if (
-      !email ||
-      !firstName ||
-      !lastName ||
-      !contactNumber ||
-      !password ||
-      !user
-    )
+    if (!email || !full_name || !contactNumber || !password || !user)
       return res
         .status(200)
         .json({ status: 401, message: "fill all the fields" });
@@ -29,8 +21,7 @@ const userSignup = async (req, res) => {
 
     const users = new User({
       email: email,
-      first_name: firstName,
-      last_name: lastName,
+      full_name: full_name,
       phone_number: contactNumber,
       password: hashedPassword,
       user: user,
@@ -65,7 +56,7 @@ const userLogin = async (req, res) => {
     return res.status(200).json({ message: "Incorrect password", status: 401 });
 
   const token = await jwt.sign(
-    { userid: user._id, username: user.first_name },
+    { userid: user._id, username: user.full_name },
     process.env.SECRET_KEY
   );
 
@@ -74,7 +65,68 @@ const userLogin = async (req, res) => {
     status: 200,
     user: user.user,
     userId: user._id,
+    email: user.email,
     token: token,
   });
 };
+
+export const updateUserData = async (req, res) => {
+  try {
+    const { email } = req.query;
+    const { full_name, description, skills } = req.body;
+
+    const user_img = req.files?.image?.[0];
+    const resume = req.files?.file?.[0];
+
+    const user = await User.findOneAndUpdate(
+      { email },
+      {
+        $set: {
+          full_name,
+          description,
+          skills,
+          user_img: user_img?.path,
+          resume: resume?.path,
+        },
+
+        $unset: {
+          first_name: "",
+          last_name: "",
+        },
+      }
+    );
+
+    await user.save();
+    return res.status(200).json({
+      success: true,
+      message: "data updated successfully!!",
+      status: 200,
+      user,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: err.message, success: false, status: 500 });
+  }
+};
+
+export const getUserData = async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    const user = await User.findOne({ email });
+
+    if (!user)
+      return res
+        .status(200)
+        .json({ success: false, status: 404, message: "User not found" });
+
+    return res
+      .status(200)
+      .json({ success: true, status: 200, message: "User found", user });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export { userSignup, userLogin };

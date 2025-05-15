@@ -1,26 +1,37 @@
 import { JobPosting } from "../models/jobPost.schema.js";
+import mongoose from "mongoose";
 
 // Create a new Job Post
 export const createJobPost = async (req, res) => {
   try {
     const { userId, jobs } = req.body;
 
-    if (!userId)
-      return res
-        .status(200)
-        .json({ message: "Please login again", status: 401 });
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid or missing userId" });
+    }
 
-    const jobPost = new JobPosting({ userId, jobs });
-    await jobPost.save();
+    // Convert to ObjectId
+    const objectId = new mongoose.Types.ObjectId(userId);
+
+    let jobPost = await JobPosting.findOne({ userId: objectId });
+
+    if (jobPost) {
+      jobPost.jobs.push(...jobs);
+      await jobPost.save();
+    } else {
+      jobPost = new JobPosting({ userId: objectId, jobs });
+      await jobPost.save();
+    }
 
     res.status(200).json({
       success: true,
       status: 200,
-      message: "Job Posted Succesfully. You can post new jobs",
+      message: "Job posted successfully",
     });
   } catch (error) {
+    console.error("Error posting job:", error);
     res
-      .status(200)
+      .status(500)
       .json({ success: false, message: error.message, status: 500 });
   }
 };
@@ -28,7 +39,9 @@ export const createJobPost = async (req, res) => {
 // Get all Job Posts
 export const getAllJobPosts = async (req, res) => {
   try {
-    const jobPosts = await JobPosting.find().sort({ createdAt: -1 }).populate("userId", "name email");
+    const jobPosts = await JobPosting.find()
+      .sort({ createdAt: -1 })
+      .populate("userId", "name email");
     res.status(200).json({ success: true, data: jobPosts });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

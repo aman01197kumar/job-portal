@@ -4,14 +4,15 @@ import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
+import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
 import { toast, ToastContainer } from "react-toastify";
 
 const UserLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loggedBy, setLoggedBy] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
+  const { email, password } = loggedBy;
   const userLoginHandler = async () => {
     if (!email || !password) {
       toast.warn("please enter email and password");
@@ -34,7 +35,7 @@ const UserLogin = () => {
       password: password,
     };
 
-    const response = await axios.post("http://localhost:3000/login", user);
+    const response = await axios.post(`${BASE_URL}/${END_POINTS.LOGIN}`, user);
 
     if (response?.data?.status === 400) {
       toast.warn(response?.data?.message);
@@ -53,12 +54,12 @@ const UserLogin = () => {
         userId: response?.data?.userId,
         user_type: response?.data?.user,
         token: response?.data?.token,
+        email:response?.data?.email
       });
 
-      
       localStorage.setItem("userData", userData);
-      navigate("dashboard");
-      window.location.reload()
+      navigate("/");
+      window.location.reload();
     }
   };
   return (
@@ -87,7 +88,9 @@ const UserLogin = () => {
                 className="p-2 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@xyz.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) =>
+                  setLoggedBy({ ...loggedBy, email: e.target.value })
+                }
               />
             </div>
             <div className="mb-5">
@@ -104,7 +107,9 @@ const UserLogin = () => {
                   id="password"
                   placeholder="..............."
                   className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) =>
+                    setLoggedBy({ ...loggedBy, password: e.target.value })
+                  }
                 />
                 {showPassword ? (
                   <VisibilityOffIcon
