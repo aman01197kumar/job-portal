@@ -10,7 +10,6 @@ import ViewJobDescription from "./screens/ViewJobDescription";
 import JobPosted from "./screens/JobPosted";
 
 const App = () => {
-  const [openDrawer, setOpenDrawer] = useState(false);
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -39,10 +38,6 @@ const App = () => {
 
         <Route path="signup" element={<Signup />} />
 
-        <Route
-          path="user-profile"
-          element={<UserProfile email={userData?.email} />}
-        />
         <Route
           path="/admin/job-posting"
           element={<JobPosting userId={userData?.userId} />}

@@ -1,4 +1,3 @@
-import React from "react";
 
 const JobPostedCard = ({ organisation_name, job_profile }) => {
   return (

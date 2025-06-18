@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import UserProfileEdit from "../components/UserProfileEdit";
 import axios from "axios";
-import { esbuildVersion } from "vite";
 const skills = [
   "HTML",
   "CSS",
@@ -36,7 +35,7 @@ export default function UserProfile({ email }) {
         );
         console.log(response?.data);
       }
-      // else console.log('nooo')
+    
     } catch (err) {
       console.log(err);
     }
