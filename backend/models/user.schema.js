@@ -18,6 +18,7 @@ const userSchema = mongoose.Schema({
   user_img: String,
   skills: Object,
   resume: String,
+  profile_img: String,
 });
 
 export const User = mongoose.model("User", userSchema);

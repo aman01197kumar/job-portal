@@ -1,5 +1,5 @@
 import { User } from "../models/user.schema.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjscd";
 import jwt from "jsonwebtoken";
 const userSignup = async (req, res) => {
   try {
@@ -76,25 +76,16 @@ export const updateUserData = async (req, res) => {
     const { full_name, description, skills } = req.body;
 
     const user_img = req.files?.image?.[0];
-    const resume = req.files?.file?.[0];
+    const resume = req.file;
 
-    const user = await User.findOneAndUpdate(
-      { email },
-      {
-        $set: {
-          full_name,
-          description,
-          skills,
-          user_img: user_img?.path,
-          resume: resume?.path,
-        },
+    const user = await User.findOne({ email });
 
-        $unset: {
-          first_name: "",
-          last_name: "",
-        },
-      }
-    );
+    user.full_name = full_name;
+    user.description = description;
+    user.skills = skills;
+    user.resume = resume ? resume.path : user.resume;
+    user.profile_img = user_img ? user_img.path : user.profile_img;
+
 
     await user.save();
     return res.status(200).json({

@@ -8,6 +8,7 @@ const JobTable = ({ loggedBy }) => {
   const [isApplied, setIsApplied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [appliedJobs, setAppliedJobs] = useState([]);
   const dispatch = useDispatch();
 
   const fetchJobs = async () => {
@@ -15,7 +16,6 @@ const JobTable = ({ loggedBy }) => {
     setError(null);
     try {
       const response = await axios.get("http://localhost:3000/jobs");
-      console.log("API Response:", response?.data);
       const allJobs = response?.data?.data?.flatMap((item) => item.jobs) || [];
       setDashboardJobPosted(allJobs);
     } catch (err) {
@@ -43,22 +43,22 @@ const JobTable = ({ loggedBy }) => {
   }
 
   const applyJobHandler = async (job) => {
-    console.log(job._id, dashboardJobPosted);
     try {
-      setIsApplied(dashboardJobPosted.some((item) => item?._id === job._id));
+      setAppliedJobs((prev) => [...prev, job]);
+      const checkApplied = appliedJobs.some((item) => item._id === job._id);
+      if (checkApplied) {
+        setIsApplied(true);
+        return;
+      }
     } catch (err) {
       console.log(err);
     }
   };
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <div className="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
-        {/* ... (rest of your filter and search UI remains the same) ... */}
-      </div>
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 w-100">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
-            <th scope="col" className="p-4"></th>
             <th scope="col" className="px-6 py-3">
               Company name
             </th>
@@ -71,6 +71,9 @@ const JobTable = ({ loggedBy }) => {
             <th scope="col" className="px-6 py-3">
               Action
             </th>
+            <th scope="col" className="px-6 py-3">
+              Status
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -79,21 +82,6 @@ const JobTable = ({ loggedBy }) => {
               key={job?._id}
               className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
-              <td className="w-4 p-4">
-                <div className="flex items-center">
-                  <input
-                    id={`checkbox-table-search-${job?._id}`}
-                    type="checkbox"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    htmlFor={`checkbox-table-search-${job?._id}`}
-                    className="sr-only"
-                  >
-                    checkbox
-                  </label>
-                </div>
-              </td>
               <th
                 scope="row"
                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -117,11 +105,20 @@ const JobTable = ({ loggedBy }) => {
                 <span>/</span>
 
                 <div
-                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer"
+                  className={`font-medium ${
+                    appliedJobs.some((item) => item._id === job._id)
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-blue-600 hover:underline cursor-pointer"
+                  }`}
                   style={{ minWidth: "70px" }}
-                  onClick={() => applyJobHandler(job)}
+                  onClick={() =>
+                    !appliedJobs.some((item) => item._id === job._id) &&
+                    applyJobHandler(job)
+                  }
                 >
-                  {isApplied ? "Applied" : "Apply"}
+                  {appliedJobs.some((item) => item._id === job._id)
+                    ? "Applied"
+                    : "Apply"}
                 </div>
               </td>
             </tr>
