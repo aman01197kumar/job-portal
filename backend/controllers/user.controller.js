@@ -1,5 +1,5 @@
 import { User } from "../models/user.schema.js";
-import bcrypt from "bcryptjscd";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 const userSignup = async (req, res) => {
   try {
