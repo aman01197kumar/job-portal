@@ -31,7 +31,7 @@ export default function UserProfile({ email }) {
     try {
       if (email) {
         const response = await axios.get(
-          `http://localhost:3000/getuser?email=${email}`
+          `${BASE_URL}/${END_POINTS.USER_PROFILE}?email=${email}`
         );
         console.log(response?.data);
       }

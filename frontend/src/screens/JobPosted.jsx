@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import AdminHeader from "../components/AdminHeader";
 import axios from "axios";
 import JobPostedCard from "../components/JobPostedCard";
+import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
 
-const JobPosted = ({userid}) => {
+const JobPosted = ({ userid }) => {
   const [jobDetails, setJobDetails] = useState([]);
 
   const fetchJobDetails = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/jobs/user/${userid}`
+        `${BASE_URL}/${END_POINTS.JOB_POSTED}/${userid}`
       );
       console.log(response?.data);
 

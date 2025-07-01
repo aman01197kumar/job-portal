@@ -11,7 +11,6 @@ const AdminLogin = ({ setLoggedBy }) => {
   const navigate = useNavigate();
 
   const userLoginHandler = () => {
-    console.log(email,password)
     if (!email || !password) {
       alert("please enter email and password");
       return;

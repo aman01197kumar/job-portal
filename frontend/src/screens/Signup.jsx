@@ -5,6 +5,8 @@ import axios from "axios";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { toast, ToastContainer } from "react-toastify";
+import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
+
 
 const Signup = () => {
   const [fname, setFname] = useState("");
@@ -56,7 +58,7 @@ const Signup = () => {
     };
     try {
       const response = await axios.post(
-        "http://localhost:3000/signup",
+        `${BASE_URL}/${END_POINTS.SIGNUP}`,
         userSignupDetails
       );
 

@@ -1,7 +1,11 @@
-const BASE_URL = 'http://localhost:3000'
+const BASE_URL = "https://job-portal-8rp9.onrender.com";
 
 const END_POINTS = {
-    LOGIN:`login`,
-}
+  LOGIN: `login`,
+  JOB_POSTED: `jobs/user`,
+  JOBS: `jobs`,
+  SIGNUP: `signup`,
+  USER_PROFILE: `getuser`,
+};
 
-export {BASE_URL,END_POINTS}
+export { BASE_URL, END_POINTS };

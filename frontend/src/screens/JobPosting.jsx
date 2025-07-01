@@ -2,16 +2,15 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import AdminHeader from "../components/AdminHeader";
+import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
 
-const JobPosting = ({userId}) => {
+const JobPosting = ({ userId }) => {
   const [organizationName, setOrganizationName] = useState("");
   const [ctc, setCtc] = useState("");
   const [jobType, setJobType] = useState("");
   const [jobProfile, setJobProfile] = useState("");
   const [jobLocation, setJobLocation] = useState("");
   const [jobDescription, setJobDescription] = useState("");
-
-
 
   const addJobOpportunityHandler = async () => {
     if (!userId) {
@@ -50,7 +49,7 @@ const JobPosting = ({userId}) => {
         },
       ],
     };
-    const response = await axios.post("http://localhost:3000/jobs", job);
+    const response = await axios.post(`${BASE_URL}/${END_POINTS.JOBS}}`, job);
 
     if (response?.data?.status === 401) {
       toast.error(response?.data?.message);
@@ -76,7 +75,7 @@ const JobPosting = ({userId}) => {
 
   return (
     <>
-    <AdminHeader />
+      <AdminHeader />
       <div className="w-full">
         <div className=" p-4 w-full w-80 max-h-full bg-white rounded-lg shadow-lg dark:bg-gray-700">
           <div className="flex items-center justify-center p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
