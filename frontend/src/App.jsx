@@ -44,7 +44,7 @@ const App = () => {
         />
         <Route
           path="job-details/:id"
-          element={<ViewJobDescription user_type={userData?.user_type} />}
+          element={<ViewJobDescription/>}
         />
         <Route
           path="job-posted"

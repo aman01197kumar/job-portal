@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { addJobDescription } from "../redux/jobDescription";
 import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
 
-const JobTable = ({ loggedBy }) => {
+const JobTable = () => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
   const [isApplied, setIsApplied] = useState(false);
   const [loading, setLoading] = useState(true);

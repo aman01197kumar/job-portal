@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  selectedJob: [],
+  selectedJob: {},
   numb: 0,
 };
 
@@ -11,7 +11,6 @@ const jobSlice = createSlice({
   reducers: {
     addJobDescription: (state, action) => {
       state.selectedJob = action.payload;
-    
     },
   },
 });
