@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addJobDescription } from "../redux/jobDescription";
-import { BASE_URL, END_POINTS } from "../assets/END_POINTS"
+import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
 
 const JobTable = ({ loggedBy }) => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
@@ -16,7 +16,9 @@ const JobTable = ({ loggedBy }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${BASE_URL}/${END_POINTS.JOBS}`);
+      const response = await axios.get(`${BASE_URL}/${END_POINTS.JOBS}`, {
+        "content-type": "application/json",
+      });
       const allJobs = response?.data?.data?.flatMap((item) => item.jobs) || [];
       setDashboardJobPosted(allJobs);
     } catch (err) {

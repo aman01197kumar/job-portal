@@ -6,6 +6,7 @@ const ViewJobDescription = () => {
   const jobDescriptions = useSelector(
     (state) => state.jobDescription.selectedJob
   );
+  console.log(jobDescriptions, "nknkn");
   const params = useParams();
   const jobId = params.id;
   const job = jobDescriptions.find((job) => job._id === jobId);

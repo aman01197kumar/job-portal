@@ -16,5 +16,5 @@ const jobSlice = createSlice({
   },
 });
 
-export const { addJobDescription, increment } = jobSlice.actions;
+export const { addJobDescription } = jobSlice.actions;
 export default jobSlice.reducer; // 👈 This is what you import in store.js
