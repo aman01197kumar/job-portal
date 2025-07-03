@@ -1,20 +1,66 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
+import { addJobDescription } from "../redux/jobDescription";
 
 const ViewJobDescription = () => {
-  const jobDescriptions = useSelector(
-    (state) => state.jobDescription.selectedJob
-  );
-  console.log(jobDescriptions, "nknkn");
-  const params = useParams();
-  const jobId = params.id;
-  const job = jobDescriptions.find((job) => job._id === jobId);
+  const { id: jobId } = useParams();
+  const dispatch = useDispatch();
 
-  if (!jobDescriptions || Object.keys(jobDescriptions).length === 0) {
+  const jobFromStore = useSelector((state) =>
+    state.jobDescription.selectedJob?.find((job) => job._id === jobId)
+  );
+
+  const [job, setJob] = useState(jobFromStore);
+  const [loading, setLoading] = useState(!jobFromStore);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!jobFromStore) {
+      setLoading(true);
+      const fetchJob = async () => {
+        try {
+          // This fetches all jobs to find the one needed.
+          // For better performance, consider creating a backend endpoint
+          // to fetch a single job by its ID.
+          const response = await axios.get(`${BASE_URL}/${END_POINTS.JOBS}`);
+          const allJobs =
+            response?.data?.data?.flatMap((item) => item.jobs) || [];
+          const foundJob = allJobs.find((j) => j._id === jobId);
+
+          if (foundJob) {
+            setJob(foundJob);
+            // Optionally, populate the store with all jobs for faster navigation later.
+            dispatch(addJobDescription(allJobs));
+          } else {
+            setError("Job not found.");
+          }
+        } catch (err) {
+          console.error("Error fetching job details:", err);
+          setError("Failed to load job details.");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchJob();
+    }
+  }, [jobId, jobFromStore, dispatch]);
+
+  if (loading) {
+    return <p className="text-center mt-4 text-gray-500">Loading...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center mt-4 text-red-500">{error}</p>;
+  }
+
+  if (!job) {
     return (
       <p className="text-center mt-4 text-gray-500">
-        No job descriptions available.
+        Job description not found.
       </p>
     );
   }

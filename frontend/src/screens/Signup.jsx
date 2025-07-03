@@ -42,7 +42,7 @@ const Signup = () => {
       return;
     }
 
-    if (password?.trim().length < 8) {
+    if (password?.trim().length < 8) {  
       toast.error("Password must be at least 8 characters long.");
       return;
     }
