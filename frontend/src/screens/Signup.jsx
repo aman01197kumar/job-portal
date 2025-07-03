@@ -7,7 +7,6 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { toast, ToastContainer } from "react-toastify";
 import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
 
-
 const Signup = () => {
   const [fname, setFname] = useState("");
   const [email, setEmail] = useState("");
@@ -48,15 +47,15 @@ const Signup = () => {
       return;
     }
 
-    const userSignupDetails = {
-      firstName: fname,
-      lastName: lastName,
-      email: email,
-      password: password,
-      contactNumber: contactNumber,
-      user: user.toLowerCase(),
-    };
     try {
+      const userSignupDetails = {
+        full_name: fname + " " + lastName,
+        email: email,
+        password: password,
+        contactNumber: contactNumber,
+        user: user.toLowerCase(),
+      };
+      console.log(userSignupDetails);
       const response = await axios.post(
         `${BASE_URL}/${END_POINTS.SIGNUP}`,
         userSignupDetails
@@ -73,7 +72,9 @@ const Signup = () => {
         navigate("/");
       }
       toast.success(response?.data?.message);
-      navigate("/");
+      console.log(response?.data);
+
+      // navigate("/");
     } catch (err) {
       console.log(err);
     }
@@ -191,7 +192,7 @@ const Signup = () => {
           </button>
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 };
