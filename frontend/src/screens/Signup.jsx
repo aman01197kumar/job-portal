@@ -27,23 +27,28 @@ const Signup = () => {
       !confirmPassword?.trim() ||
       !user
     ) {
-      alert("Please fill all the fields.");
+      toast.error("Please fill all the fields.");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email?.trim())) {
-      alert("Email is not in proper format.");
+      toast.error("Email is not in proper format.");
       return;
     }
 
     if (!/^\d{10}$/.test(contactNumber?.trim())) {
-      alert("Contact number must be exactly 10 digits.");
+      toast.error("Contact number must be exactly 10 digits.");
+      return;
+    }
+
+    if (password?.trim().length < 8) {
+      toast.error("Password must be at least 8 characters long.");
       return;
     }
 
     if (password?.trim() !== confirmPassword?.trim()) {
-      alert("Passwords do not match.");
+      toast.error("Passwords do not match.");
       return;
     }
 
@@ -55,26 +60,24 @@ const Signup = () => {
         contactNumber: contactNumber,
         user: user.toLowerCase(),
       };
-      console.log(userSignupDetails);
+
       const response = await axios.post(
         `${BASE_URL}/${END_POINTS.SIGNUP}`,
         userSignupDetails
       );
 
       if (response.status == 409) {
-        console.log("somthing went wrong abhihsek");
+        toast.error("somthing went wrong");
+        return;
       }
 
       if (response?.data?.status === 401) {
         toast.error(response?.data?.message);
       } else if (response?.data?.status === 409) {
         toast.error(response?.data?.message);
-        navigate("/");
       }
-      toast.success(response?.data?.message);
-      console.log(response?.data);
 
-      // navigate("/");
+      navigate("/");
     } catch (err) {
       console.log(err);
     }
