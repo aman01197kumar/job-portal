@@ -4,10 +4,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "./screens/Dashboard";
 import UserLogin from "./screens/UserLogin";
 import Signup from "./screens/Signup";
-import UserProfile from "./screens/UserProfile";
 import JobPosting from "./screens/JobPosting";
 import ViewJobDescription from "./screens/ViewJobDescription";
 import JobPosted from "./screens/JobPosted";
+import { ProfilePage } from "./screens/Profile";
 
 const App = () => {
   const [userData, setUserData] = useState(null);
@@ -42,14 +42,12 @@ const App = () => {
           path="/admin/job-posting"
           element={<JobPosting userId={userData?.userId} />}
         />
-        <Route
-          path="job-details/:id"
-          element={<ViewJobDescription/>}
-        />
+        <Route path="job-details/:id" element={<ViewJobDescription />} />
         <Route
           path="job-posted"
           element={<JobPosted userid={userData?.userId} />}
         />
+        <Route path="/user-profile" element={<ProfilePage />} />
       </Routes>
     </BrowserRouter>
   );

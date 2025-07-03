@@ -1,316 +1,375 @@
-import { useState } from "react";
-import {
-  Dialog,
-  DialogPanel,
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  Popover,
-  PopoverButton,
-  PopoverGroup,
-  PopoverPanel,
-} from "@headlessui/react";
-import {
-  ArrowPathIcon,
-  Bars3Icon,
-  ChartPieIcon,
-  CursorArrowRaysIcon,
-  FingerPrintIcon,
-  SquaresPlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  PhoneIcon,
-  PlayCircleIcon,
-} from "@heroicons/react/20/solid";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { 
+  Menu, 
+  X, 
+  Search, 
+  Briefcase, 
+  BookOpen, 
+  Users, 
+  Bell, 
+  User, 
+  Settings, 
+  LogOut,
+  ChevronDown,
+  MapPin,
+  Building,
+  Heart,
+  FileText,
+  MessageSquare
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const products = [
+const jobCategories = [
   {
     id: 1,
-    name: "Analytics",
-    description: "Get a better understanding of your traffic",
+    name: "Technology",
+    description: "Software, IT, and tech roles",
     href: "#",
-    icon: ChartPieIcon,
+    icon: Briefcase,
+    count: "2,340 jobs"
   },
   {
     id: 2,
-    name: "Engagement",
-    description: "Speak directly to your customers",
+    name: "Design",
+    description: "UI/UX, Graphic, and Product Design",
     href: "#",
-    icon: CursorArrowRaysIcon,
+    icon: BookOpen,
+    count: "890 jobs"
   },
   {
     id: 3,
-    name: "Security",
-    description: "Your customers’ data will be safe and secure",
+    name: "Marketing",
+    description: "Digital marketing and growth roles",
     href: "#",
-    icon: FingerPrintIcon,
+    icon: Users,
+    count: "1,250 jobs"
   },
   {
     id: 4,
-    name: "Integrations",
-    description: "Connect with third-party tools",
+    name: "Sales",
+    description: "Business development and sales",
     href: "#",
-    icon: SquaresPlusIcon,
-  },
-  {
-    id: 5,
-    name: "Integrations",
-    description: "Connect with third-party tools",
-    href: "#",
-    icon: SquaresPlusIcon,
-  },
-  {
-    id: 6,
-    name: "Automations",
-    description: "Build strategic funnels that will convert",
-    href: "#",
-    icon: ArrowPathIcon,
-  },
-];
-const callsToAction = [
-  { name: "User Profile", href: "#", icon: PlayCircleIcon },
-  { name: "Contact sales", href: "#", icon: PhoneIcon },
+    icon: Building,
+    count: "980 jobs"
+  }
 ];
 
-const profileContent = ["User Profile", "Logout"];
-export default function Header({ setOpenDrawer }) {
+const quickActions = [
+  { name: "Saved Jobs", href: "#", icon: Heart, count: "12" },
+  { name: "Applications", href: "#", icon: FileText, count: "8" },
+  { name: "Messages", href: "#", icon: MessageSquare, count: "3" },
+];
+
+export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [jobsDropdownOpen, setJobsDropdownOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
-  const navigate = useNavigate();
-
-  const handleUserProfile = () => {
-    setMobileMenuOpen(false);
-    navigate("/user-profile");
+  const navigate = useNavigate()
+  const handleLogout = () => {
+    // Add logout logic here
+    navigate('/login'); // Redirect to login page after logout
+    localStorage.removeItem('userData'); // Clear user data from local storage
+    console.log('Logging out...');
   };
 
-  const signupHandler = () => {
-    setMobileMenuOpen(false);
-    navigate("/");
-  };
-
-  const logoutHandler = () => {
-    localStorage.removeItem("userData");
-
-    navigate("/");
-    window.location.reload();
-  };
   return (
-    <header className="bg-white">
-      <nav
-        aria-label="Global"
-        className="mx-auto flex max-w-7xl items-center justify-between p-3 lg:px-8"
-      >
-        <div className="flex lg:flex-1">
-          <a href="#" className="-m-1.5 p-1.5">
-            <span className="sr-only">Your Company</span>
-            <img
-              alt=""
-              src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-              className="h-8 w-auto"
-              onClick={() => setOpenDrawer(true)}
-            />
-          </a>
-        </div>
-        <div className="flex lg:hidden">
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(true)}
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-          >
-            <span className="sr-only">Open main menu</span>
-            <Bars3Icon aria-hidden="true" className="size-6" />
-          </button>
-        </div>
-        <PopoverGroup className="hidden lg:flex lg:gap-x-12">
-          <Popover className="relative">
-            <PopoverButton className="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
-              Product
-              <ChevronDownIcon
-                aria-hidden="true"
-                className="size-5 flex-none text-gray-400"
-              />
-            </PopoverButton>
-
-            <PopoverPanel
-              transition
-              className="absolute top-full -left-8 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
-            >
-              <div className="p-4">
-                {products.map((item) => (
-                  <div
-                    key={item.name}
-                    className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50"
-                  >
-                    <div className="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                      <item.icon
-                        aria-hidden="true"
-                        className="size-6 text-gray-600 group-hover:text-indigo-600"
-                      />
-                    </div>
-                    <div className="flex-auto">
-                      <a
-                        href={item.href}
-                        className="block font-semibold text-gray-900"
-                      >
-                        {item.name}
-                        <span className="absolute inset-0" />
-                      </a>
-                      <p className="mt-1 text-gray-600">{item.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                {callsToAction.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-100"
-                  >
-                    <item.icon
-                      aria-hidden="true"
-                      className="size-5 flex-none text-gray-400"
-                    />
-                    {item.name}
-                  </a>
-                ))}
-              </div>
-            </PopoverPanel>
-          </Popover>
-
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
-            Features
-          </a>
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
-            Marketplace
-          </a>
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
-            Company
-          </a>
-        </PopoverGroup>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end ">
-          <PopoverGroup className="hidden lg:flex lg:gap-x-12">
-            <Popover className="relative">
-              <PopoverButton className="flex items-center gap-x-1 text-4xl font-semibold text-gray-900">
-                <img
-                  className="w-10 h-10 rounded-full"
-                  src="/docs/images/people/profile-picture-5.jpg"
-                  alt="Rounded avatar"
-                />
-              </PopoverButton>
-
-              <PopoverPanel
-                transition
-                className="absolute -right-8 z-10 mt-3 w-60 overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
-              >
-                <div className="cursor-pointer divide-x divide-gray-900/5 bg-gray-50">
-                  <div
-                    className="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-100"
-                    onClick={() => navigate("/user-profile")}
-                  >
-                    User Profile
-                  </div>
-                  <div
-                    className="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-100"
-                    onClick={logoutHandler}
-                  >
-                    Logout
-                  </div>
-                </div>
-              </PopoverPanel>
-            </Popover>
-          </PopoverGroup>
-        </div>
-      </nav>
-      <Dialog
-        open={mobileMenuOpen}
-        onClose={setMobileMenuOpen}
-        className="lg:hidden"
-      >
-        <div className="fixed inset-0 z-10" />
-        <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div className="flex items-center justify-between">
-            <a href="#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
-              <img
-                alt=""
-                src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-                className="h-8 w-auto"
-              />
-            </a>
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(false)}
-              className="-m-2.5 rounded-md p-2.5 text-gray-700"
-            >
-              <span className="sr-only">Close menu</span>
-              <XMarkIcon aria-hidden="true" className="size-6" />
-            </button>
-          </div>
-          <div className="mt-6 flow-root">
-            <div className="-my-6 divide-y divide-gray-500/10">
-              <div className="space-y-2 py-6">
-                <Disclosure as="div" className="-mx-3">
-                  <DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pr-3.5 pl-3 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
-                    Product
-                    <ChevronDownIcon
-                      aria-hidden="true"
-                      className="size-5 flex-none group-data-open:rotate-180"
-                    />
-                  </DisclosureButton>
-                  <DisclosurePanel className="mt-2 space-y-2">
-                    {[...products, ...callsToAction].map((item) => (
-                      <DisclosureButton
-                        key={item.name}
-                        as="a"
-                        href={item.href}
-                        className="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50"
-                      >
-                        {item.name}
-                      </DisclosureButton>
-                    ))}
-                  </DisclosurePanel>
-                </Disclosure>
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Features
-                </a>
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Marketplace
-                </a>
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Company
-                </a>
-              </div>
-              <div className="cursor-pointer divide-x divide-gray-900/5 bg-gray-50">
-                <div
-                  className="flex items-center gap-x-2.5 pb-6 text-sm/6 font-semibold hover:bg-gray-100"
-                  onClick={handleUserProfile}
-                >
-                  User Profile
-                </div>
-                <div
-                  className="flex items-center gap-x-2.5 pb-6 text-sm/6 font-semibold hover:bg-gray-100"
-                  onClick={signupHandler}
-                >
-                  Logout
-                </div>
-              </div>
+    <header className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
+      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => navigate('/')}>
+              <Briefcase className="h-8 w-8 text-blue-600" />
+              <span className="ml-2 text-xl font-bold text-gray-900">JobPortal</span>
             </div>
           </div>
-        </DialogPanel>
-      </Dialog>
+
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex lg:items-center lg:space-x-8">
+            {/* Jobs Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setJobsDropdownOpen(!jobsDropdownOpen)}
+                className="flex items-center text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200"
+              >
+                Find Jobs
+                <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-200 ${jobsDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {jobsDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+                  <div className="p-4">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-3">Browse by Category</h3>
+                    <div className="space-y-2">
+                      {jobCategories.map((category) => (
+                        <a
+                          key={category.id}
+                          href={category.href}
+                          className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                        >
+                          <div className="flex-shrink-0">
+                            <category.icon className="h-6 w-6 text-blue-600" />
+                          </div>
+                          <div className="ml-3 flex-1">
+                            <p className="text-sm font-medium text-gray-900">{category.name}</p>
+                            <p className="text-xs text-gray-500">{category.description}</p>
+                            <p className="text-xs text-blue-600 font-medium">{category.count}</p>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border-t border-gray-200 p-4">
+                    <a
+                      href="#"
+                      className="block w-full text-center bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium"
+                    >
+                      View All Jobs
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Navigation Links */}
+            <a href="#" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
+              Companies
+            </a>
+            <a href="#" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
+              Salary Guide
+            </a>
+            <a href="#" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
+              Career Advice
+            </a>
+          </div>
+
+          {/* Search Bar */}
+          <div className="hidden md:flex flex-1 max-w-lg mx-8">
+            <div className="relative w-full">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search jobs, companies, or skills..."
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              />
+            </div>
+          </div>
+
+          {/* Right Side Actions */}
+          <div className="hidden lg:flex lg:items-center lg:space-x-4">
+            {/* Quick Actions */}
+            {quickActions.map((action) => (
+              <a
+                key={action.name}
+                href={action.href}
+                className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                title={action.name}
+              >
+                <action.icon className="h-5 w-5" />
+                {action.count && (
+                  <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {action.count}
+                  </span>
+                )}
+              </a>
+            ))}
+
+            {/* Notifications */}
+            <button className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-all duration-200">
+              <Bell className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                5
+              </span>
+            </button>
+
+            {/* Profile Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+              >
+                <img
+                  src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400"
+                  alt="Profile"
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+                <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${profileDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {profileDropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+                  <div className="p-4 border-b border-gray-200">
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400"
+                        alt="Profile"
+                        className="h-12 w-12 rounded-full object-cover"
+                      />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">John Doe</p>
+                        <p className="text-xs text-gray-500">Software Engineer</p>
+                        <p className="text-xs text-green-600">Profile 85% complete</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="py-2">
+                    <a
+                      href="/user-profile"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      <User className="h-4 w-4 mr-3" />
+                      View Profile
+                    </a>
+                    <a
+                      href="#"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      <Settings className="h-4 w-4 mr-3" />
+                      Account Settings
+                    </a>
+                    <a
+                      href="#"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      <FileText className="h-4 w-4 mr-3" />
+                      Resume Builder
+                    </a>
+                  </div>
+                  
+                  <div className="border-t border-gray-200 py-2">
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
+                    >
+                      <LogOut className="h-4 w-4 mr-3" />
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="lg:hidden">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
+            >
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Search Bar */}
+        <div className="md:hidden pb-4">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search jobs..."
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+            />
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-white border-t border-gray-200">
+          <div className="px-4 pt-4 pb-6 space-y-4">
+            {/* Profile Section */}
+            <div className="flex items-center space-x-3 pb-4 border-b border-gray-200">
+              <img
+                src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400"
+                alt="Profile"
+                className="h-10 w-10 rounded-full object-cover"
+              />
+              <div>
+                <p className="text-sm font-medium text-gray-900">John Doe</p>
+                <p className="text-xs text-gray-500">Software Engineer</p>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="grid grid-cols-3 gap-4 py-4 border-b border-gray-200">
+              {quickActions.map((action) => (
+                <a
+                  key={action.name}
+                  href={action.href}
+                  className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                >
+                  <div className="relative">
+                    <action.icon className="h-6 w-6 text-gray-600" />
+                    {action.count && (
+                      <span className="absolute -top-2 -right-2 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                        {action.count}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-600 mt-1">{action.name}</span>
+                </a>
+              ))}
+            </div>
+
+            {/* Navigation Links */}
+            <div className="space-y-2">
+              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                Find Jobs
+              </a>
+              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                Companies
+              </a>
+              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                Salary Guide
+              </a>
+              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                Career Advice
+              </a>
+            </div>
+
+            {/* Account Actions */}
+            <div className="pt-4 border-t border-gray-200 space-y-2">
+              <a href="#" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                <User className="h-5 w-5 mr-3" />
+                View Profile
+              </a>
+              <a href="#" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                <Settings className="h-5 w-5 mr-3" />
+                Settings
+              </a>
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+              >
+                <LogOut className="h-5 w-5 mr-3" />
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Overlay for dropdowns */}
+      {(jobsDropdownOpen || profileDropdownOpen) && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => {
+            setJobsDropdownOpen(false);
+            setProfileDropdownOpen(false);
+          }}
+        />
+      )}
     </header>
   );
-}
+};
