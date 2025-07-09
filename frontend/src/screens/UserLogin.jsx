@@ -6,11 +6,13 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
 import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
 import { toast, ToastContainer } from "react-toastify";
+import Loader from "../components/Loader";
 
 const UserLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loggedBy, setLoggedBy] = useState({ email: "", password: "" });
   const navigate = useNavigate();
+  const [isLoading, setIsloading] = useState(false)
 
   const { email, password } = loggedBy;
   const userLoginHandler = async () => {
@@ -35,31 +37,37 @@ const UserLogin = () => {
       password: password,
     };
 
-    const response = await axios.post(`${BASE_URL}/${END_POINTS.LOGIN}`, user);
+    try {
+      setIsloading(true)
+      const response = await axios.post(`${BASE_URL}/${END_POINTS.LOGIN}`, user);
 
-    if (response?.data?.status === 400) {
-      toast.warn(response?.data?.message);
-      return;
-    }
-    if (response?.data?.status === 401) {
-      toast.warn(response?.data?.message);
-      return;
-    }
-    if (response?.data?.status === 404) {
-      toast.error(response?.data?.message);
-      return;
-    }
-    if (response?.data?.status === 200) {
-      const userData = JSON.stringify({
-        userId: response?.data?.userId,
-        user_type: response?.data?.user,
-        token: response?.data?.token,
-        email:response?.data?.email
-      });
+      if (response?.data?.status === 400) {
+        toast.warn(response?.data?.message);
+        return;
+      }
+      if (response?.data?.status === 401) {
+        toast.warn(response?.data?.message);
+        return;
+      }
+      if (response?.data?.status === 404) {
+        toast.error(response?.data?.message);
+        return;
+      }
+      if (response?.data?.status === 200) {
+        const userData = JSON.stringify({
+          userId: response?.data?.userId,
+          user_type: response?.data?.user,
+          token: response?.data?.token,
+          email: response?.data?.email
+        });
 
-      localStorage.setItem("userData", userData);
-      navigate("/");
-      window.location.reload();
+        localStorage.setItem("userData", userData);
+        navigate("/");
+        window.location.reload();
+      }
+    }
+    catch (err) {
+      console.log(err);
     }
   };
   return (
@@ -157,10 +165,11 @@ const UserLogin = () => {
             </div>
             <button
               type="submit"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="text-white flex justify-center bg-blue-700 hover:bg-blue-800 focus:ring-4 w-full focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-1/4 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               onClick={userLoginHandler}
             >
-              Submit
+              {isLoading ? <Loader /> : "Submit"}
+
             </button>
           </div>
         </div>

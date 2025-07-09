@@ -42,32 +42,38 @@ const userSignup = async (req, res) => {
 const userLogin = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !password)
-    return res
-      .status(200)
-      .json({ message: "Fill all the details", status: 400 });
-  const user = await User.findOne({ email });
+  try {
 
-  if (!user)
-    return res.status(200).json({ message: "User not found", status: 404 });
+    if (!email || !password)
+      return res
+        .status(200)
+        .json({ message: "Fill all the details", status: 400 });
+    const user = await User.findOne({ email });
 
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch)
-    return res.status(200).json({ message: "Incorrect password", status: 401 });
+    if (!user)
+      return res.status(200).json({ message: "User not found", status: 404 });
 
-  const token = await jwt.sign(
-    { userid: user._id, username: user.full_name },
-    process.env.SECRET_KEY
-  );
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(200).json({ message: "Incorrect password", status: 401 });
 
-  return res.status(200).json({
-    message: "login successful",
-    status: 200,
-    user: user.user,
-    userId: user._id,
-    email: user.email,
-    token: token,
-  });
+    const token = await jwt.sign(
+      { userid: user._id, username: user.full_name },
+      process.env.SECRET_KEY
+    );
+
+    return res.status(200).json({
+      message: "login successful",
+      status: 200,
+      user: user.user,
+      userId: user._id,
+      email: user.email,
+      token: token,
+    });
+  }
+  catch (err) {
+    return res.status(500).json({ message: "Internal Server Error", status: 500, success: false })
+  }
 };
 
 export const updateUserData = async (req, res) => {

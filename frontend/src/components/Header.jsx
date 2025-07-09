@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  Menu, 
-  X, 
-  Search, 
-  Briefcase, 
-  BookOpen, 
-  Users, 
-  Bell, 
-  User, 
-  Settings, 
+import {
+  Menu,
+  X,
+  Search,
+  Briefcase,
+  BookOpen,
+  Users,
+  Bell,
+  User,
+  Settings,
   LogOut,
   ChevronDown,
   MapPin,
@@ -68,9 +68,9 @@ export const Header = () => {
   const navigate = useNavigate()
   const handleLogout = () => {
     // Add logout logic here
-    navigate('/login'); // Redirect to login page after logout
     localStorage.removeItem('userData'); // Clear user data from local storage
-    console.log('Logging out...');
+    navigate('/'); // Redirect to login page after logout
+    window.location.reload();
   };
 
   return (
@@ -215,7 +215,7 @@ export const Header = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="py-2">
                     <a
                       href="/user-profile"
@@ -239,7 +239,7 @@ export const Header = () => {
                       Resume Builder
                     </a>
                   </div>
-                  
+
                   <div className="border-t border-gray-200 py-2">
                     <button
                       onClick={handleLogout}
