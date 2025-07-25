@@ -10,7 +10,7 @@ const ViewJobDescription = () => {
   const dispatch = useDispatch();
 
   const jobFromStore = useSelector((state) =>
-    state.jobDescription.selectedJob?.find((job) => job._id === jobId)
+    state?.jobDescription?.selectedJob?.find((job) => job._id === jobId)
   );
 
   const [job, setJob] = useState(jobFromStore);
@@ -22,9 +22,6 @@ const ViewJobDescription = () => {
       setLoading(true);
       const fetchJob = async () => {
         try {
-          // This fetches all jobs to find the one needed.
-          // For better performance, consider creating a backend endpoint
-          // to fetch a single job by its ID.
           const response = await axios.get(`${BASE_URL}/${END_POINTS.JOBS}`);
           const allJobs =
             response?.data?.data?.flatMap((item) => item.jobs) || [];
@@ -32,7 +29,6 @@ const ViewJobDescription = () => {
 
           if (foundJob) {
             setJob(foundJob);
-            // Optionally, populate the store with all jobs for faster navigation later.
             dispatch(addJobDescription(allJobs));
           } else {
             setError("Job not found.");
