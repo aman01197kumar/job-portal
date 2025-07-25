@@ -7,12 +7,10 @@ import './index.css'
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <GoogleOAuthProvider clientId="my client id">
-
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <App />
       </PersistGate>
     </Provider>
-  </GoogleOAuthProvider>
+  
 );
