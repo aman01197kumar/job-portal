@@ -4,121 +4,130 @@ import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
-import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
+import { GoogleLogin } from "@react-oauth/google";
+// import {jwt_decode} from "jwt-decode";
+ import * as JWT from 'jwt-decode';
 import { toast, ToastContainer } from "react-toastify";
 import Loader from "../components/Loader";
+import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
+
 
 const UserLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loggedBy, setLoggedBy] = useState({ email: "", password: "" });
+  const [isLoading, setIsloading] = useState(false);
   const navigate = useNavigate();
-  const [isLoading, setIsloading] = useState(false)
 
   const { email, password } = loggedBy;
+
   const userLoginHandler = async () => {
     if (!email || !password) {
-      toast.warn("please enter email and password");
+      toast.warn("Please enter email and password");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email?.trim())) {
+    if (!emailRegex.test(email.trim())) {
       toast.warn("Email is not in proper format.");
       return;
     }
 
     if (password.length < 8) {
-      toast.warn("password must be of atleast 8 characters");
+      toast.warn("Password must be at least 8 characters");
       return;
     }
 
-    const user = {
-      email: email,
-      password: password,
-    };
+    const user = { email, password };
 
     try {
-      setIsloading(true)
+      setIsloading(true);
       const response = await axios.post(`${BASE_URL}/${END_POINTS.LOGIN}`, user);
-      // const response = await axios.post(`${BASE_URL}\${}`, user)
 
-      if (response?.data?.status === 400) {
-        toast.warn(response?.data?.message);
+      const { data } = response;
+
+      if (data.status === 400 || data.status === 401) {
+        toast.warn(data.message);
         return;
       }
-      if (response?.data?.status === 401) {
-        toast.warn(response?.data?.message);
+
+      if (data.status === 404) {
+        toast.error(data.message);
         return;
       }
-      if (response?.data?.status === 404) {
-        toast.error(response?.data?.message);
-        return;
-      }
-      if (response?.data?.status === 200) {
+
+      if (data.status === 200) {
         const userData = JSON.stringify({
-          userId: response?.data?.userId,
-          user_type: response?.data?.user,
-          token: response?.data?.token,
-          email: response?.data?.email
+          userId: data.userId,
+          user_type: data.user,
+          token: data.token,
+          email: data.email,
         });
 
         localStorage.setItem("userData", userData);
+        toast.success("Login successful!");
         navigate("/");
         window.location.reload();
       }
-    }
-    catch (err) {
+    } catch (err) {
+      toast.error("Login failed. Please try again.");
       console.log(err);
+    } finally {
+      setIsloading(false);
     }
   };
+
+  const handleGoogleLoginSuccess = (credentialResponse) => {
+    const { credential } = credentialResponse;
+    const decoded = jwt_decode(credential);
+
+    localStorage.setItem("userData", JSON.stringify(decoded));
+    toast.success("Google login successful!");
+    navigate("/");
+    window.location.reload();
+  };
+
   return (
     <>
       <div className="flex justify-center items-center h-screen bg-gray-100">
-        <div className="flex w-full md:w-3/4 max-w-5xl bg-white p-8 rounded-lg shadow-lg">
-          <div className="w-1/3 md:w-2/3 flex justify-center items-center bg-cover bg-center sm:w-full sm:h-full sm:bg-[url('../assets/login.jpg')]">
+        <div className="relative flex h-100 md:h-auto flex-col-reverse md:flex-row w-full m-3 md:m-auto p-7 md:p-auto md:w-3/4 max-w-5xl bg-white rounded-lg shadow-lg overflow-hidden">
+
+          {/* Image Section */}
+          <div className="w-full md:w-1/2 md:h-auto">
             <img
               src={login}
               alt="Login"
-              className="max-w-full max-h-full object-cover hidden sm:block"
+              className="w-full object-cover"
             />
+            <div className="absolute inset-0 bg-black opacity-30 md:hidden"></div>
           </div>
 
-          <div className="w-2/3 md:w-3/4 p-6 border rounded-lg shadow-sm">
+          {/* Form Section */}
+          <div className="absolute md:static top-0 left-0 w-full md:w-1/2 h-full p-6 md:p-8 z-10 flex flex-col justify-center bg-white/90 backdrop-blur-sm animate-fadeIn rounded-lg md:rounded-none shadow-lg md:shadow-none">
             <div className="mb-5">
-              <label
-                htmlFor="email"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">
                 Your email
               </label>
               <input
                 type="email"
                 id="email"
-                className="p-2 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="p-2 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
                 placeholder="name@xyz.com"
                 value={email}
-                onChange={(e) =>
-                  setLoggedBy({ ...loggedBy, email: e.target.value })
-                }
+                onChange={(e) => setLoggedBy({ ...loggedBy, email: e.target.value })}
               />
             </div>
+
             <div className="mb-5">
-              <label
-                htmlFor="password"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">
                 Your password
               </label>
-
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
                   placeholder="..............."
-                  className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  onChange={(e) =>
-                    setLoggedBy({ ...loggedBy, password: e.target.value })
-                  }
+                  className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5"
+                  onChange={(e) => setLoggedBy({ ...loggedBy, password: e.target.value })}
                 />
                 {showPassword ? (
                   <VisibilityOffIcon
@@ -133,28 +142,23 @@ const UserLogin = () => {
                 )}
               </div>
             </div>
-            <div className="flex justify-between  mb-5">
+
+            <div className="flex justify-between mb-5">
               <div className="flex items-start">
-                <div className="flex items-center h-5">
-                  <input
-                    id="remember"
-                    type="checkbox"
-                    defaultValue=""
-                    className="w-4 h-4 border border-gray-300 rounded-sm  focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                    required=""
-                  />
-                </div>
-                <label
-                  htmlFor="remember"
-                  className="text-sm font-medium text-gray-900 dark:text-gray-300"
-                >
+                <input
+                  id="remember"
+                  type="checkbox"
+                  className="w-4 h-4 border border-gray-300 rounded-sm focus:ring-3 focus:ring-blue-300"
+                />
+                <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900">
                   Remember me
                 </label>
               </div>
-              <label className="text-blue-600 underline cursor-pointer text-sm font-medium">
+              <span className="text-blue-600 underline cursor-pointer text-sm font-medium">
                 Forgot Password?
-              </label>
+              </span>
             </div>
+
             <div className="mb-3 text-sm">
               Don't have an account?{" "}
               <span
@@ -164,14 +168,25 @@ const UserLogin = () => {
                 Create Account
               </span>
             </div>
-            <button
-              type="submit"
-              className="text-white flex justify-center bg-blue-700 hover:bg-blue-800 focus:ring-4 w-full focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-1/4 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              onClick={userLoginHandler}
-            >
-              {isLoading ? <Loader /> : "Submit"}
 
-            </button>
+            <div className="flex flex-col gap-4">
+              <button
+                type="submit"
+                className="text-white flex justify-center bg-blue-700 hover:bg-blue-800 focus:ring-4 w-full focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                onClick={userLoginHandler}
+              >
+                {isLoading ? <Loader /> : "Submit"}
+              </button>
+
+              <div className="text-center text-sm text-gray-500">or</div>
+
+              <GoogleLogin
+                onSuccess={handleGoogleLoginSuccess}
+                onError={() => {
+                  toast.error("Google Sign In was unsuccessful. Try again later.");
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
