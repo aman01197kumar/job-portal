@@ -20,6 +20,7 @@ import {
   IndianRupee
 } from "lucide-react";
 import { Header } from "./Header";
+import { addJobDescription } from "../redux/jobDescription";
 
 const MainContent = () => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);

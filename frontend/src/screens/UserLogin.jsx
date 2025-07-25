@@ -39,8 +39,8 @@ const UserLogin = () => {
 
     try {
       setIsloading(true)
-      // const response = await axios.post(`${BASE_URL}/${END_POINTS.LOGIN}`, user);
-      const response = await axios.post('http://localhost:3000/login', user)
+      const response = await axios.post(`${BASE_URL}/${END_POINTS.LOGIN}`, user);
+      // const response = await axios.post(`${BASE_URL}\${}`, user)
 
       if (response?.data?.status === 400) {
         toast.warn(response?.data?.message);
