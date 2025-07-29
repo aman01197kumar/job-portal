@@ -5,11 +5,10 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
 import { GoogleLogin } from "@react-oauth/google";
-// import {jwt_decode} from "jwt-decode";
- import * as JWT from 'jwt-decode';
 import { toast, ToastContainer } from "react-toastify";
 import Loader from "../components/Loader";
 import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
+import { responseGoogle } from "../utils/googleAuth";
 
 
 const UserLogin = () => {
@@ -76,15 +75,17 @@ const UserLogin = () => {
     }
   };
 
-  const handleGoogleLoginSuccess = (credentialResponse) => {
-    const { credential } = credentialResponse;
-    const decoded = jwt_decode(credential);
+  // const handleGoogleLoginSuccess = (credentialResponse) => {
+  //   const { credential } = credentialResponse;
+  //   const decoded = jwt_decode(credential);
 
-    localStorage.setItem("userData", JSON.stringify(decoded));
-    toast.success("Google login successful!");
-    navigate("/");
-    window.location.reload();
-  };
+  //   localStorage.setItem("userData", JSON.stringify(decoded));
+  //   toast.success("Google login successful!");
+  //   navigate("/");
+  //   window.location.reload();
+  // };
+
+  // console.log(responseGoogle,'res');
 
   return (
     <>
@@ -175,16 +176,14 @@ const UserLogin = () => {
                 className="text-white flex justify-center bg-blue-700 hover:bg-blue-800 focus:ring-4 w-full focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 onClick={userLoginHandler}
               >
-                {isLoading ? <Loader /> : "Submit"}
+                {isLoading ? <Loader width={5} height={5} /> : "Submit"}
               </button>
 
               <div className="text-center text-sm text-gray-500">or</div>
 
               <GoogleLogin
-                onSuccess={handleGoogleLoginSuccess}
-                onError={() => {
-                  toast.error("Google Sign In was unsuccessful. Try again later.");
-                }}
+                onSuccess={responseGoogle}
+                onError={responseGoogle}
               />
             </div>
           </div>

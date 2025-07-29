@@ -3,6 +3,7 @@ import storage from "redux-persist/lib/storage";
 import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
 import { combineReducers } from "redux";
 import jobReducer from "./jobDescription"; // ✅ Correct import
+import sentApplicationReducer from './sentApplications'
 
 const persistConfig = {
   key: "root",
@@ -11,6 +12,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   jobDescription: jobReducer, // ✅ Use the actual reducer
+  sentApplication: sentApplicationReducer,
+
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

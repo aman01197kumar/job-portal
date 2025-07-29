@@ -67,7 +67,6 @@ export const Header = () => {
 
   const navigate = useNavigate()
   const handleLogout = () => {
-    // Add logout logic here
     localStorage.removeItem('userData'); // Clear user data from local storage
     navigate('/'); // Redirect to login page after logout
     window.location.reload();
@@ -137,9 +136,6 @@ export const Header = () => {
               Companies
             </a>
             <a href="#" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
-              Salary Guide
-            </a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
               Career Advice
             </a>
           </div>
@@ -158,34 +154,20 @@ export const Header = () => {
             </div>
           </div>
 
-          {/* Right Side Actions */}
           <div className="hidden lg:flex lg:items-center lg:space-x-4">
-            {/* Quick Actions */}
-            {quickActions.map((action) => (
-              <a
-                key={action.name}
-                href={action.href}
-                className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
-                title={action.name}
-              >
-                <action.icon className="h-5 w-5" />
-                {action.count && (
-                  <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    {action.count}
-                  </span>
-                )}
-              </a>
-            ))}
-
-            {/* Notifications */}
+            <button className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-all duration-200">
+              <MessageSquare className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                5
+              </span>
+            </button>
             <button className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-all duration-200">
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                 5
               </span>
             </button>
-
-            {/* Profile Dropdown */}
+            
             <div className="relative">
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}

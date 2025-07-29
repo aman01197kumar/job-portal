@@ -42,7 +42,7 @@ const Signup = () => {
       return;
     }
 
-    if (password?.trim().length < 8) {  
+    if (password?.trim().length < 8) {
       toast.error("Password must be at least 8 characters long.");
       return;
     }
@@ -84,35 +84,49 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      {" "}
-      {/* Full-screen flex container */}
-      <div className="flex w-full md:w-3/4 max-w-5xl bg-white p-8 rounded-lg shadow-lg align-items-center">
-        <div className="w-1/3 md:w-2/3 flex justify-center items-center">
-          <img
-            src={signup}
-            alt="signup"
-            className="max-w-full max-h-full object-cover"
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center px-4"
+      style={{ backgroundImage: `url(${signup})` }}
+    >
+      <div className="bg-white bg-opacity-90 w-full max-w-3xl p-6 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold text-center mb-6">Create an Account</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            type="text"
+            placeholder="First Name"
+            value={fname}
+            onChange={(e) => setFname(e.target.value)}
+            className="input-field"
           />
-        </div>
-        <div className="w-2/3 md:w-3/4 p-6 border rounded-lg shadow-sm">
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              type="email"
-              value={email}
-              placeholder="Email Address"
-              className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="relative z-0 w-full mb-5 group">
+          <input
+            type="text"
+            placeholder="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            className="input-field"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="input-field"
+          />
+          <input
+            type="text"
+            placeholder="Contact Number"
+            value={contactNumber}
+            onChange={(e) => setContactNumber(e.target.value)}
+            className="input-field"
+          />
+          <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
-              id="password"
               placeholder="Password"
               value={password}
-              className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
               onChange={(e) => setPassword(e.target.value)}
+              className="input-field pr-10"
             />
             {showPassword ? (
               <VisibilityOffIcon
@@ -126,78 +140,46 @@ const Signup = () => {
               />
             )}
           </div>
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-          </div>
-
-          <div className="grid md:grid-cols-2 md:gap-6">
-            <div className="relative z-0 w-full mb-5 group">
-              <input
-                type="text"
-                value={fname}
-                placeholder="First Name"
-                className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                onChange={(e) => setFname(e.target.value)}
-              />
-            </div>
-            <div className="relative z-0 w-full mb-5 group">
-              <input
-                type="text"
-                value={lastName}
-                placeholder="Last Name"
-                className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                onChange={(e) => setLastName(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="grid md:grid-cols-2 md:gap-6">
-            <div className="relative z-0 w-full mb-5 group">
-              <input
-                type="text"
-                value={contactNumber}
-                placeholder="Contact Number"
-                className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                onChange={(e) => setContactNumber(e.target.value)}
-              />
-            </div>
-            <div className="relative z-0 w-full mb-2 group">
-              <select
-                value={user}
-                onChange={(e) => setUser(e.target.value)}
-                className=" border border-gray-900 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
-              >
-                <option selected="">User</option>
-                <option value="employer">Employer</option>
-                <option value="job-seeker">Job Seeker</option>
-              </select>
-            </div>
-          </div>
-          <div className="mb-3">
-            Already have an account?{" "}
-            <span
-              className="text-blue-600 underline cursor-pointer font-medium"
-              onClick={() => navigate("/")}
-            >
-              Sign in
-            </span>
-          </div>
-          <button
-            type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            onClick={onSubmitHandler}
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="input-field"
+          />
+          <select
+            value={user}
+            onChange={(e) => setUser(e.target.value)}
+            className="input-field"
           >
-            Submit
-          </button>
+            <option value="">User Type</option>
+            <option value="employer">Employer</option>
+            <option value="job-seeker">Job Seeker</option>
+          </select>
         </div>
+
+        <div className="mt-4">
+          Already have an account?{" "}
+          <span
+            className="text-blue-600 underline cursor-pointer"
+            onClick={() => navigate("/")}
+          >
+            Sign in
+          </span>
+        </div>
+
+        <button
+          type="submit"
+          onClick={onSubmitHandler}
+          className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+        >
+          Submit
+        </button>
+
+        <ToastContainer />
       </div>
-      <ToastContainer />
     </div>
   );
+
 };
 
 export default Signup;

@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { user_router } from "./routes/user.route.js";
 import router from "./routes/jobPost.route.js";
 import cors from "cors";
+import { googleRoutes } from "./routes/google.route.js";
 
 dotenv.config();
 const app = express();
@@ -21,4 +22,5 @@ app.use(express.json());
 app.use(router);
 app.use("/uploads", express.static("uploads")); // Serve images statically
 app.use(user_router);
+app.use('/auth',googleRoutes)
 app.listen(PORT, () => console.log(`Server is running at ${PORT}`));

@@ -9,18 +9,19 @@ import {
   FileText,
   MessageSquare,
   TrendingUp,
-  Clock,
   MapPin,
   Building,
   DollarSign,
-  Star,
   Eye,
-  Send,
   ExternalLink,
   IndianRupee
 } from "lucide-react";
 import { Header } from "./Header";
 import { addJobDescription } from "../redux/jobDescription";
+import StatusCards from "./StatusCards";
+import { savedJobs, notifications, dashboardStats } from "../assets/data/data";
+import { useNavigate } from "react-router-dom";
+import { addAppliedJobs } from "../redux/sentApplications";
 
 const MainContent = () => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
@@ -28,6 +29,7 @@ const MainContent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -50,94 +52,16 @@ const MainContent = () => {
     fetchJobs();
   }, []);
 
+
   const applyJobHandler = (job) => {
     if (appliedJobs.some((item) => item._id === job._id)) return;
+    dispatch(addAppliedJobs(job))
     setAppliedJobs((prev) => [...prev, job]);
   };
 
+
   const isApplied = (jobId) => appliedJobs.some((item) => item._id === jobId);
 
-  const savedJobs = [
-    {
-      id: 1,
-      title: "Full Stack Developer",
-      company: "Innovation Labs",
-      location: "San Francisco, CA",
-      salary: "$120k - $150k",
-      postedDate: "1 day ago",
-    },
-    {
-      id: 2,
-      title: "React Developer",
-      company: "WebFlow Co.",
-      location: "Remote",
-      salary: "$90k - $120k",
-      postedDate: "3 days ago",
-    },
-    {
-      id: 3,
-      title: "Software Engineer",
-      company: "CloudTech",
-      location: "New York, NY",
-      salary: "$110k - $140k",
-      postedDate: "5 days ago",
-    },
-  ];
-
-  const notifications = [
-    {
-      id: 1,
-      type: "application",
-      message: "Your application for Frontend Developer at TechCorp was viewed",
-      time: "2 hours ago",
-      icon: Eye,
-    },
-    {
-      id: 2,
-      type: "message",
-      message: "New message from Design Studio recruiter",
-      time: "4 hours ago",
-      icon: MessageSquare,
-    },
-    {
-      id: 3,
-      type: "job_match",
-      message: "5 new jobs match your preferences",
-      time: "1 day ago",
-      icon: Search,
-    },
-  ];
-
-  const dashboardStats = [
-    {
-      title: "Applications Sent",
-      value: "24",
-      change: "+3 this week",
-      icon: Send,
-      color: "bg-blue-500",
-    },
-    {
-      title: "Profile Views",
-      value: "156",
-      change: "+12 this week",
-      icon: Eye,
-      color: "bg-green-500",
-    },
-    {
-      title: "Saved Jobs",
-      value: "18",
-      change: "+5 this week",
-      icon: Bookmark,
-      color: "bg-purple-500",
-    },
-    {
-      title: "Interview Invites",
-      value: "3",
-      change: "+1 this week",
-      icon: Star,
-      color: "bg-orange-500",
-    },
-  ];
 
   return (
     <>
@@ -154,35 +78,14 @@ const MainContent = () => {
                 Track your applications and discover new opportunities
               </p>
             </div>
-            <div className="mt-4 sm:mt-0">
-              <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
-                <Search className="h-5 w-5 mr-2" />
-                Find New Jobs
-              </button>
-            </div>
           </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {dashboardStats.map((stat) => (
-              <div
-                key={stat.title}
-                className="bg-white p-6 rounded-xl shadow-lg border border-gray-100"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      {stat.title}
-                    </p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
-                      {stat.value}
-                    </p>
-                    <p className="text-sm text-green-600 mt-1">{stat.change}</p>
-                  </div>
-                  <div className={`${stat.color} p-3 rounded-lg`}>
-                    <stat.icon className="h-6 w-6 text-white" />
-                  </div>
-                </div>
+              <div key={stat.title} onClick={() => navigate(`${stat.url}`)}>
+
+                <StatusCards title={stat.title} color={stat.color} value={stat.value} icon={stat.icon} change={stat.change} />
               </div>
             ))}
           </div>
@@ -209,67 +112,72 @@ const MainContent = () => {
                 <div className="p-6">
                   <div className="space-y-4">
                     {loading ? (
-                      <Loader />
+
+                      <Loader width={10} height={10} />
+
+
                     ) : (
-                      dashboardJobPosted.map((application) => (
-                        <div
-                          key={application.id}
-                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                        >
-                          {/* Job Info */}
-                          <div className="flex-1 mb-4 sm:mb-0">
-                            <h3 className="font-semibold text-gray-900">
-                              {application.job_profile}
-                            </h3>
-                            <p className="text-gray-600 text-sm flex items-center mt-1">
-                              <Building className="h-4 w-4 mr-1" />
-                              {application.organisation_name}
-                            </p>
-                            <p className="text-gray-600 text-sm flex items-center mt-1">
-                              <IndianRupee className="h-4 w-4 mr-1" />
-                              {application.ctc}
-                            </p>
-                          </div>
 
-                          {/* Actions */}
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                            <a
-                              href={`/job-details/${application._id}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={() =>
-                                dispatch(addJobDescription(dashboardJobPosted))
-                              }
-                              className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300"
-                            >
-                              <Eye size={16} />
-                              View Details
-                            </a>
+                      dashboardJobPosted ? (
+                        dashboardJobPosted.map((application) => (
+                          <div
+                            key={application.id}
+                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                          >
 
-                            <button
-                              onClick={() => applyJobHandler(application)}
-                              disabled={isApplied(application._id)}
-                              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${
-                                isApplied(application._id)
+                            <div className="flex-1 mb-4 sm:mb-0">
+                              <h3 className="font-semibold text-gray-900">
+                                {application.job_profile}
+                              </h3>
+                              <p className="text-gray-600 text-sm flex items-center mt-1">
+                                <Building className="h-4 w-4 mr-1" />
+                                {application.organisation_name}
+                              </p>
+                              <p className="text-gray-600 text-sm flex items-center mt-1">
+                                <IndianRupee className="h-4 w-4 mr-1" />
+                                {application.ctc}
+                              </p>
+                            </div>
+
+
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                              <a
+                                href={`/job-details/${application._id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() =>
+                                  dispatch(addJobDescription(dashboardJobPosted))
+                                }
+                                className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300"
+                              >
+                                <Eye size={16} />
+                                View Details
+                              </a>
+
+                              <button
+                                onClick={() => applyJobHandler(application)}
+                                disabled={isApplied(application._id)}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${isApplied(application._id)
                                   ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                                   : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                              }`}
-                            >
-                              <ExternalLink size={16} />
-                              {isApplied(application._id)
-                                ? "Applied"
-                                : "Apply Now"}
-                            </button>
+                                  }`}
+                              >
+                                <ExternalLink size={16} />
+                                {isApplied(application._id)
+                                  ? "Applied"
+                                  : "Apply Now"}
+                              </button>
 
-                            {/* Status Badge */}
-                            <span
-                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white ${application.statusColor}`}
-                            >
-                              {application.status}
-                            </span>
+
+                              <span
+                                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white ${application.statusColor}`}
+                              >
+                                {application.status}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      ))
+                        ))
+                      ) : <p>{error}</p>
                     )}
                   </div>
                 </div>

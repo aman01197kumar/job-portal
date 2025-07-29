@@ -1,11 +1,11 @@
 import React from "react";
 
-const Loader = () => {
+const Loader = ({ width, height }) => {
   return (
-    <div role="status" className="flex justify-center items-center 0 w-1/3">
+    <div role="status" className="flex justify-center items-center">
       <svg
         aria-hidden="true"
-        className="inline w-5 h-5 font-bold text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+        className={`inline w-${width} h-${height} font-bold text-gray-200 animate-spin dark:text-gray-600 fill-blue-600`}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
