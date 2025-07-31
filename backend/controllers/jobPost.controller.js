@@ -1,5 +1,6 @@
 import { JobPosting } from "../models/jobPost.schema.js";
 import mongoose from "mongoose";
+import { JOBAPPLICATIONS } from "../models/sentJobApplication.schema.js";
 
 // Create a new Job Post
 export const createJobPost = async (req, res) => {
@@ -93,4 +94,97 @@ export const deleteJobPost = async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
+}
+export const sentJobApplicationController = async (req, res) => {
+  const { organization_name, job_profile, ctc, description } = req.body;
+  const { userId } = req.params;
+
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: "Invalid or missing userId" });
+  }
+
+  try {
+    // Check if the user already has a document
+    let userApplication = await JOBAPPLICATIONS.findOne({ userId });
+
+    if (userApplication) {
+      // Check if job_profile already exists in sentApplications
+      const alreadyApplied = userApplication.sentApplications.some(
+        (app) => app.job_profile === job_profile && app.organisation_name === organization_name
+      );
+
+      if (alreadyApplied) {
+        return res.status(401).json({
+          message: "Application already sent for this job profile",
+          success: false,
+          status: 401,
+        });
+      }
+
+      // Push new application into the array
+      userApplication.sentApplications.push({
+        organisation_name: organization_name,
+        job_profile,
+        ctc,
+        description,
+      });
+
+      await userApplication.save();
+    } else {
+      // Create new document for the user
+      const newApplication = new JOBAPPLICATIONS({
+        userId,
+        sentApplications: [
+          {
+            organisation_name: organization_name,
+            job_profile,
+            ctc,
+            description,
+          },
+        ],
+      });
+
+      await newApplication.save();
+    }
+
+    return res.status(200).json({
+      message: "Application sent successfully!",
+      status: 200,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error while sending application:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+      status: 500,
+    });
+  }
 };
+
+
+
+export const getSentJobApplication = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: "Invalid or missing userId" });
+  }
+
+  const jobs = await JOBAPPLICATIONS.find({ userId }).sort({ createdAt: -1 });
+
+  if (!jobs || jobs.length === 0) {
+    return res.status(404).json({
+      message: "No Applications sent",
+      status: 404,
+      success: false,
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    status: 200,
+    data: jobs,
+  });
+};
+

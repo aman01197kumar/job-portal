@@ -14,12 +14,12 @@ const jobPostSchema = mongoose.Schema({
       job_profile: String,
       job_location: String,
       job_description: String,
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
     },
-  ],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  ]
 });
 
 export const JobPosting = mongoose.model("JobPosting", jobPostSchema);

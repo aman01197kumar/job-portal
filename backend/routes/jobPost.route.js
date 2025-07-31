@@ -4,6 +4,8 @@ import {
   deleteJobPost,
   getAllJobPosts,
   getJobPostsByUser,
+  getSentJobApplication,
+  sentJobApplicationController,
 } from "../controllers/jobPost.controller.js";
 
 const router = express.Router();
@@ -19,5 +21,11 @@ router.get("/jobs/user/:userId", getJobPostsByUser);
 
 // DELETE job post
 router.delete("/jobs/:jobPostId", deleteJobPost);
+
+//POST sent job application
+router.post('/job-applications/:userId', sentJobApplicationController)
+
+//GET all sent jobs application
+router.get('/get-job-applications/:userId', getSentJobApplication)
 
 export default router;
