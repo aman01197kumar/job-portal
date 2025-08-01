@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
@@ -27,6 +27,7 @@ const MainContent = ({ userId }) => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [buttonLoading, setButtonLoading] = useState(false)
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate()
@@ -54,7 +55,9 @@ const MainContent = ({ userId }) => {
 
 
   const jobAppliedHandler = async (application) => {
+
     try {
+      setButtonLoading(true)
       const payload = {
         organisation_name: application?.organisation_name,
         job_profile: application?.job_profile,
@@ -81,8 +84,6 @@ const MainContent = ({ userId }) => {
         }
       );
 
-      console.log(response?.data,'daatt');
-
       const { status, message, _id } = response?.data;
 
       if (status === 400) {
@@ -99,17 +100,35 @@ const MainContent = ({ userId }) => {
         toast.success(message);
 
         // Prevent duplicates
-        // if (!appliedJobs.some((item) => item._id === _id)) {
-        //   setAppliedJobs((prev) => [...prev, job]);
-        // }
+        if (!appliedJobs.some((item) => item._id === _id)) {
+          setAppliedJobs((prev) => [...prev, application]);
+        }
       }
     } catch (err) {
       console.error("Error while applying for job:", err);
       toast.error("Something went wrong. Please try again.");
     }
+    finally {
+      setButtonLoading(false)
+    }
   };
 
-  // const isApplied = (jobId) => appliedJobs.some((item) => item._id === jobId);
+  const isApplied = (jobId) => appliedJobs.some((item) => item._id === jobId);
+
+  const fetchJobApplications = async () => {
+    try {
+
+      const response = await axios.get(`${BASE_URL}/${END_POINTS.GET_ALL_APPLICATIONS}/${userId}`)
+      console.log(response?.data);
+    }
+    catch (err) {
+      console.log(err);
+    }
+
+  }
+  useEffect(() => {
+    fetchJobApplications()
+  }, [appliedJobs])
 
 
 
@@ -206,16 +225,21 @@ const MainContent = ({ userId }) => {
 
                               <button
                                 onClick={() => jobAppliedHandler(application)}
-                                // disabled={isApplied(application._id)}
-                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 
+                                disabled={isApplied(application._id)}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${isApplied(application._id)
                                   ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                                   : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                   }`}
                               >
-                                <ExternalLink size={16} />
-                                {/* {isApplied(application._id)
-                                  ? "Applied"
-                                  : "Apply Now"} */}
+                                {
+                                  buttonLoading ? <Loader width={5} height={5} /> :
+                                    <>
+                                      <ExternalLink size={16} />
+                                      {isApplied(application._id)
+                                        ? "Applied"
+                                        : "Apply Now"}
+                                    </>
+                                }
                               </button>
 
 
@@ -353,7 +377,7 @@ const MainContent = ({ userId }) => {
           </div>
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </>
   );
 };

@@ -165,7 +165,7 @@ export const getSentJobApplication = async (req, res) => {
     return res.status(400).json({ message: "Invalid or missing userId" });
   }
 
-  const jobs = await JOBAPPLICATIONS.find({ userId }).sort({ createdAt: -1 });
+  const jobs = await JOBAPPLICATIONS.findOne({ userId }).sort({ createdAt: -1 });
 
   if (!jobs || jobs.length === 0) {
     return res.status(404).json({
