@@ -96,21 +96,21 @@ export const deleteJobPost = async (req, res) => {
   }
 }
 export const sentJobApplicationController = async (req, res) => {
-  const { organization_name, job_profile, ctc, description } = req.body;
+  const { organisation_name, job_profile, ctc, job_location, job_type, description } = req.body;
   const { userId } = req.params;
 
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).json({ message: "Invalid or missing userId" });
   }
-
   try {
+    console.log("Request received:", job_location);
     // Check if the user already has a document
     let userApplication = await JOBAPPLICATIONS.findOne({ userId });
 
     if (userApplication) {
       // Check if job_profile already exists in sentApplications
       const alreadyApplied = userApplication.sentApplications.some(
-        (app) => app.job_profile === job_profile && app.organisation_name === organization_name
+        (app) => app.job_profile === job_profile && app.organisation_name === organisation_name
       );
 
       if (alreadyApplied) {
@@ -123,10 +123,7 @@ export const sentJobApplicationController = async (req, res) => {
 
       // Push new application into the array
       userApplication.sentApplications.push({
-        organisation_name: organization_name,
-        job_profile,
-        ctc,
-        description,
+        organisation_name, job_profile, ctc, job_location, job_type, description
       });
 
       await userApplication.save();
@@ -136,10 +133,7 @@ export const sentJobApplicationController = async (req, res) => {
         userId,
         sentApplications: [
           {
-            organisation_name: organization_name,
-            job_profile,
-            ctc,
-            description,
+            organisation_name, job_profile, ctc, job_location, job_type, description
           },
         ],
       });

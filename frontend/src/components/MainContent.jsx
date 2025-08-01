@@ -28,6 +28,7 @@ const MainContent = () => {
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userData, setUserData] = useState(null)
   const dispatch = useDispatch();
   const navigate = useNavigate()
 
@@ -52,13 +53,41 @@ const MainContent = () => {
     fetchJobs();
   }, []);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("userData");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUserData(parsedUser);
+      } catch (error) {
+        console.error("Failed to parse userData:", error);
+      }
+    }
+  }, []);
 
-  const applyJobHandler = (job) => {
-    if (appliedJobs.some((item) => item._id === job._id)) return;
-    dispatch(addAppliedJobs(job))
-    setAppliedJobs((prev) => [...prev, job]);
-  };
 
+  const jobAppliedHandler = async (application) => {
+    console.log(application, 'app');
+    try {
+      const payload = {
+        organisation_name: application?.organisation_name,
+        job_profile: application?.job_profile,
+        ctc: application?.ctc,
+        description: application?.description,
+        job_location: application?.job_location,
+        job_type: application?.job_type,
+        description: application?.job_description
+      }
+
+      const response = await axios.post(`${BASE_URL}/${END_POINTS.APPLICATION_SUBMITTED}/${userData?.userId}`, payload)
+      console.log(response?.data);
+      // if (appliedJobs.some((item) => item._id === job._id)) return;
+      // setAppliedJobs((prev) => [...prev, job]);
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
 
   const isApplied = (jobId) => appliedJobs.some((item) => item._id === jobId);
 
@@ -155,7 +184,7 @@ const MainContent = () => {
                               </a>
 
                               <button
-                                onClick={() => applyJobHandler(application)}
+                                onClick={() => jobAppliedHandler(application)}
                                 disabled={isApplied(application._id)}
                                 className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${isApplied(application._id)
                                   ? "bg-gray-200 text-gray-500 cursor-not-allowed"

@@ -32,7 +32,7 @@ const App = () => {
           {userData?.token ? (
             <Route
               path="/"
-              element={<Dashboard user_type={userData?.user_type} />}
+              element={<Dashboard user_type={userData?.user_type} userId={userData?.userId}/>}
             />
           ) : (
             <Route path="/" element={<UserLogin />} />

@@ -18,8 +18,20 @@ const sentJobApplicationSchema = mongoose.Schema({
                 required: true
             },
             ctc: {
-                type: Number,
+                type: String,
                 required: true
+            },
+            description: {
+                type: String,
+                required: true
+            },
+            job_location: {
+                type: String,
+
+            },
+            job_type: {
+                type: String,
+
             },
             description: {
                 type: String,

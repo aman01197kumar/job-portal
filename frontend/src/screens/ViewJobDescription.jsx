@@ -8,8 +8,6 @@ const ViewJobDescription = () => {
     state?.jobDescription?.selectedJob?.find((job) => job._id === jobId)
   );
 
-  console.log(jobFromStore,'ncksnk');
-
   if (!jobFromStore) {
     return (
       <p className="text-center mt-4 text-gray-500">

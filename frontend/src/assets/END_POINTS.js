@@ -6,6 +6,8 @@ const END_POINTS = {
   JOBS: `jobs`,
   SIGNUP: `signup`,
   USER_PROFILE: `getuser`,
+  APPLICATION_SUBMITTED:`job-applications`,
+  GET_ALL_APPLICATIONS:`get-job-applications`
 };
 
 export { BASE_URL, END_POINTS };
