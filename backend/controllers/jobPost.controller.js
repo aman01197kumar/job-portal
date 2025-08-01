@@ -169,7 +169,7 @@ export const getSentJobApplication = async (req, res) => {
 
   if (!jobs || jobs.length === 0) {
     return res.status(404).json({
-      message: "No Applications sent",
+      message: "No Applications found",
       status: 404,
       success: false,
     });
