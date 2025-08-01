@@ -4,7 +4,6 @@ import { Header } from "../../components/Header";
 
 const ApplicationSent = () => {
     const { selectedJobApplications } = useSelector(state => state.sentApplication)
-console.log(selectedJobApplications,'job');
     if (selectedJobApplications.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center h-64 text-gray-500">
