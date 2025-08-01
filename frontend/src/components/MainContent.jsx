@@ -22,12 +22,13 @@ import StatusCards from "./StatusCards";
 import { savedJobs, notifications, dashboardStats } from "../assets/data/data";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { addAppliedJobs } from "../redux/sentApplications";
 
 const MainContent = ({ userId }) => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [buttonLoading, setButtonLoading] = useState(false)
+  const [buttonLoadingId, setButtonLoadingId] = useState(null)
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate()
@@ -55,9 +56,10 @@ const MainContent = ({ userId }) => {
 
 
   const jobAppliedHandler = async (application) => {
+    const jobId = application._id;
+    setButtonLoadingId(jobId); // start loading for this button
 
     try {
-      setButtonLoading(true)
       const payload = {
         organisation_name: application?.organisation_name,
         job_profile: application?.job_profile,
@@ -67,7 +69,6 @@ const MainContent = ({ userId }) => {
         job_type: application?.job_type,
       };
 
-      // Make sure userId is defined
       if (!userId) {
         toast.error("User ID not found. Please log in again.");
         return;
@@ -77,58 +78,53 @@ const MainContent = ({ userId }) => {
         `${BASE_URL}/${END_POINTS.APPLICATION_SUBMITTED}/${userId}`,
         payload,
         {
-          headers: {
-            'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${token}` // If your API requires auth
-          },
+          headers: { 'Content-Type': 'application/json' },
         }
       );
 
-      const { status, message, _id } = response?.data;
-
-      if (status === 400) {
-        toast.error(message);
-        return;
-      }
-
-      if (status === 401) {
-        toast.error(message);
-        return;
-      }
+      const { status, message } = response?.data;
 
       if (status === 200) {
         toast.success(message);
-
-        // Prevent duplicates
-        if (!appliedJobs.some((item) => item._id === _id)) {
-          setAppliedJobs((prev) => [...prev, application]);
-        }
+        fetchJobApplications(); // refresh after apply
+      } else {
+        toast.error(message);
       }
     } catch (err) {
-      console.error("Error while applying for job:", err);
-      toast.error("Something went wrong. Please try again.");
-    }
-    finally {
-      setButtonLoading(false)
+      console.error("Apply error:", err);
+      toast.error("Something went wrong.");
+    } finally {
+      setButtonLoadingId(null); // stop loading
     }
   };
 
-  const isApplied = (jobId) => appliedJobs.some((item) => item._id === jobId);
+
 
   const fetchJobApplications = async () => {
     try {
+      const response = await axios.get(`${BASE_URL}/${END_POINTS.GET_ALL_APPLICATIONS}/${userId}`);
+      const status = response?.data?.status;
 
-      const response = await axios.get(`${BASE_URL}/${END_POINTS.GET_ALL_APPLICATIONS}/${userId}`)
-      console.log(response?.data);
-    }
-    catch (err) {
+
+      if (status === 404) {
+        return toast.error(response?.data?.message || "No applications found");
+      }
+
+      const applications = response?.data?.data?.sentApplications || [];
+      setAppliedJobs(applications);
+      dispatch(addAppliedJobs(applications))
+    } catch (err) {
       console.log(err);
     }
+  };
 
-  }
+  // Only fetch once on mount
   useEffect(() => {
-    fetchJobApplications()
-  }, [appliedJobs])
+    fetchJobApplications();
+  }, []);
+
+  // Fix isApplied logic
+  const isApplied = (jobId) => appliedJobs.some((item) => item._id === jobId);
 
 
 
@@ -231,16 +227,16 @@ const MainContent = ({ userId }) => {
                                   : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                   }`}
                               >
-                                {
-                                  buttonLoading ? <Loader width={5} height={5} /> :
-                                    <>
-                                      <ExternalLink size={16} />
-                                      {isApplied(application._id)
-                                        ? "Applied"
-                                        : "Apply Now"}
-                                    </>
-                                }
+                                {buttonLoadingId === application._id ? (
+                                  <Loader width={5} height={5} />
+                                ) : (
+                                  <>
+                                    <ExternalLink size={16} />
+                                    {isApplied(application._id) ? "Applied" : "Apply Now"}
+                                  </>
+                                )}
                               </button>
+
 
 
                               <span
