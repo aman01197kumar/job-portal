@@ -100,7 +100,7 @@ export const sentJobApplicationController = async (req, res) => {
   const { userId } = req.params;
 
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({ message: "Invalid or missing userId" });
+    return res.status(200).json({ message: "Invalid or missing userId" ,status:400,success:false});
   }
   try {
     console.log("Request received:", job_location);
@@ -114,7 +114,7 @@ export const sentJobApplicationController = async (req, res) => {
       );
 
       if (alreadyApplied) {
-        return res.status(401).json({
+        return res.status(200).json({
           message: "Application already sent for this job profile",
           success: false,
           status: 401,

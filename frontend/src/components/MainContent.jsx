@@ -21,14 +21,13 @@ import { addJobDescription } from "../redux/jobDescription";
 import StatusCards from "./StatusCards";
 import { savedJobs, notifications, dashboardStats } from "../assets/data/data";
 import { useNavigate } from "react-router-dom";
-import { addAppliedJobs } from "../redux/sentApplications";
+import { toast, ToastContainer } from "react-toastify";
 
-const MainContent = () => {
+const MainContent = ({ userId }) => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userData, setUserData] = useState(null)
   const dispatch = useDispatch();
   const navigate = useNavigate()
 
@@ -53,43 +52,65 @@ const MainContent = () => {
     fetchJobs();
   }, []);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("userData");
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUserData(parsedUser);
-      } catch (error) {
-        console.error("Failed to parse userData:", error);
-      }
-    }
-  }, []);
-
 
   const jobAppliedHandler = async (application) => {
-    console.log(application, 'app');
     try {
       const payload = {
         organisation_name: application?.organisation_name,
         job_profile: application?.job_profile,
         ctc: application?.ctc,
-        description: application?.description,
+        description: application?.job_description,
         job_location: application?.job_location,
         job_type: application?.job_type,
-        description: application?.job_description
+      };
+
+      // Make sure userId is defined
+      if (!userId) {
+        toast.error("User ID not found. Please log in again.");
+        return;
       }
 
-      const response = await axios.post(`${BASE_URL}/${END_POINTS.APPLICATION_SUBMITTED}/${userData?.userId}`, payload)
-      console.log(response?.data);
-      // if (appliedJobs.some((item) => item._id === job._id)) return;
-      // setAppliedJobs((prev) => [...prev, job]);
-    }
-    catch (err) {
-      console.log(err);
-    }
-  }
+      const response = await axios.post(
+        `${BASE_URL}/${END_POINTS.APPLICATION_SUBMITTED}/${userId}`,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            // 'Authorization': `Bearer ${token}` // If your API requires auth
+          },
+        }
+      );
 
-  const isApplied = (jobId) => appliedJobs.some((item) => item._id === jobId);
+      console.log(response?.data,'daatt');
+
+      const { status, message, _id } = response?.data;
+
+      if (status === 400) {
+        toast.error(message);
+        return;
+      }
+
+      if (status === 401) {
+        toast.error(message);
+        return;
+      }
+
+      if (status === 200) {
+        toast.success(message);
+
+        // Prevent duplicates
+        // if (!appliedJobs.some((item) => item._id === _id)) {
+        //   setAppliedJobs((prev) => [...prev, job]);
+        // }
+      }
+    } catch (err) {
+      console.error("Error while applying for job:", err);
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
+
+  // const isApplied = (jobId) => appliedJobs.some((item) => item._id === jobId);
+
 
 
   return (
@@ -185,16 +206,16 @@ const MainContent = () => {
 
                               <button
                                 onClick={() => jobAppliedHandler(application)}
-                                disabled={isApplied(application._id)}
-                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${isApplied(application._id)
+                                // disabled={isApplied(application._id)}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 
                                   ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                                   : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                   }`}
                               >
                                 <ExternalLink size={16} />
-                                {isApplied(application._id)
+                                {/* {isApplied(application._id)
                                   ? "Applied"
-                                  : "Apply Now"}
+                                  : "Apply Now"} */}
                               </button>
 
 
@@ -332,6 +353,7 @@ const MainContent = () => {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </>
   );
 };
