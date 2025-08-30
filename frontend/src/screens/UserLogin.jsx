@@ -5,7 +5,8 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
 import { GoogleLogin } from "@react-oauth/google";
-import { toast, ToastContainer } from "react-toastify";
+// import { toast, ToastContainer } from "react-toastify";
+import toast, { Toaster } from 'react-hot-toast';
 import Loader from "../components/Loader";
 import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
 import { responseGoogle } from "../utils/googleAuth";
@@ -64,7 +65,7 @@ const UserLogin = () => {
 
         localStorage.setItem("userData", userData);
         toast.success("Login successful!");
-        navigate("/");
+        navigate('/')
         window.location.reload();
       }
     } catch (err) {
@@ -75,17 +76,6 @@ const UserLogin = () => {
     }
   };
 
-  // const handleGoogleLoginSuccess = (credentialResponse) => {
-  //   const { credential } = credentialResponse;
-  //   const decoded = jwt_decode(credential);
-
-  //   localStorage.setItem("userData", JSON.stringify(decoded));
-  //   toast.success("Google login successful!");
-  //   navigate("/");
-  //   window.location.reload();
-  // };
-
-  // console.log(responseGoogle,'res');
 
   return (
     <>
@@ -189,7 +179,7 @@ const UserLogin = () => {
           </div>
         </div>
       </div>
-      <ToastContainer />
+      <Toaster />
     </>
   );
 };

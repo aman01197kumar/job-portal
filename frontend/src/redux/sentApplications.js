@@ -9,7 +9,7 @@ const sentApplicationSlice = createSlice({
     initialState,
     reducers: {
         addAppliedJobs: (state, action) => {
-            state.selectedJobApplications = action.payload;
+            state.selectedJobApplications = [...action.payload]
         },
     },
 });

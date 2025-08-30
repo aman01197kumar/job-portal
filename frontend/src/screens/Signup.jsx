@@ -15,6 +15,7 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [user, setUser] = useState("");
   const [lastName, setLastName] = useState("");
+
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -63,8 +64,14 @@ const Signup = () => {
 
       const response = await axios.post(
         `${BASE_URL}/${END_POINTS.SIGNUP}`,
-        userSignupDetails
+        userSignupDetails,
+        {
+          headers: {
+            "Content-Type": "application/json", // must be proper case
+          },
+        }
       );
+
 
       if (response.status == 409) {
         toast.error("somthing went wrong");

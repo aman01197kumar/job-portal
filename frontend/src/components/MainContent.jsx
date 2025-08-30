@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
 import Loader from "./Loader";
 import {
@@ -55,9 +55,13 @@ const MainContent = ({ userId }) => {
   }, []);
 
 
+  const { selectedJobApplications } = useSelector(state => state.sentApplication)
+
   const jobAppliedHandler = async (application) => {
     const jobId = application._id;
+
     setButtonLoadingId(jobId); // start loading for this button
+    const isAppliced = selectedJobApplications.some((_, id) => id === jobId)
 
     try {
       const payload = {
@@ -127,23 +131,11 @@ const MainContent = ({ userId }) => {
   const isApplied = (jobId) => appliedJobs.some((item) => item._id === jobId);
 
 
-
   return (
     <>
       <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Job Seeker Dashboard
-              </h1>
-              <p className="mt-2 text-gray-600">
-                Track your applications and discover new opportunities
-              </p>
-            </div>
-          </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -166,12 +158,7 @@ const MainContent = ({ userId }) => {
                       <FileText className="h-5 w-5 mr-2 text-blue-600" />
                       Recent Applications
                     </h2>
-                    <a
-                      href="#"
-                      className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                    >
-                      View All
-                    </a>
+
                   </div>
                 </div>
                 <div className="p-6">
@@ -221,8 +208,8 @@ const MainContent = ({ userId }) => {
 
                               <button
                                 onClick={() => jobAppliedHandler(application)}
-                                disabled={isApplied(application._id)}
-                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${isApplied(application._id)
+                                disabled={isApplied}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${isApplied
                                   ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                                   : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                   }`}

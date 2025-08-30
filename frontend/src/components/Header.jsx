@@ -18,6 +18,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/imgs/oppmore_logo.png'
 
 const jobCategories = [
   {
@@ -77,11 +78,13 @@ export const Header = () => {
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => navigate('/')}>
-              <Briefcase className="h-8 w-8 text-blue-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">JobPortal</span>
-            </div>
+          <div className="flex-shrink-0">
+            <img
+              src={logo}
+              alt="logo"
+              className="w-28 mt-3 object-contain cursor-pointer"
+              onClick={() => navigate('/')}
+            />
           </div>
 
           {/* Desktop Navigation */}
@@ -167,7 +170,7 @@ export const Header = () => {
                 5
               </span>
             </button>
-            
+
             <div className="relative">
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}

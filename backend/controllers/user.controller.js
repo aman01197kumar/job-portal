@@ -5,39 +5,46 @@ const userSignup = async (req, res) => {
   try {
     const { full_name, email, password, contactNumber, user } = req.body;
 
-    if (!email || !full_name || !contactNumber || !password || !user)
-      return res
-        .status(200)
-        .json({ status: 401, message: "fill all the fields" });
+    if (!email || !full_name || !contactNumber || !password || !user) {
+      return res.status(401).json({ status: 401, message: "Fill all the fields" });
+    }
 
-    const userData = await User.findOne({ email: email });
+    // ✅ Check using actual DB field names
+    const userData = await User.findOne({
+      $or: [{ email }, { phone_number: contactNumber }]
+    });
 
-    if (userData)
-      return res
-        .status(200)
-        .json({ status: 409, message: "User already exists" });
+    if (userData) {
+      return res.status(409).json({ status: 409, message: "Email or Contact Number already exists." });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const users = new User({
-      email: email,
-      full_name: full_name,
+      full_name,
+      email,
       phone_number: contactNumber,
       password: hashedPassword,
-      user: user,
+      user,
     });
 
     await users.save();
-    return res
-      .status(200)
-      .json({ status: 200, message: "Data saved successfully", users });
+
+    return res.status(200).json({
+      status: 200,
+      message: "Data saved successfully",
+      users,
+    });
   } catch (err) {
     console.error("Signup error:", err);
-    return res
-      .status(500)
-      .json({ status: 500, message: "Internal server error" });
+
+    return res.status(500).json({
+      status: 500,
+      message: "Internal server error",
+    });
   }
 };
+
 
 const userLogin = async (req, res) => {
   const { email, password } = req.body;
