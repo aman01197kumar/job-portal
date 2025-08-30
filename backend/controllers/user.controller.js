@@ -3,15 +3,17 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 const userSignup = async (req, res) => {
   try {
-    const { full_name, email, password, contactNumber, user } = req.body;
+    const { first_name, last_name, email, password, phone_number, user } = req.body;
+    console.log(first_name, last_name, email, password, phone_number, user,'kcnisci');
+    const full_name = `${first_name} ${last_name}`
 
-    if (!email || !full_name || !contactNumber || !password || !user) {
+    if (!email || !full_name || !phone_number || !password || !user) {
       return res.status(401).json({ status: 401, message: "Fill all the fields" });
     }
 
     // ✅ Check using actual DB field names
     const userData = await User.findOne({
-      $or: [{ email }, { phone_number: contactNumber }]
+      $or: [{ email }, { phone_number }]
     });
 
     if (userData) {
@@ -23,7 +25,7 @@ const userSignup = async (req, res) => {
     const users = new User({
       full_name,
       email,
-      phone_number: contactNumber,
+      phone_number,
       password: hashedPassword,
       user,
     });

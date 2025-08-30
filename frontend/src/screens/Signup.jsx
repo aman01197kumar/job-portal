@@ -4,27 +4,31 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { toast, ToastContainer } from "react-toastify";
+import toast, { Toaster } from 'react-hot-toast';
 import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
 
 const Signup = () => {
-  const [fname, setFname] = useState("");
-  const [email, setEmail] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
-  const [password, setPassword] = useState("");
+  const [userSignupDetails, setUserSignupDetails] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    password: '',
+    phone_number: '',
+    user: '',
+  })
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [user, setUser] = useState("");
-  const [lastName, setLastName] = useState("");
+
 
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const onSubmitHandler = async (e) => {
+  const onSubmitHandler = async () => {
+    console.log(userSignupDetails, 'user');
     if (
-      !fname?.trim() ||
-      !email?.trim() ||
-      !contactNumber?.trim() ||
-      !password?.trim() ||
+      !userSignupDetails?.fname?.trim() ||
+      !userSignupDetails?.email?.trim() ||
+      !userSignupDetails?.contactNumber?.trim() ||
+      !userSignupDetails?.password?.trim() ||
       !confirmPassword?.trim() ||
       !user
     ) {
@@ -33,34 +37,27 @@ const Signup = () => {
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email?.trim())) {
+    if (!emailRegex.test(userSignupDetails?.email?.trim())) {
       toast.error("Email is not in proper format.");
       return;
     }
 
-    if (!/^\d{10}$/.test(contactNumber?.trim())) {
+    if (!/^\d{10}$/.test(userSignupDetails?.contactNumber?.trim())) {
       toast.error("Contact number must be exactly 10 digits.");
       return;
     }
 
-    if (password?.trim().length < 8) {
+    if (userSignupDetails?.password?.trim().length < 8) {
       toast.error("Password must be at least 8 characters long.");
       return;
     }
 
-    if (password?.trim() !== confirmPassword?.trim()) {
+    if (userSignupDetails?.password?.trim() !== confirmPassword?.trim()) {
       toast.error("Passwords do not match.");
       return;
     }
 
     try {
-      const userSignupDetails = {
-        full_name: fname + " " + lastName,
-        email: email,
-        password: password,
-        contactNumber: contactNumber,
-        user: user.toLowerCase(),
-      };
 
       const response = await axios.post(
         `${BASE_URL}/${END_POINTS.SIGNUP}`,
@@ -102,37 +99,37 @@ const Signup = () => {
           <input
             type="text"
             placeholder="First Name"
-            value={fname}
-            onChange={(e) => setFname(e.target.value)}
+            value={userSignupDetails?.first_name}
+            onChange={(e) => setUserSignupDetails(prev => ({ ...prev, first_name: e.target.value }))}
             className="input-field"
           />
           <input
             type="text"
             placeholder="Last Name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            value={userSignupDetails?.last_name}
+            onChange={(e) => setUserSignupDetails(prev => ({ ...prev, last_name: e.target.value }))}
             className="input-field"
           />
           <input
             type="email"
             placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={userSignupDetails?.email}
+            onChange={(e) => setUserSignupDetails(prev => ({ ...prev, email: e.target.value }))}
             className="input-field"
           />
           <input
             type="text"
             placeholder="Contact Number"
-            value={contactNumber}
-            onChange={(e) => setContactNumber(e.target.value)}
+            value={userSignupDetails?.phone_number}
+            onChange={(e) => setUserSignupDetails(prev => ({ ...prev, phone_number: e.target.value }))}
             className="input-field"
           />
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={userSignupDetails?.password}
+              onChange={(e) => setUserSignupDetails(prev => ({ ...prev, password: e.target.value }))}
               className="input-field pr-10"
             />
             {showPassword ? (
@@ -154,8 +151,8 @@ const Signup = () => {
             className="input-field"
           />
           <select
-            value={user}
-            onChange={(e) => setUser(e.target.value)}
+            value={userSignupDetails?.user}
+            onChange={(e) => setUserSignupDetails(prev => ({ ...prev, user: e.target.value }))}
             className="input-field"
           >
             <option value="">User Type</option>
@@ -182,7 +179,7 @@ const Signup = () => {
           Submit
         </button>
 
-        <ToastContainer />
+        <Toaster />
       </div>
     </div>
   );

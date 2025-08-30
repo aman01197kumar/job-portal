@@ -5,7 +5,6 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
 import { GoogleLogin } from "@react-oauth/google";
-// import { toast, ToastContainer } from "react-toastify";
 import toast, { Toaster } from 'react-hot-toast';
 import Loader from "../components/Loader";
 import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
