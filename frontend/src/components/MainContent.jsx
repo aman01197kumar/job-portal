@@ -28,16 +28,16 @@ const MainContent = ({ userId }) => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [buttonLoadingId, setButtonLoadingId] = useState(null)
+  const [buttonLoadingId, setButtonLoadingId] = useState(null);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const fetchJobs = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${BASE_URL}/${END_POINTS.JOBS}`, {
+      const response = await axios.get(`${BASE_URL}/${END_POINTS.JOBS}`, { userId }, {
         "content-type": "application/json",
       });
       const allJobs = response?.data?.data?.flatMap((item) => item.jobs) || [];
@@ -55,13 +55,11 @@ const MainContent = ({ userId }) => {
   }, []);
 
 
-  const { selectedJobApplications } = useSelector(state => state.sentApplication)
-
   const jobAppliedHandler = async (application) => {
     const jobId = application._id;
+    if (isApplied(jobId)) return;
 
-    setButtonLoadingId(jobId); // start loading for this button
-    const isAppliced = selectedJobApplications.some((_, id) => id === jobId)
+    setButtonLoadingId(jobId);
 
     try {
       const payload = {
@@ -82,7 +80,7 @@ const MainContent = ({ userId }) => {
         `${BASE_URL}/${END_POINTS.APPLICATION_SUBMITTED}/${userId}`,
         payload,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
         }
       );
 
@@ -90,7 +88,7 @@ const MainContent = ({ userId }) => {
 
       if (status === 200) {
         toast.success(message);
-        fetchJobApplications(); // refresh after apply
+        fetchJobApplications();
       } else {
         toast.error(message);
       }
@@ -98,17 +96,16 @@ const MainContent = ({ userId }) => {
       console.error("Apply error:", err);
       toast.error("Something went wrong.");
     } finally {
-      setButtonLoadingId(null); // stop loading
+      setButtonLoadingId(null);
     }
   };
 
-
-
   const fetchJobApplications = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/${END_POINTS.GET_ALL_APPLICATIONS}/${userId}`);
+      const response = await axios.get(
+        `${BASE_URL}/${END_POINTS.GET_ALL_APPLICATIONS}/${userId}`
+      );
       const status = response?.data?.status;
-
 
       if (status === 404) {
         return toast.error(response?.data?.message || "No applications found");
@@ -116,33 +113,36 @@ const MainContent = ({ userId }) => {
 
       const applications = response?.data?.data?.sentApplications || [];
       setAppliedJobs(applications);
-      dispatch(addAppliedJobs(applications))
+      dispatch(addAppliedJobs(applications));
     } catch (err) {
       console.log(err);
     }
   };
 
-  // Only fetch once on mount
   useEffect(() => {
     fetchJobApplications();
   }, []);
 
-  // Fix isApplied logic
-  const isApplied = (jobId) => appliedJobs.some((item) => item._id === jobId);
-
+  // ✅ Correct isApplied logic
+  const isApplied = (jobId) =>
+    appliedJobs.some((item) => item._id === jobId);
 
   return (
     <>
       <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
-
           {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {dashboardStats.map((stat) => (
               <div key={stat.title} onClick={() => navigate(`${stat.url}`)}>
-
-                <StatusCards title={stat.title} color={stat.color} value={stat.value} icon={stat.icon} change={stat.change} />
+                <StatusCards
+                  title={stat.title}
+                  color={stat.color}
+                  value={stat.value}
+                  icon={stat.icon}
+                  change={stat.change}
+                />
               </div>
             ))}
           </div>
@@ -158,83 +158,79 @@ const MainContent = ({ userId }) => {
                       <FileText className="h-5 w-5 mr-2 text-blue-600" />
                       Recent Applications
                     </h2>
-
                   </div>
                 </div>
                 <div className="p-6">
                   <div className="space-y-4">
                     {loading ? (
-
                       <Loader width={10} height={10} />
-
-
-                    ) : (
-
-                      dashboardJobPosted ? (
-                        dashboardJobPosted.map((application) => (
-                          <div
-                            key={application.id}
-                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                          >
-
-                            <div className="flex-1 mb-4 sm:mb-0">
-                              <h3 className="font-semibold text-gray-900">
-                                {application.job_profile}
-                              </h3>
-                              <p className="text-gray-600 text-sm flex items-center mt-1">
-                                <Building className="h-4 w-4 mr-1" />
-                                {application.organisation_name}
-                              </p>
-                              <p className="text-gray-600 text-sm flex items-center mt-1">
-                                <IndianRupee className="h-4 w-4 mr-1" />
-                                {application.ctc}
-                              </p>
-                            </div>
-
-
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                              <a
-                                href={`/job-details/${application._id}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={() =>
-                                  dispatch(addJobDescription(dashboardJobPosted))
-                                }
-                                className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300"
-                              >
-                                <Eye size={16} />
-                                View Details
-                              </a>
-
-                              <button
-                                onClick={() => jobAppliedHandler(application)}
-                                disabled={isApplied}
-                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${isApplied
-                                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                                  : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                  }`}
-                              >
-                                {buttonLoadingId === application._id ? (
-                                  <Loader width={5} height={5} />
-                                ) : (
-                                  <>
-                                    <ExternalLink size={16} />
-                                    {isApplied(application._id) ? "Applied" : "Apply Now"}
-                                  </>
-                                )}
-                              </button>
-
-
-
-                              <span
-                                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white ${application.statusColor}`}
-                              >
-                                {application.status}
-                              </span>
-                            </div>
+                    ) : dashboardJobPosted.length > 0 ? (
+                      dashboardJobPosted.map((application) => (
+                        <div
+                          key={application._id}
+                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                        >
+                          <div className="flex-1 mb-4 sm:mb-0">
+                            <h3 className="font-semibold text-gray-900">
+                              {application.job_profile}
+                            </h3>
+                            <p className="text-gray-600 text-sm flex items-center mt-1">
+                              <Building className="h-4 w-4 mr-1" />
+                              {application.organisation_name}
+                            </p>
+                            <p className="text-gray-600 text-sm flex items-center mt-1">
+                              <IndianRupee className="h-4 w-4 mr-1" />
+                              {application.ctc}
+                            </p>
                           </div>
-                        ))
-                      ) : <p>{error}</p>
+
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                            <a
+                              href={`/job-details/${application._id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() =>
+                                dispatch(addJobDescription(dashboardJobPosted))
+                              }
+                              className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300"
+                            >
+                              <Eye size={16} />
+                              View Details
+                            </a>
+
+                            <button
+                              onClick={() => jobAppliedHandler(application)}
+                              disabled={
+                                isApplied(application._id) ||
+                                buttonLoadingId === application._id
+                              }
+                              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${isApplied(application._id)
+                                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                                : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                }`}
+                            >
+                              {buttonLoadingId === application._id ? (
+                                <Loader width={5} height={5} />
+                              ) : (
+                                <>
+                                  <ExternalLink size={16} />
+                                  {isApplied(application._id)
+                                    ? "Applied"
+                                    : "Apply Now"}
+                                </>
+                              )}
+                            </button>
+
+                            <span
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white ${application.statusColor}`}
+                            >
+                              {application.status}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p>{error}</p>
                     )}
                   </div>
                 </div>

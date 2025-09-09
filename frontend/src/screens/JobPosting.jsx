@@ -49,7 +49,7 @@ const JobPosting = ({ userId }) => {
         },
       ],
     };
-    const response = await axios.post(`${BASE_URL}/${END_POINTS.JOBS}}`, job);
+    const response = await axios.post(`${BASE_URL}/${END_POINTS.JOBS}`, job);
 
     if (response?.data?.status === 401) {
       toast.error(response?.data?.message);

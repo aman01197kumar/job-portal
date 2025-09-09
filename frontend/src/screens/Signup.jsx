@@ -23,14 +23,15 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const onSubmitHandler = async () => {
-    console.log(userSignupDetails, 'user');
+    
     if (
-      !userSignupDetails?.fname?.trim() ||
+      !userSignupDetails?.first_name?.trim() ||
+      !userSignupDetails?.last_name?.trim() ||
       !userSignupDetails?.email?.trim() ||
-      !userSignupDetails?.contactNumber?.trim() ||
+      !userSignupDetails?.phone_number?.trim() ||
       !userSignupDetails?.password?.trim() ||
       !confirmPassword?.trim() ||
-      !user
+      !userSignupDetails?.password?.trim()
     ) {
       toast.error("Please fill all the fields.");
       return;
@@ -42,7 +43,7 @@ const Signup = () => {
       return;
     }
 
-    if (!/^\d{10}$/.test(userSignupDetails?.contactNumber?.trim())) {
+    if (!/^\d{10}$/.test(userSignupDetails?.phone_number?.trim())) {
       toast.error("Contact number must be exactly 10 digits.");
       return;
     }
@@ -84,6 +85,7 @@ const Signup = () => {
       navigate("/");
     } catch (err) {
       console.log(err);
+      toast.error(err?.response?.data?.message)
     }
   };
 

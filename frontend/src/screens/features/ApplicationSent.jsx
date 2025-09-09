@@ -1,10 +1,33 @@
 import { Briefcase, Building2, CalendarDays, IndianRupee } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Header } from "../../components/Header";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { BASE_URL, END_POINTS } from "../../assets/END_POINTS";
 
-const ApplicationSent = () => {
-    const { selectedJobApplications } = useSelector(state => state.sentApplication)
-    if (selectedJobApplications.length === 0) {
+const ApplicationSent = ({ userid }) => {
+
+    console.log(userid, 'ncn');
+    const [appliedJobs, setAppliedJobs] = useState([])
+    const fetchAppliedJobs = async () => {
+        try {
+
+            const response = await axios.get(
+                `${BASE_URL}/${END_POINTS.GET_ALL_APPLICATIONS}/${userid}`,
+            );
+            console.log(response);
+            setAppliedJobs(response?.data?.data?.sentApplications)
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+    useEffect(() => {
+        fetchAppliedJobs()
+    }, [])
+
+    if (appliedJobs.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center h-64 text-gray-500">
                 <p className="text-xl font-semibold">No Applications Sent</p>
@@ -17,7 +40,7 @@ const ApplicationSent = () => {
         <>
             <Header />
             <div className="p-6 space-y-6 max-w-4xl mx-auto">
-                {selectedJobApplications.map((app) => (
+                {appliedJobs.map((app) => (
                     <div
                         key={app.id}
                         className="rounded-xl border bg-white p-5 shadow-md hover:shadow-lg transition duration-300"
@@ -42,12 +65,12 @@ const ApplicationSent = () => {
                                     </p>
                                 )}
 
-                                
+
                                 {app.appliedOn && (
-                                <p className="text-gray-600 text-sm mt-1 flex items-center gap-2">
-                                <CalendarDays className="w-4 h-4 text-gray-400" />
-                                Applied on {new Date(app.appliedOn).toLocaleDateString()}
-                                </p>
+                                    <p className="text-gray-600 text-sm mt-1 flex items-center gap-2">
+                                        <CalendarDays className="w-4 h-4 text-gray-400" />
+                                        Applied on {new Date(app.appliedOn).toLocaleDateString()}
+                                    </p>
                                 )}
                             </div>
 

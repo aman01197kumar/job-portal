@@ -25,7 +25,7 @@ const App = () => {
     }
   }, []);
 
-  console.log(userData,'userdata');
+  console.log(userData, 'userdata');
 
   return (
     <GoogleOAuthProvider clientId="1731036921-prm09e148mv69jnpqtpnioe6tqisi8lr.apps.googleusercontent.com">
@@ -34,7 +34,7 @@ const App = () => {
           {userData?.token ? (
             <Route
               path="/"
-              element={<Dashboard user_type={userData?.user_type} userId={userData?.userId}/>}
+              element={<Dashboard user_type={userData?.user_type} userId={userData?.userId} />}
             />
           ) : (
             <Route path="/" element={<UserLogin />} />
@@ -52,7 +52,7 @@ const App = () => {
             element={<JobPosted userid={userData?.userId} />}
           />
           <Route path="/user-profile" element={<ProfilePage />} />
-          <Route path="application-sent" element={<ApplicationSent />} />
+          <Route path="application-sent" element={<ApplicationSent userid={userData?.userId} />} />
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>

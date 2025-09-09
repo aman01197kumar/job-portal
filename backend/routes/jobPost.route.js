@@ -2,7 +2,7 @@ import express from "express";
 import {
   createJobPost,
   deleteJobPost,
-  getAllJobPosts,
+  getAllJobPostsForUser,
   getJobPostsByUser,
   getSentJobApplication,
   sentJobApplicationController,
@@ -14,7 +14,7 @@ const router = express.Router();
 router.post("/jobs", createJobPost);
 
 // GET all job posts
-router.get("/jobs", getAllJobPosts);
+router.get("/jobs/:userId", getAllJobPostsForUser);
 
 // GET jobs by userId
 router.get("/jobs/user/:userId", getJobPostsByUser);

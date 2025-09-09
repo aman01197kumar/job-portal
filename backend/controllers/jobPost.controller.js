@@ -38,12 +38,43 @@ export const createJobPost = async (req, res) => {
 };
 
 // Get all Job Posts
-export const getAllJobPosts = async (req, res) => {
+export const getAllJobPostsForUser = async (req, res) => {
   try {
-    const jobPosts = await JobPosting.find()
-      .sort({ createdAt: -1 })
-      .populate("userId", "name email");
-    res.status(200).json({ success: true, data: jobPosts });
+    const { userId } = req.params;
+
+    const jobPosts = await JobPosting.find().populate(
+      "userId",
+      "name email"
+    );
+
+    console.log(jobPosts);
+
+    const appliedJobs = await JOBAPPLICATIONS.findOne({ userId });
+
+    // Collect applied jobs for quick lookup
+    const appliedSet = new Set();
+    if (appliedJobs && appliedJobs.sentApplications) {
+      appliedJobs.sentApplications.forEach(app => {
+        appliedSet.add(
+          `${app.organisation_name}|${app.job_profile}|${app.ctc}|${app.job_location}|${app.job_type}`
+        );
+      });
+    }
+
+    // Flatten all jobs and return only unapplied jobs
+    const unappliedJobs = [];
+    jobPosts.forEach(post => {
+      post.jobs.forEach(job => {
+        const key = `${job.organisation_name}|${job.job_profile}|${job.ctc}|${job.job_location}|${job.job_type}`;
+        if (!appliedSet.has(key)) {
+          unappliedJobs.push({
+            ...job._doc
+          });
+        }
+      });
+    });
+
+    res.status(200).json({ success: true, data: unappliedJobs });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
