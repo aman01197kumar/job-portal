@@ -37,11 +37,11 @@ const MainContent = ({ userId }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${BASE_URL}/${END_POINTS.JOBS}`, { userId }, {
+      const response = await axios.get(`${BASE_URL}/${END_POINTS.JOBS}/${userId}`, {
         "content-type": "application/json",
       });
-      const allJobs = response?.data?.data?.flatMap((item) => item.jobs) || [];
-      setDashboardJobPosted(allJobs);
+      
+      setDashboardJobPosted(response?.data?.data);
     } catch (err) {
       console.error("Error fetching jobs:", err);
       setError("Failed to load jobs.");
