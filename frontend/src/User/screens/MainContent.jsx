@@ -215,7 +215,7 @@ const MainContent = ({ userId }) => {
   const isApplied = (jobId) =>
     appliedJobs.some((item) => item._id === jobId);
 
-  console.log(dashboardJobPosted, 'fmk');
+
 
   return (
     <>
@@ -317,7 +317,7 @@ const MainContent = ({ userId }) => {
                         </div>
                       ))
                     ) : (
-                      <p>{error}</p>
+                      <p className="text-center">No Jobs listed!!</p>
                     )}
                   </div>
                 </div>
