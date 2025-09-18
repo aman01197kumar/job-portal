@@ -5,8 +5,9 @@ const ViewJobDescription = () => {
   const { id: jobId } = useParams();
 
   const jobFromStore = useSelector((state) =>
-    state?.jobDescription?.selectedJob?.find((job) => job._id === jobId)
+    state?.jobDescription?.selectedJob
   );
+  console.log(jobFromStore,'nikvnie');
 
   if (!jobFromStore) {
     return (
@@ -41,7 +42,7 @@ const ViewJobDescription = () => {
         <h3 className="text-lg font-semibold mb-2 text-gray-800">
           Job Description
         </h3>
-        <p className="text-gray-600">{jobFromStore.job_description}</p>
+        <p className="text-gray-600">{jobFromStore.description}</p>
       </div>
 
       <div className="mt-6">

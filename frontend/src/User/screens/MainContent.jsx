@@ -18,9 +18,10 @@ import {
 import { Header } from "../../utilities/components/Header";
 import StatusCards from "../../utilities/components/StatusCards";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import toast, { Toaster } from 'react-hot-toast';
 import { addAppliedJobs } from "../../redux/sentApplications";
 import { Send, Star } from "lucide-react";
+import { useDispatch } from "react-redux";
 
 const MainContent = ({ userId }) => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
@@ -29,6 +30,7 @@ const MainContent = ({ userId }) => {
   const [buttonLoadingId, setButtonLoadingId] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
 
 
@@ -213,6 +215,8 @@ const MainContent = ({ userId }) => {
   const isApplied = (jobId) =>
     appliedJobs.some((item) => item._id === jobId);
 
+  console.log(dashboardJobPosted, 'fmk');
+
   return (
     <>
       <Header />
@@ -251,28 +255,28 @@ const MainContent = ({ userId }) => {
                     {loading ? (
                       <Loader width={10} height={10} />
                     ) : dashboardJobPosted.length > 0 ? (
-                      dashboardJobPosted.map(({ _id, job_profile, organisation_name, ctc, statusColor, status }) => (
+                      dashboardJobPosted.map((application) => (
                         <div
-                          key={_id}
+                          key={application?._id}
                           className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
                         >
                           <div className="flex-1 mb-4 sm:mb-0">
                             <h3 className="font-semibold text-gray-900">
-                              {job_profile}
+                              {application?.job_profile}
                             </h3>
                             <p className="text-gray-600 text-sm flex items-center mt-1">
                               <Building className="h-4 w-4 mr-1" />
-                              {organisation_name}
+                              {application?.organisation_name}
                             </p>
                             <p className="text-gray-600 text-sm flex items-center mt-1">
                               <IndianRupee className="h-4 w-4 mr-1" />
-                              {ctc}
+                              {application?.ctc}
                             </p>
                           </div>
 
                           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                             <a
-                              href={`/job-details/${_id}`}
+                              href={`/job-details/${application?._id}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300"
@@ -282,33 +286,33 @@ const MainContent = ({ userId }) => {
                             </a>
 
                             <button
-                              onClick={() => jobAppliedHandler()}
+                              onClick={() => jobAppliedHandler(application)}
                               disabled={
-                                isApplied(_id) ||
-                                buttonLoadingId === _id
+                                isApplied(application?._id) ||
+                                buttonLoadingId === application?._id
                               }
-                              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${isApplied(_id)
+                              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${isApplied(application?._id)
                                 ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                                 : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                 }`}
                             >
-                              {buttonLoadingId === _id ? (
+                              {buttonLoadingId === application?._id ? (
                                 <Loader width={5} height={5} />
                               ) : (
                                 <>
                                   <ExternalLink size={16} />
-                                  {isApplied(_id)
+                                  {isApplied(application?._id)
                                     ? "Applied"
                                     : "Apply Now"}
                                 </>
                               )}
                             </button>
 
-                            <span
-                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white ${statusColor}`}
+                            {/* <span
+                              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white"
                             >
                               {status}
-                            </span>
+                            </span> */}
                           </div>
                         </div>
                       ))
@@ -439,7 +443,7 @@ const MainContent = ({ userId }) => {
           </div>
         </div>
       </div>
-      <ToastContainer />
+      <Toaster />
     </>
   );
 };

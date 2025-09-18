@@ -1,9 +1,12 @@
-import { Briefcase, Building2, CalendarDays, IndianRupee } from "lucide-react";
+import { Briefcase, Building2, CalendarDays, Eye, IndianRupee } from "lucide-react";
 import { Header } from "../../utilities/components/Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL, END_POINTS } from "../../assets/END_POINTS";
 import Loader from "../../utilities/components/Loader";
+import { useDispatch } from "react-redux";
+import { addJobDescription } from "../../redux/jobDescription";
+
 
 const NoJobsFound = () => {
     return (
@@ -18,13 +21,14 @@ const ApplicationSent = ({ userid }) => {
 
     const [appliedJobs, setAppliedJobs] = useState([])
     const [isLoading, setIsLoading] = useState(false)
+    const dispatch = useDispatch()
     const fetchAppliedJobs = async () => {
         try {
             setIsLoading(true)
+
             const response = await axios.get(
                 `${BASE_URL}/${END_POINTS.GET_ALL_APPLICATIONS}/${userid}`,
             );
-            console.log(response);
             setAppliedJobs(response?.data?.data?.sentApplications)
         }
         catch (err) {
@@ -48,9 +52,9 @@ const ApplicationSent = ({ userid }) => {
                 isLoading ? <Loader width={10} height={10} /> : appliedJobs.length === 0 ? <NoJobsFound /> : (
 
                     <div className="p-6 space-y-6 max-w-4xl mx-auto">
-                        {appliedJobs.map(({ id, job_profile, organisation_name, ctc, appliedOn }) => (
+                        {appliedJobs.map((application) => (
                             <div
-                                key={id}
+                                key={application?._id}
                                 className="rounded-xl border bg-white p-5 shadow-md hover:shadow-lg transition duration-300"
                             >
                                 <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
@@ -58,26 +62,26 @@ const ApplicationSent = ({ userid }) => {
                                     <div className="flex-1">
                                         <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                                             <Briefcase className="w-5 h-5 text-blue-600" />
-                                            {job_profile}
+                                            {application?.job_profile}
                                         </h2>
 
                                         <p className="text-gray-600 text-sm mt-1 flex items-center gap-2">
                                             <Building2 className="w-4 h-4 text-gray-400" />
-                                            {organisation_name}
+                                            {application?.organisation_name}
                                         </p>
 
-                                        {ctc && (
+                                        {application?.ctc && (
                                             <p className="text-gray-600 text-sm mt-1 flex items-center gap-2">
                                                 <IndianRupee className="w-4 h-4 text-gray-400" />
-                                                {ctc}
+                                                {application?.ctc}
                                             </p>
                                         )}
 
 
-                                        {appliedOn && (
+                                        {application?.appliedOn && (
                                             <p className="text-gray-600 text-sm mt-1 flex items-center gap-2">
                                                 <CalendarDays className="w-4 h-4 text-gray-400" />
-                                                Applied on {new Date(appliedOn).toLocaleDateString()}
+                                                Applied on {new Date(application?.appliedOn).toLocaleDateString()}
                                             </p>
                                         )}
                                     </div>
@@ -91,6 +95,16 @@ const ApplicationSent = ({ userid }) => {
                                 </span>
                                 </div> */}
                                 </div>
+                                <a
+                                    href={`/job-details/${application?._id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 mt-3"
+                                    onClick={() => dispatch(addJobDescription(application))}
+                                >
+                                    <Eye size={16} />
+                                    View Details
+                                </a>
                             </div>
                         ))}
                     </div>

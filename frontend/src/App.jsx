@@ -9,6 +9,7 @@ import JobPosted from "./Employer/screens/JobPosted";
 import { ProfilePage } from "./screens/Profile";
 import ApplicationSent from "./User/screens/ApplicationSent";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import Loader from "./utilities/components/Loader";
 
 const App = () => {
   const [userData, setUserData] = useState(null);
@@ -51,7 +52,7 @@ const App = () => {
             element={<JobPosted userid={userData?.userId} />}
           />
           <Route path="/user-profile" element={<ProfilePage />} />
-          <Route path="application-sent" element={<ApplicationSent userid={userData?.userId} />} />
+          <Route path="application-sent" element={userData ? <ApplicationSent userid={userData?.userId} /> : <Loader width={10} height={10} />} />
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>

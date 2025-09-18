@@ -127,11 +127,11 @@ export const deleteJobPost = async (req, res) => {
   }
 }
 export const sentJobApplicationController = async (req, res) => {
-  const { organisation_name, job_profile, ctc, job_location, job_type, description } = req.body;
+  const { organisation_name, job_profile, ctc, job_location, job_type, description, _id } = req.body;
   const { userId } = req.params;
 
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(200).json({ message: "Invalid or missing userId" ,status:400,success:false});
+    return res.status(200).json({ message: "Invalid or missing userId", status: 400, success: false });
   }
   try {
     console.log("Request received:", job_location);
@@ -141,7 +141,7 @@ export const sentJobApplicationController = async (req, res) => {
     if (userApplication) {
       // Check if job_profile already exists in sentApplications
       const alreadyApplied = userApplication.sentApplications.some(
-        (app) => app.job_profile === job_profile && app.organisation_name === organisation_name
+        (app) => app._id === _id
       );
 
       if (alreadyApplied) {
@@ -196,7 +196,7 @@ export const getSentJobApplication = async (req, res) => {
     return res.status(400).json({ message: "Invalid or missing userId" });
   }
 
-  const jobs = await JOBAPPLICATIONS.findOne({ userId }).sort({ createdAt: -1 });
+  const jobs = await JOBAPPLICATIONS.findOne({ userId }).sort({ createdAt: 1 });
 
   if (!jobs || jobs.length === 0) {
     return res.status(404).json({

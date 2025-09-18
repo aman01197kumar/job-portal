@@ -11,7 +11,6 @@ import {
   Settings,
   LogOut,
   ChevronDown,
-  MapPin,
   Building,
   Heart,
   FileText,
