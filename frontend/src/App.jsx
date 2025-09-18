@@ -25,7 +25,6 @@ const App = () => {
     }
   }, []);
 
-  console.log(userData, 'userdata');
 
   return (
     <GoogleOAuthProvider clientId="1731036921-prm09e148mv69jnpqtpnioe6tqisi8lr.apps.googleusercontent.com">
