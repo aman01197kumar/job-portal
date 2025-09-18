@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, X, Plus } from 'lucide-react';
-import { techStacks } from '../../assets/tech_stacks';
+import { techStacks } from '../../../assets/tech_stacks';
 
 
 export const TechStackDropdown = ({

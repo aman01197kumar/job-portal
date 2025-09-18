@@ -3,12 +3,12 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "./screens/Dashboard";
 import UserLogin from "./screens/UserLogin";
 import Signup from "./screens/Signup";
-import JobPosting from "./screens/JobPosting";
-import ViewJobDescription from "./screens/ViewJobDescription";
-import JobPosted from "./screens/JobPosted";
+import JobPosting from "./Employer/screens/JobPosting";
+import ViewJobDescription from "./User/screens/ViewJobDescription";
+import JobPosted from "./Employer/screens/JobPosted";
 import { ProfilePage } from "./screens/Profile";
+import ApplicationSent from "./User/screens/ApplicationSent";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import ApplicationSent from "./screens/features/ApplicationSent";
 
 const App = () => {
   const [userData, setUserData] = useState(null);

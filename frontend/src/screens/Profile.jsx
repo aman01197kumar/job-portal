@@ -14,9 +14,10 @@ import {
   Award,
 } from "lucide-react";
 
-import { EditProfileModal } from "../components/UserProfile/EditProfileModal";
 import { techStacks } from "../assets/tech_stacks";
-import {Header} from "../components/Header";
+import { Header } from "../utilities/components/Header";
+import { EditProfileModal } from "../User/screens/UserProfile/EditProfileModal";
+
 
 // Sample user data
 const sampleUser = {

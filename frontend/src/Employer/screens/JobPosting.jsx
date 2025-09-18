@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+// import AdminHeader from "../../components/AdminHeader";
+import { BASE_URL, END_POINTS } from "../../assets/END_POINTS";
 import AdminHeader from "../components/AdminHeader";
-import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
 
 const JobPosting = ({ userId }) => {
   const [organizationName, setOrganizationName] = useState("");

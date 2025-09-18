@@ -18,7 +18,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/imgs/oppmore_logo.png'
+import logo from '../../assets/imgs/oppmore_logo.png'
 
 const jobCategories = [
   {

@@ -1,6 +1,7 @@
 import React from "react";
-import MainContent from "../components/MainContent";
-import AdminDashboard from "./AdminDashboard";
+import MainContent from "../User/screens/MainContent";
+import AdminDashboard from "../Employer/screens/AdminDashboard";
+
 
 const Dashboard = ({ user_type, userId }) => {
   return (

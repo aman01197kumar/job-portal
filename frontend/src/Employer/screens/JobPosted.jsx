@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import AdminHeader from "../components/AdminHeader";
+// import AdminHeader from "../components/AdminHeader";
 import axios from "axios";
+// import JobPostedCard from "../../components/JobPostedCard";
+import { BASE_URL, END_POINTS } from "../../assets/END_POINTS";
+import AdminHeader from "../components/AdminHeader";
 import JobPostedCard from "../components/JobPostedCard";
-import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
 
 const JobPosted = ({ userid }) => {
   const [jobDetails, setJobDetails] = useState([]);

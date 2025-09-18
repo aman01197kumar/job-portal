@@ -6,9 +6,9 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
 import { GoogleLogin } from "@react-oauth/google";
 import toast, { Toaster } from 'react-hot-toast';
-import Loader from "../components/Loader";
+import Loader from "../utilities/components/Loader";
 import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
-import { responseGoogle } from "../utils/googleAuth";
+import { responseGoogle } from "../auth/googleAuth";
 
 
 const UserLogin = () => {
