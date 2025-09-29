@@ -11,6 +11,7 @@ const sentApplicationSlice = createSlice({
         addAppliedJobs: (state, action) => {
             state.selectedJobApplications = [...action.payload]
         },
+        
     },
 });
 
