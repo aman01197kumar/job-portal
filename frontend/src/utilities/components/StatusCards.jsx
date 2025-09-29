@@ -1,24 +1,31 @@
+import { useSelector } from 'react-redux'
+import StatusCard from './StatusCard'
 
-const StatusCards = (stat) => {
+const StatusCards = () => {
+
+  const sentApplications = useSelector(state => state?.sentApplication?.selectedJobApplications)
   return (
-    <div
-      key={stat.title}
-      className="bg-white p-6 rounded-xl shadow-lg border border-gray-100"
-    >
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600">
-            {stat.title}
-          </p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">
-            {stat.value}
-          </p>
-          <p className="text-sm text-green-600 mt-1">{stat.change}</p>
-        </div>
-        <div className={`${stat.color} p-3 rounded-lg`}>
-          <stat.icon className="h-6 w-6 text-white" />
-        </div>
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <StatusCard
+        title="Applications Sent"
+        value={sentApplications.length}
+        url="application-sent"
+      />
+      <StatusCard
+        title="Profile Views"
+        value="156"
+        url="profile-views"
+      />
+      <StatusCard
+        title="Saved Jobs"
+        value="18"
+        url="saved-jobs"
+      />
+      <StatusCard
+        title="Interview Invites"
+        value="3"
+        url="interview-invites"
+      />
     </div>
   )
 }

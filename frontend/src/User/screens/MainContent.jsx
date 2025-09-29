@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import { Header } from "../../utilities/components/Header";
 import StatusCards from "../../utilities/components/StatusCards";
-import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from 'react-hot-toast';
 import { addAppliedJobs } from "../../redux/sentApplications";
 import { Send, Star } from "lucide-react";
@@ -29,7 +28,6 @@ const MainContent = ({ userId }) => {
   const [loading, setLoading] = useState(true);
   const [buttonLoadingId, setButtonLoadingId] = useState(null);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
   const dispatch = useDispatch()
 
 
@@ -223,19 +221,7 @@ const MainContent = ({ userId }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {dashboardStats.map(({ title, url, color, value, icon, change }) => (
-              <div key={title} onClick={() => navigate(`${url}`)}>
-                <StatusCards
-                  title={title}
-                  color={color}
-                  value={value}
-                  icon={icon}
-                  change={change}
-                />
-              </div>
-            ))}
-          </div>
+         <StatusCards/>
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
