@@ -5,37 +5,47 @@ import { JOBAPPLICATIONS } from "../models/sentJobApplication.schema.js";
 // Create a new Job Post
 export const createJobPost = async (req, res) => {
   try {
-    const { userId, jobs } = req.body;
+    const { userId } = req.params;
+    const { jobId, organisation_name, job_profile, ctc, job_location, job_type, description } = req.body;
 
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid or missing userId" });
     }
 
-    // Convert to ObjectId
-    const objectId = new mongoose.Types.ObjectId(userId);
-
-    let jobPost = await JobPosting.findOne({ userId: objectId });
-
-    if (jobPost) {
-      jobPost.jobs.push(...jobs);
-      await jobPost.save();
-    } else {
-      jobPost = new JobPosting({ userId: objectId, jobs });
-      await jobPost.save();
+    if (!jobId || !mongoose.Types.ObjectId.isValid(jobId)) {
+      return res.status(400).json({ message: "Invalid or missing jobId" });
     }
 
-    res.status(200).json({
+    // ✅ Try inserting (will fail if duplicate due to unique index)
+    const newApplication = new JobApplication({
+      userId,
+      jobId,
+      organisation_name,
+      job_profile,
+      ctc,
+      job_location,
+      job_type,
+      description,
+    });
+
+    await newApplication.save();
+
+    return res.status(200).json({
       success: true,
-      status: 200,
-      message: "Job posted successfully",
+      message: "Application sent successfully!",
     });
   } catch (error) {
-    console.error("Error posting job:", error);
-    res
-      .status(500)
-      .json({ success: false, message: error.message, status: 500 });
+    if (error.code === 11000) {
+      // ✅ Duplicate key error from unique index
+      return res.status(400).json({
+        success: false,
+        message: "Application already sent for this job",
+      });
+    }
+    res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 // Get all Job Posts
 export const getAllJobPostsForUser = async (req, res) => {

@@ -1,25 +1,32 @@
 import mongoose from "mongoose";
 
-const jobPostSchema = mongoose.Schema({
+const jobApplicationSchema = mongoose.Schema({
   userId: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
     required: true,
+    index: true, // ✅ faster queries
   },
-  jobs: [
-    {
-      organisation_name: String,
-      ctc: String,
-      job_type: String,
-      job_profile: String,
-      job_location: String,
-      job_description: String,
-      createdAt: {
-        type: Date,
-        default: Date.now,
-      },
-    },
-  ]
+  jobId: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Job",
+    required: true,
+    index: true, // ✅ avoids duplicates
+  },
+  organisation_name: String,
+  job_profile: String,
+  ctc: String,
+  job_location: String,
+  job_type: String,
+  description: String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    index: true, // ✅ sort fast
+  },
 });
 
-export const JobPosting = mongoose.model("JobPosting", jobPostSchema);
+// ✅ Prevent duplicate applications (same user, same job)
+jobApplicationSchema.index({ userId: 1, jobId: 1 }, { unique: true });
+
+export const JobApplication = mongoose.model("JobApplication", jobApplicationSchema);
