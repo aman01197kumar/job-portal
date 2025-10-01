@@ -31,7 +31,7 @@ const CareerAdvice = () => {
     return (
         <>
             <Header />
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {advisers?.map(
                     ({ adviser_name, adviser_description, adviser_skills, adviser_pic, profile }, index) => (
                         <CareerAdviserCard
@@ -40,11 +40,12 @@ const CareerAdvice = () => {
                             adviser_description={adviser_description}
                             adviser_skills={adviser_skills}
                             adviser_pic={adviser_pic}
-                                profile={profile}
+                            profile={profile}
                         />
                     )
                 )}
             </div>
+
 
         </>
     )
