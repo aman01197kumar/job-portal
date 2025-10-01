@@ -2,10 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     selectedJobApplications: [],
+    jobApplications:[]
 };
 
 const sentApplicationSlice = createSlice({
-    name: "sentApplication",
+    name: "applications",
     initialState,
     reducers: {
         addAppliedJobs: (state, action) => {

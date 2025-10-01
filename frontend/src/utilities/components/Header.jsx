@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Menu,
   X,
@@ -60,17 +60,37 @@ const quickActions = [
   { name: "Messages", href: "#", icon: MessageSquare, count: "3" },
 ];
 
-export const Header = () => {
+
+
+export const Header = ({ setDashboardJobPosted, allJobs}) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [jobsDropdownOpen, setJobsDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const navigate = useNavigate()
   const handleLogout = () => {
-    localStorage.removeItem('userData'); // Clear user data from local storage
-    navigate('/'); // Redirect to login page after logout
+    localStorage.removeItem('userData');
+    navigate('/');
     window.location.reload();
   };
+
+const searchJobHandler = (e) => {
+    const searchValue = e.target.value.toLowerCase();
+
+    if (!searchValue) {
+      // Reset to full list
+      setDashboardJobPosted(allJobs);
+      return;
+    }
+
+    const filteredJobs = allJobs.filter((job) =>
+      job.job_profile.toLowerCase().includes(searchValue) ||
+      job.organisation_name.toLowerCase().includes(searchValue) // Optional: search by company too
+    );
+
+    setDashboardJobPosted(filteredJobs);
+  };
+
 
   return (
     <header className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
@@ -152,6 +172,7 @@ export const Header = () => {
                 type="text"
                 placeholder="Search jobs, companies, or skills..."
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                onChange={(e) => searchJobHandler(e)}
               />
             </div>
           </div>
