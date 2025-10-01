@@ -15,8 +15,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { addAppliedJobs } from "../../redux/sentApplications";
 import { useDispatch } from "react-redux";
 import SavedJobs from "../../utilities/components/SavedJobs";
-import Notifications from "../../utilities/components/Notifications";
-import QuickActions from "../../utilities/components/QuickActions";
+import Notifications from "../../utilities/components/Notifications"
 
 const MainContent = ({ userId }) => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
@@ -215,9 +214,6 @@ const MainContent = ({ userId }) => {
               <Notifications />
             </div>
           </div>
-
-          {/* Quick Actions */}
-          <QuickActions />
         </div>
       </div>
       <Toaster />

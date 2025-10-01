@@ -10,6 +10,7 @@ import { ProfilePage } from "./screens/Profile";
 import ApplicationSent from "./User/screens/ApplicationSent";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import Loader from "./utilities/components/Loader";
+import CareerAdvice from "./utilities/components/CareerAdvice";
 
 const App = () => {
   const [userData, setUserData] = useState(null);
@@ -53,6 +54,7 @@ const App = () => {
           />
           <Route path="/user-profile" element={<ProfilePage />} />
           <Route path="application-sent" element={userData ? <ApplicationSent userid={userData?.userId} /> : <Loader width={10} height={10} />} />
+          <Route path="career-advice" element={<CareerAdvice />} />
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>
