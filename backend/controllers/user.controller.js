@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 const userSignup = async (req, res) => {
   try {
     const { first_name, last_name, email, password, phone_number, user } = req.body;
-    console.log(first_name, last_name, email, password, phone_number, user,'kcnisci');
     const full_name = `${first_name} ${last_name}`
 
     if (!email || !full_name || !phone_number || !password || !user) {
@@ -58,6 +57,7 @@ const userLogin = async (req, res) => {
         .status(200)
         .json({ message: "Fill all the details", status: 400 });
     const user = await User.findOne({ email });
+
 
     if (!user)
       return res.status(200).json({ message: "User not found", status: 404 });

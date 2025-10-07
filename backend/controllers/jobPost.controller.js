@@ -95,7 +95,7 @@ export const getJobPostsByUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const jobPosts = await JobPosting.find({ userId }).populate(
+    const jobPosts = await JobApplication.find({ userId }).populate(
       "userId",
       "name email"
     );
@@ -111,7 +111,7 @@ export const deleteJobPost = async (req, res) => {
     const { jobPostId } = req.params;
     const { jobIndex } = req.body;
 
-    const jobPost = await JobPosting.findById(jobPostId);
+    const jobPost = await JobApplication.findById(jobPostId);
 
     if (!jobPost) {
       return res
