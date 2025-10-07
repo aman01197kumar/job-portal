@@ -1,4 +1,4 @@
-import { JobPosting } from "../models/jobPost.schema.js";
+import { JobApplication } from "../models/jobPost.schema.js";
 import mongoose from "mongoose";
 import { JOBAPPLICATIONS } from "../models/sentJobApplication.schema.js";
 
@@ -48,11 +48,11 @@ export const createJobPost = async (req, res) => {
 
 
 // Get all Job Posts
-export const getAllJobPostsForUser = async (req, res) => {
+export const getAllJobPostsByUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const jobPosts = await JobPosting.find().populate(
+    const jobPosts = await JobApplication.find().populate(
       "userId",
       "name email"
     );
@@ -137,21 +137,30 @@ export const deleteJobPost = async (req, res) => {
   }
 }
 export const sentJobApplicationController = async (req, res) => {
-  const { organisation_name, job_profile, ctc, job_location, job_type, description, _id } = req.body;
+  const { organisation_name, job_profile, ctc, job_location, job_type, description } = req.body;
   const { userId } = req.params;
 
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(200).json({ message: "Invalid or missing userId", status: 400, success: false });
+    return res.status(400).json({
+      message: "Invalid or missing userId",
+      status: 400,
+      success: false,
+    });
   }
+
   try {
-    console.log("Request received:", job_location);
-    // Check if the user already has a document
+    // Find user's applications
     let userApplication = await JOBAPPLICATIONS.findOne({ userId });
 
     if (userApplication) {
-      // Check if job_profile already exists in sentApplications
+      // ✅ Check if a job with same details already exists
       const alreadyApplied = userApplication.sentApplications.some(
-        (app) => app._id === _id
+        (app) =>
+          app.organisation_name === organisation_name &&
+          app.job_profile === job_profile &&
+          app.ctc === ctc &&
+          app.job_location === job_location &&
+          app.job_type === job_type
       );
 
       if (alreadyApplied) {
@@ -162,19 +171,29 @@ export const sentJobApplicationController = async (req, res) => {
         });
       }
 
-      // Push new application into the array
+      // Push new application
       userApplication.sentApplications.push({
-        organisation_name, job_profile, ctc, job_location, job_type, description
+        organisation_name,
+        job_profile,
+        ctc,
+        job_location,
+        job_type,
+        description,
       });
 
       await userApplication.save();
     } else {
-      // Create new document for the user
+      // Create a new document if not found
       const newApplication = new JOBAPPLICATIONS({
         userId,
         sentApplications: [
           {
-            organisation_name, job_profile, ctc, job_location, job_type, description
+            organisation_name,
+            job_profile,
+            ctc,
+            job_location,
+            job_type,
+            description,
           },
         ],
       });
@@ -196,6 +215,7 @@ export const sentJobApplicationController = async (req, res) => {
     });
   }
 };
+
 
 
 
