@@ -12,13 +12,10 @@ const JobPosted = ({ userid }) => {
   const fetchJobDetails = async () => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/${END_POINTS.JOB_POSTED}/${userid}`
+        `${BASE_URL}/${END_POINTS.JOB_POSTED_BY_EMPLOYER}/${userid}`
       );
-      console.log(response?.data);
 
-      // Ye important hai ab:
-      const allJobs = response?.data?.data?.flatMap((item) => item.jobs) || [];
-      setJobDetails(allJobs);
+      setJobDetails(response?.data?.data);
     } catch (err) {
       console.log(err);
     }
@@ -33,10 +30,11 @@ const JobPosted = ({ userid }) => {
       <AdminHeader />
       <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 space-y-5 mt-5 ml-7">
         {jobDetails.length > 0 ? (
-          jobDetails.map(({ organisation_name, job_profile }) => (
+          jobDetails.map(({ _id, organisation_name, job_profile }) => (
             <JobPostedCard
               organisation_name={organisation_name}
               job_profile={job_profile}
+              key={_id}
             />
           ))
         ) : (

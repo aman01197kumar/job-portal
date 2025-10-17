@@ -44,6 +44,7 @@ const UserLogin = () => {
 
       const { data } = response;
 
+
       if (data.status === 400 || data.status === 401) {
         toast.warn(data.message);
         return;
@@ -59,7 +60,7 @@ const UserLogin = () => {
           userId: data.userId,
           user_type: data.user,
           token: data.token,
-          email: data.email,
+          username:data.username
         });
 
         localStorage.setItem("userData", userData);

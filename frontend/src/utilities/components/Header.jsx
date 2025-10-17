@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/imgs/oppmore_logo.png'
+import { useSelector } from 'react-redux';
 
 const jobCategories = [
   {
@@ -62,19 +63,20 @@ const quickActions = [
 
 
 
-export const Header = ({ setDashboardJobPosted, allJobs}) => {
+export const Header = ({ setDashboardJobPosted, allJobs }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [jobsDropdownOpen, setJobsDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const navigate = useNavigate()
+  const username = useSelector(state => state.user)
   const handleLogout = () => {
     localStorage.removeItem('userData');
     navigate('/');
     window.location.reload();
   };
 
-const searchJobHandler = (e) => {
+  const searchJobHandler = (e) => {
     const searchValue = e.target.value.toLowerCase();
 
     if (!searchValue) {

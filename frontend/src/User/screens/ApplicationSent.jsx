@@ -6,6 +6,7 @@ import { BASE_URL, END_POINTS } from "../../assets/END_POINTS";
 import Loader from "../../utilities/components/Loader";
 import { useDispatch } from "react-redux";
 import { addJobDescription } from "../../redux/jobDescription";
+import { useNavigate } from "react-router-dom";
 
 
 const NoJobsFound = () => {
@@ -22,12 +23,13 @@ const ApplicationSent = ({ userid }) => {
     const [appliedJobs, setAppliedJobs] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const fetchAppliedJobs = async () => {
         try {
             setIsLoading(true)
 
             const response = await axios.get(
-                `${BASE_URL}/${END_POINTS.GET_ALL_APPLICATIONS}/${userid}`,
+                `${BASE_URL}/${END_POINTS.APPLIED_JOBS}/${userid}`,
             );
             setAppliedJobs(response?.data?.data?.sentApplications)
         }
@@ -45,6 +47,11 @@ const ApplicationSent = ({ userid }) => {
     }, [])
 
 
+    const viewDetailsHandler = (application) => {
+        dispatch(addJobDescription(application))
+        navigate(`/job-details/${application?._id}`)
+
+    }
     return (
         <>
             <Header />
@@ -95,16 +102,16 @@ const ApplicationSent = ({ userid }) => {
                                 </span>
                                 </div> */}
                                 </div>
-                                <a
-                                    href={`/job-details/${application?._id}`}
+                                <div
+                                    href={`${window.location.origin}/job-details/${application?._id}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 mt-3"
-                                    onClick={() => dispatch(addJobDescription(application))}
+                                    onClick={() => viewDetailsHandler(application)}
                                 >
                                     <Eye size={16} />
                                     View Details
-                                </a>
+                                </div>
                             </div>
                         ))}
                     </div>

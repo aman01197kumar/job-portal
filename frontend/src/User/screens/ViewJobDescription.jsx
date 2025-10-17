@@ -9,6 +9,7 @@ const ViewJobDescription = () => {
     state?.jobDescription?.selectedJob
   );
 
+
   const sentApplications = useSelector(state => state?.sentApplication?.selectedJobApplications)
 
   const isApplied = sentApplications.some(job => id === job._id)

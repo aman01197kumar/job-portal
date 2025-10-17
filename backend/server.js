@@ -18,6 +18,7 @@ app.use(cors({ origin: true }));
 
 try {
   mongoose.connect(MONGO_URL)
+  console.log('database connected!!!');
 }
 catch (err) {
   console.log(console.log(err))

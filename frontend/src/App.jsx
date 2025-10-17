@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Dashboard from "./screens/Dashboard";
 import UserLogin from "./screens/UserLogin";
 import Signup from "./screens/Signup";
@@ -11,50 +11,55 @@ import ApplicationSent from "./User/screens/ApplicationSent";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import Loader from "./utilities/components/Loader";
 import CareerAdvice from "./utilities/components/CareerAdvice";
+import { useDispatch } from "react-redux";
+import { addUsername } from "./redux/userInfo";
+import ProtectedRoute from "./utilities/components/ProtectedRoute";
 
 const App = () => {
-  const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
+  const [userData, setUserData] = useState(() => {
     const storedUser = localStorage.getItem("userData");
     if (storedUser) {
       try {
-        const parsedUser = JSON.parse(storedUser);
-        setUserData(parsedUser);
+        return JSON.parse(storedUser);
       } catch (error) {
         console.error("Failed to parse userData:", error);
+        return null;
       }
     }
-  }, []);
+    return null;
+  });
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(addUsername(userData?.username));
+  }, [userData, dispatch]);
 
   return (
     <GoogleOAuthProvider clientId="1731036921-prm09e148mv69jnpqtpnioe6tqisi8lr.apps.googleusercontent.com">
       <BrowserRouter>
         <Routes>
-          {userData?.token ? (
+          <Route path="/" element={!userData?.token ? <UserLogin /> : <Navigate to="/dashboard" />} />
+          <Route path="/signup" element={!userData?.token ? <Signup /> : <Navigate to="/dashboard" />} />
+
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute userData={userData} />}>
             <Route
-              path="/"
+              path="/dashboard"
               element={<Dashboard user_type={userData?.user_type} userId={userData?.userId} />}
             />
-          ) : (
-            <Route path="/" element={<UserLogin />} />
-          )}
-
-          <Route path="/signup" element={<Signup />} />
-
-          <Route
-            path="/admin/job-posting"
-            element={<JobPosting userId={userData?.userId} />}
-          />
-          <Route path="/job-details/:id" element={<ViewJobDescription />} />
-          <Route
-            path="/job-posted"
-            element={<JobPosted userid={userData?.userId} />}
-          />
-          <Route path="/user-profile" element={<ProfilePage />} />
-          <Route path="application-sent" element={userData ? <ApplicationSent userid={userData?.userId} /> : <Loader width={10} height={10} />} />
-          <Route path="career-advice" element={<CareerAdvice />} />
+            <Route
+              path="/admin/job-posting"
+              element={<JobPosting userId={userData?.userId} />}
+            />
+            <Route path="/job-details/:id" element={<ViewJobDescription />} />
+            <Route
+              path="/job-posted"
+              element={<JobPosted userid={userData?.userId} />}
+            />
+            <Route path="/user-profile" element={<ProfilePage />} />
+            <Route path="application-sent" element={<ApplicationSent userid={userData?.userId} />} />
+            <Route path="/career-advice" element={<CareerAdvice />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>

@@ -1,104 +1,90 @@
-import { JobApplication } from "../models/jobPost.schema.js";
+import { JobPost } from "../models/jobPost.schema.js";
 import mongoose from "mongoose";
-import { JOBAPPLICATIONS } from "../models/sentJobApplication.schema.js";
+import { APPLIEDJOBS } from "../models/appliedJobs.schema.js";
+import { jobs } from "googleapis/build/src/apis/jobs/index.js";
 
-// Create a new Job Post
 export const createJobPost = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { jobId, organisation_name, job_profile, ctc, job_location, job_type, description } = req.body;
+    const { jobId, organisation_name, job_profile, ctc, job_location, job_type, job_description } = req.body;
 
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: "Invalid or missing userId" });
+      return res.status(400).json({ message: "Please login again" });
     }
+    if (!organisation_name || !job_profile || !ctc || !job_location || !job_type || !job_description)
+      return res.status(400).json({ success: false, message: 'Please fill all the fields' })
 
-    if (!jobId || !mongoose.Types.ObjectId.isValid(jobId)) {
-      return res.status(400).json({ message: "Invalid or missing jobId" });
-    }
+    if (organisation_name.length < 4)
+      return res.status(400).json({ success: false, message: 'Please add Organisation Name' })
 
-    // ✅ Try inserting (will fail if duplicate due to unique index)
-    const newApplication = new JobApplication({
-      userId,
-      jobId,
+    if (Number(ctc) < 100000)
+      return res.status(400).json({ success: false, message: 'CTC cannot be less than 100000' })
+
+
+    const jobsDatabase = await JobPost.findOne({ userId })
+
+    const newJob = {
       organisation_name,
       job_profile,
       ctc,
       job_location,
       job_type,
-      description,
-    });
-
-    await newApplication.save();
-
-    return res.status(200).json({
-      success: true,
-      message: "Application sent successfully!",
-    });
-  } catch (error) {
-    if (error.code === 11000) {
-      // ✅ Duplicate key error from unique index
-      return res.status(400).json({
-        success: false,
-        message: "Application already sent for this job",
-      });
+      job_description
     }
+
+    if (jobsDatabase) {
+      jobsDatabase.postedJobs.push(newJob)
+      await jobsDatabase.save()
+    }
+    else {
+      const newDatabase = new JobPost({
+        userId, postedJobs: [newJob]
+      })
+      await newDatabase.save()
+    }
+
+
+    return res.status(200).json({ success: true, message: 'new job generated' })
+  } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 
 // Get all Job Posts
-export const getAllJobPostsByUser = async (req, res) => {
+export const getAllJobPosts = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const jobPosts = await JobApplication.find().populate(
-      "userId",
-      "name email"
-    );
-
-    console.log(jobPosts);
-
-    const appliedJobs = await JOBAPPLICATIONS.findOne({ userId });
-
-    // Collect applied jobs for quick lookup
-    const appliedSet = new Set();
-    if (appliedJobs && appliedJobs.sentApplications) {
-      appliedJobs.sentApplications.forEach(app => {
-        appliedSet.add(
-          `${app.organisation_name}|${app.job_profile}|${app.ctc}|${app.job_location}|${app.job_type}`
-        );
-      });
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid or missing userId" });
     }
 
-    // Flatten all jobs and return only unapplied jobs
-    const unappliedJobs = [];
-    jobPosts.forEach(post => {
-      post.jobs.forEach(job => {
-        const key = `${job.organisation_name}|${job.job_profile}|${job.ctc}|${job.job_location}|${job.job_type}`;
-        if (!appliedSet.has(key)) {
-          unappliedJobs.push({
-            ...job._doc
-          });
-        }
-      });
-    });
 
-    res.status(200).json({ success: true, data: unappliedJobs });
+    const allJobsApplications = await JobPost.find()
+    const arr = []
+    allJobsApplications.forEach(jobs => jobs.postedJobs.forEach(job => arr.push(job)))
+    res.status(200).json({ jobs: arr, success: true })
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Get Job Posts by User ID
-export const getJobPostsByUser = async (req, res) => {
+// Get Job Applications by a candidate
+export const getAppliedJobsByCandidate = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const jobPosts = await JobApplication.find({ userId }).populate(
-      "userId",
-      "name email"
-    );
+    const jobPosts = await APPLIEDJOBS.findOne({ userId }).populate("userId", "full_name email");
+
+    if (!jobPosts) {
+      return res.status(404).json({
+        success: false,
+        message: "No applications found for this user.",
+      });
+    }
     res.status(200).json({ success: true, data: jobPosts });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -106,36 +92,36 @@ export const getJobPostsByUser = async (req, res) => {
 };
 
 // Delete a Job Post (optional)
-export const deleteJobPost = async (req, res) => {
-  try {
-    const { jobPostId } = req.params;
-    const { jobIndex } = req.body;
+// export const deleteJobPost = async (req, res) => {
+//   try {
+//     const { jobPostId } = req.params;
+//     const { jobIndex } = req.body;
 
-    const jobPost = await JobApplication.findById(jobPostId);
+//     const jobPost = await JobApplication.findById(jobPostId);
 
-    if (!jobPost) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Job post not found" });
-    }
+//     if (!jobPost) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Job post not found" });
+//     }
 
-    if (jobIndex < 0 || jobIndex >= jobPost.jobs.length) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid job index" });
-    }
+//     if (jobIndex < 0 || jobIndex >= jobPost.jobs.length) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Invalid job index" });
+//     }
 
-    // Remove the job at the specific index
-    jobPost.jobs.splice(jobIndex, 1);
-    await jobPost.save();
+//     // Remove the job at the specific index
+//     jobPost.jobs.splice(jobIndex, 1);
+//     await jobPost.save();
 
-    res
-      .status(200)
-      .json({ success: true, message: "Job deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-}
+//     res
+//       .status(200)
+//       .json({ success: true, message: "Job deleted successfully" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// }
 export const sentJobApplicationController = async (req, res) => {
   const { organisation_name, job_profile, ctc, job_location, job_type, description } = req.body;
   const { userId } = req.params;
@@ -150,7 +136,7 @@ export const sentJobApplicationController = async (req, res) => {
 
   try {
     // Find user's applications
-    let userApplication = await JOBAPPLICATIONS.findOne({ userId });
+    let userApplication = await APPLIEDJOBS.findOne({ userId });
 
     if (userApplication) {
       // ✅ Check if a job with same details already exists
@@ -184,7 +170,7 @@ export const sentJobApplicationController = async (req, res) => {
       await userApplication.save();
     } else {
       // Create a new document if not found
-      const newApplication = new JOBAPPLICATIONS({
+      const newApplication = new APPLIEDJOBS({
         userId,
         sentApplications: [
           {
@@ -226,20 +212,24 @@ export const getSentJobApplication = async (req, res) => {
     return res.status(400).json({ message: "Invalid or missing userId" });
   }
 
-  const jobs = await JOBAPPLICATIONS.findOne({ userId }).sort({ createdAt: 1 });
+  try {
+    const userApplications = await APPLIEDJOBS.findOne({ userId });
 
-  if (!jobs || jobs.length === 0) {
-    return res.status(404).json({
-      message: "No Applications found",
-      status: 404,
-      success: false,
+
+    if (!userApplications || userApplications.sentApplications.length === 0) {
+      return res.status(200).json({
+        success: true,
+        status: 200,
+        message: "No applications found for this user.",
+        data: [],
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: userApplications,
     });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message, status: 500 });
   }
-
-  return res.status(200).json({
-    success: true,
-    status: 200,
-    data: jobs,
-  });
 };
-

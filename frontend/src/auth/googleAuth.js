@@ -5,7 +5,6 @@ export const responseGoogle = async (authResult) => {
     try {
         if(authResult['code']){
 const result = await googleApi(authResult['code'])
-console.log(result,'redd');
         }
     }
     catch (err) {

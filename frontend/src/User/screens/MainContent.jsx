@@ -33,8 +33,9 @@ const MainContent = ({ userId }) => {
       const response = await axios.get(`${BASE_URL}/${END_POINTS.JOBS}/${userId}`, {
         "content-type": "application/json",
       });
-
-      setDashboardJobPosted(response?.data?.data);
+  
+      console.log(response?.data,'res');
+      setDashboardJobPosted(response?.data?.jobs);
       setAllJobs(response?.data?.data)
     } catch (err) {
       console.error("Error fetching jobs:", err);
@@ -45,13 +46,16 @@ const MainContent = ({ userId }) => {
 
   useEffect(() => {
     fetchJobs();
+    document.title = "Oppmore | Home"
   }, []);
-  document.title = "Oppmore | Home"
+
 
 
   const jobAppliedHandler = async (application) => {
     const jobId = application._id;
     if (isApplied(jobId)) return;
+    setAppliedJobs(application);
+    dispatch(addAppliedJobs(application));
 
     setButtonLoadingId(jobId);
 
@@ -94,28 +98,6 @@ const MainContent = ({ userId }) => {
     }
   };
 
-  const fetchJobApplications = async () => {
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/${END_POINTS.GET_ALL_APPLICATIONS}/${userId}`
-      );
-
-
-      if (response?.data?.status === 404) {
-        return toast.error(response?.data?.message || "No applications found");
-      }
-
-      const applications = response?.data?.data?.sentApplications || [];
-      setAppliedJobs(applications);
-      dispatch(addAppliedJobs(applications));
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchJobApplications();
-  }, []);
 
   const isApplied = (jobId) =>
     appliedJobs.some((item) => item._id === jobId);

@@ -6,7 +6,7 @@ const StatusCard = (stat) => {
         <div
             key={stat.title}
             className="bg-white p-6 rounded-xl shadow-lg border border-gray-100"
-            onClick={() => navigate(stat.url)}
+            onClick={() => navigate(`/${stat.url}`)}
         >
             <div className="flex items-center justify-between">
                 <div>

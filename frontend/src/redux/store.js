@@ -4,6 +4,7 @@ import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, R
 import { combineReducers } from "redux";
 import jobReducer from "./jobDescription"; // ✅ Correct import
 import sentApplicationReducer from './sentApplications'
+import userInfoReducer from './userInfo'
 
 const persistConfig = {
   key: "root",
@@ -13,7 +14,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   jobDescription: jobReducer, // ✅ Use the actual reducer
   sentApplication: sentApplicationReducer,
-
+  userInfo: userInfoReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

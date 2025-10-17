@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const sentJobApplicationSchema = mongoose.Schema({
+const appliedJobsSchema = mongoose.Schema({
     userId: {
         type: mongoose.Schema.ObjectId,
         ref: "User",
@@ -33,17 +33,13 @@ const sentJobApplicationSchema = mongoose.Schema({
                 type: String,
 
             },
-            description: {
-                type: String,
-                required: true
-            },
             appliedOn: {
                 type: Date,
-                default: Date.now()
+                default: Date.now
             }
         }
     ]
 
 })
 
-export const JOBAPPLICATIONS = mongoose.model("JOBAPPLICATIONS", sentJobApplicationSchema)
+export const APPLIEDJOBS = mongoose.model("APPLIEDJOBS", appliedJobsSchema)

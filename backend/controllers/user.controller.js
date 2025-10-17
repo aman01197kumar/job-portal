@@ -76,7 +76,7 @@ const userLogin = async (req, res) => {
       status: 200,
       user: user.user,
       userId: user._id,
-      email: user.email,
+      username:user.full_name,
       token: token,
     });
   }
