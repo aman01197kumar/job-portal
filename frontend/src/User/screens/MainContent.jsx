@@ -34,9 +34,8 @@ const MainContent = ({ userId }) => {
         "content-type": "application/json",
       });
   
-      console.log(response?.data,'res');
       setDashboardJobPosted(response?.data?.jobs);
-      setAllJobs(response?.data?.data)
+      setAllJobs(response?.data?.jobs)
     } catch (err) {
       console.error("Error fetching jobs:", err);
     } finally {

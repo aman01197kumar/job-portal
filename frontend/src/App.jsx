@@ -53,7 +53,7 @@ const App = () => {
             />
             <Route path="/job-details/:id" element={<ViewJobDescription />} />
             <Route
-              path="/job-posted"
+              path="/admin/stats"
               element={<JobPosted userid={userData?.userId} />}
             />
             <Route path="/user-profile" element={<ProfilePage />} />

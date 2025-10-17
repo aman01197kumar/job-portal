@@ -61,7 +61,6 @@ export const getAllJobPosts = async (req, res) => {
       return res.status(400).json({ message: "Invalid or missing userId" });
     }
 
-
     const allJobsApplications = await JobPost.find()
     const arr = []
     allJobsApplications.forEach(jobs => jobs.postedJobs.forEach(job => arr.push(job)))
@@ -71,6 +70,25 @@ export const getAllJobPosts = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+//GET ALL JOBS IN EMPLOYER PANEL
+export const getJobsEmployerPanel = async (req, res) => {
+  try {
+    const { userId } = req.params
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid or missing userId. Please login again" });
+    }
+    const fetchJobs = await JobPost.findOne({ userId })
+
+    if (!fetchJobs)
+      return res.status(404).json({ message: 'No jobs posted yet!!', success: false })
+
+    return res.status(200).json({ message: 'jobs fetched successfully!', data:fetchJobs.postedJobs })
+  }
+  catch (err) {
+    return res.status(500).json({ message: err.message, success: false })
+  }
+}
 
 // Get Job Applications by a candidate
 export const getAppliedJobsByCandidate = async (req, res) => {

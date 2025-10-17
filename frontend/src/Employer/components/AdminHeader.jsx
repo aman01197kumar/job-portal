@@ -1,128 +1,342 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
-import Logout from "@mui/icons-material/Logout";
+import { useState } from 'react';
+import {
+  Menu,
+  X,
+  Search,
+  Briefcase,
+  BookOpen,
+  Users,
+  Bell,
+  User,
+  Settings,
+  LogOut,
+  ChevronDown,
+  Building,
+  Heart,
+  FileText,
+  MessageSquare
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import logo from '../../assets/imgs/oppmore_logo.png'
+import { useSelector } from 'react-redux';
 
-const AdminHeader = () => {
-  const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+const jobCategories = [
+  {
+    id: 1,
+    name: "Technology",
+    description: "Software, IT, and tech roles",
+    href: "#",
+    icon: Briefcase,
+    count: "2,340 jobs"
+  },
+  {
+    id: 2,
+    name: "Design",
+    description: "UI/UX, Graphic, and Product Design",
+    href: "#",
+    icon: BookOpen,
+    count: "890 jobs"
+  },
+  {
+    id: 3,
+    name: "Marketing",
+    description: "Digital marketing and growth roles",
+    href: "#",
+    icon: Users,
+    count: "1,250 jobs"
+  },
+  {
+    id: 4,
+    name: "Sales",
+    description: "Business development and sales",
+    href: "#",
+    icon: Building,
+    count: "980 jobs"
+  }
+];
+
+const quickActions = [
+  { name: "Saved Jobs", href: "#", icon: Heart, count: "12" },
+  { name: "Applications", href: "#", icon: FileText, count: "8" },
+  { name: "Messages", href: "#", icon: MessageSquare, count: "3" },
+];
+
+
+
+const AdminHeader = ({ setDashboardJobPosted, allJobs }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [jobsDropdownOpen, setJobsDropdownOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+  const navigate = useNavigate()
+  const username = useSelector(state => state.user)
+  const handleLogout = () => {
+    localStorage.removeItem('userData');
+    navigate('/');
+    window.location.reload();
   };
-  const handleClose = () => {
-    setAnchorEl(null);
+
+  const searchJobHandler = (e) => {
+    const searchValue = e.target.value.toLowerCase();
+
+    if (!searchValue) {
+      // Reset to full list
+      setDashboardJobPosted(allJobs);
+      return;
+    }
+
+    const filteredJobs = allJobs.filter((job) =>
+      job.job_profile.toLowerCase().includes(searchValue) ||
+      job.organisation_name.toLowerCase().includes(searchValue) // Optional: search by company too
+    );
+
+    setDashboardJobPosted(filteredJobs);
   };
-  const logoutHandler = () => {
-    setAnchorEl(null);
-    navigate("/");
-    localStorage.removeItem("userData");
-    window.location.reload()
-  };
-  const profileHandler = () => {
-    setAnchorEl(null);
-    navigate("/user-profile");
-  };
+
+
   return (
-    <div className="bg-black text-white flex justify-between p-3 sticky top-0 w-full shadow-xl items-center">
-      <p>Logo</p>
-      <div className="flex justify-between w-90">
-        <Box
-          sx={{ display: "flex", alignItems: "center", textAlign: "center" }}
-        >
-          <Typography
-            className="hover:cursor-pointer"
-            sx={{ minWidth: 100 }}
-            onClick={() => navigate("/")}
-          >
-            Home
-          </Typography>
-          <Typography
-            className="hover:cursor-pointer"
-            sx={{ minWidth: 100 }}
-            onClick={() => navigate("/admin/job-posting")}
-          >
-            Post Jobs
-          </Typography>
-          <Typography
-            className="hover:cursor-pointer"
-            sx={{ minWidth: 100 }}
-            onClick={() => navigate("/job-posted")}
-          >
-            Posted Jobs
-          </Typography>
-          <Tooltip title="Account settings">
-            <IconButton
-              onClick={handleClick}
-              size="small"
-              sx={{ ml: 2 }}
-              aria-controls={open ? "account-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? "true" : undefined}
+    <header className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
+      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <img
+              src={logo}
+              alt="logo"
+              className="w-28 mt-3 object-contain cursor-pointer"
+              onClick={() => navigate('/')}
+            />
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex lg:items-center lg:space-x-8">
+            {/* Jobs Dropdown */}
+            
+
+            {/* Navigation Links */}
+            <div onClick={()=>navigate('/admin/job-posting')} className=" cursor-pointer text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
+              Post Jobs
+            </div>
+            <div onClick={()=>navigate('/admin/stats')} className="cursor-pointer text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
+              Statistics
+            </div>
+          </div>
+
+          {/* Search Bar */}
+          <div className="hidden md:flex flex-1 max-w-lg mx-8">
+            <div className="relative w-full">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search jobs, companies, or skills..."
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                onChange={(e) => searchJobHandler(e)}
+              />
+            </div>
+          </div>
+
+          <div className="hidden lg:flex lg:items-center lg:space-x-4">
+            <button className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-all duration-200">
+              <MessageSquare className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                5
+              </span>
+            </button>
+            <button className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-all duration-200">
+              <Bell className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                5
+              </span>
+            </button>
+
+            <div className="relative">
+              <button
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+              >
+                <img
+                  src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400"
+                  alt="Profile"
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+                <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${profileDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {profileDropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+                  <div className="p-4 border-b border-gray-200">
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400"
+                        alt="Profile"
+                        className="h-12 w-12 rounded-full object-cover"
+                      />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">John Doe</p>
+                        <p className="text-xs text-gray-500">Software Engineer</p>
+                        <p className="text-xs text-green-600">Profile 85% complete</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="py-2">
+                    <a
+                      href="/user-profile"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      <User className="h-4 w-4 mr-3" />
+                      View Profile
+                    </a>
+                    <a
+                      href="#"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      <Settings className="h-4 w-4 mr-3" />
+                      Account Settings
+                    </a>
+                    <a
+                      href="#"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      <FileText className="h-4 w-4 mr-3" />
+                      Resume Builder
+                    </a>
+                  </div>
+
+                  <div className="border-t border-gray-200 py-2">
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
+                    >
+                      <LogOut className="h-4 w-4 mr-3" />
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="lg:hidden">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
             >
-              <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
-            </IconButton>
-          </Tooltip>
-        </Box>
-        <Menu
-          anchorEl={anchorEl}
-          id="account-menu"
-          open={open}
-          onClose={handleClose}
-          onClick={handleClose}
-          slotProps={{
-            paper: {
-              elevation: 0,
-              sx: {
-                overflow: "visible",
-                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                mt: 1.5,
-                "& .MuiAvatar-root": {
-                  width: 32,
-                  height: 32,
-                  ml: -0.5,
-                  mr: 1,
-                },
-                "&::before": {
-                  content: '""',
-                  display: "block",
-                  position: "absolute",
-                  top: 0,
-                  right: 14,
-                  width: 10,
-                  height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translateY(-50%) rotate(45deg)",
-                  zIndex: 0,
-                },
-              },
-            },
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Search Bar */}
+        <div className="md:hidden pb-4">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search jobs..."
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+            />
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-white border-t border-gray-200">
+          <div className="px-4 pt-4 pb-6 space-y-4">
+            {/* Profile Section */}
+            <div className="flex items-center space-x-3 pb-4 border-b border-gray-200">
+              <img
+                src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400"
+                alt="Profile"
+                className="h-10 w-10 rounded-full object-cover"
+              />
+              <div>
+                <p className="text-sm font-medium text-gray-900">John Doe</p>
+                <p className="text-xs text-gray-500">Software Engineer</p>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="grid grid-cols-3 gap-4 py-4 border-b border-gray-200">
+              {quickActions.map((action) => (
+                <a
+                  key={action.name}
+                  href={action.href}
+                  className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                >
+                  <div className="relative">
+                    <action.icon className="h-6 w-6 text-gray-600" />
+                    {action.count && (
+                      <span className="absolute -top-2 -right-2 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                        {action.count}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-600 mt-1">{action.name}</span>
+                </a>
+              ))}
+            </div>
+
+            {/* Navigation Links */}
+            <div className="space-y-2">
+              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                Find Jobs
+              </a>
+              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                Companies
+              </a>
+              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                Salary Guide
+              </a>
+              <a href="career-advice" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                Career Advice
+              </a>
+            </div>
+
+            {/* Account Actions */}
+            <div className="pt-4 border-t border-gray-200 space-y-2">
+              <a href="#" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                <User className="h-5 w-5 mr-3" />
+                View Profile
+              </a>
+              <a href="#" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                <Settings className="h-5 w-5 mr-3" />
+                Settings
+              </a>
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+              >
+                <LogOut className="h-5 w-5 mr-3" />
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Overlay for dropdowns */}
+      {(jobsDropdownOpen || profileDropdownOpen) && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => {
+            setJobsDropdownOpen(false);
+            setProfileDropdownOpen(false);
           }}
-          transformOrigin={{ horizontal: "right", vertical: "top" }}
-          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-        >
-          <MenuItem onClick={profileHandler}>
-            <Avatar /> Profile
-          </MenuItem>
-          <Divider />
-          <MenuItem onClick={logoutHandler}>
-            <ListItemIcon>
-              <Logout fontSize="small" />
-            </ListItemIcon>
-            Logout
-          </MenuItem>
-        </Menu>
-      </div>
-    </div>
+        />
+      )}
+    </header>
   );
 };
 
-export default AdminHeader;
+export default AdminHeader

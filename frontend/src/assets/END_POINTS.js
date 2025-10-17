@@ -9,6 +9,7 @@ const END_POINTS = {
   //Employer's
   JOB_POSTED_BY_EMPLOYER: `jobs/user`,
   CREATE_JOB: `create-jobs`,
+  JOB_FETCHED_BY_EMPLOYER:`admin/job/posted`,
 
   //Job Seeker's
   JOBS: `jobs`,
