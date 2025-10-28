@@ -45,7 +45,7 @@ const App = () => {
           <Route element={<ProtectedRoute userData={userData} />}>
             <Route
               path="/dashboard"
-              element={<Dashboard user_type={userData?.user_type} userId={userData?.userId} />}
+              element={<Dashboard userData={userData} user_type={userData?.user_type} userId={userData?.userId} />}
             />
             <Route
               path="/admin/job-posting"
@@ -56,7 +56,7 @@ const App = () => {
               path="/admin/stats"
               element={<JobPosted userid={userData?.userId} />}
             />
-            <Route path="/user-profile" element={<ProfilePage />} />
+            <Route path="/user-profile/:username" element={<ProfilePage token={userData?.token} />} />
             <Route path="application-sent" element={<ApplicationSent userid={userData?.userId} />} />
             <Route path="/career-advice" element={<CareerAdvice />} />
           </Route>

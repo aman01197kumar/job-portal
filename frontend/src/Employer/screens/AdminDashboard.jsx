@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import AdminHeader from "../components/AdminHeader";
 
-const AdminDashboard = () => {
+const AdminDashboard = ({ userData }) => {
   const navigate = useNavigate();
 
   const cards = [
@@ -45,7 +45,7 @@ const AdminDashboard = () => {
       gradient: "from-green-400 to-green-600",
     },
     {
-      title: "Employer Profile",
+      title: "All about you",
       path: "/user-profile",
       icon: (
         <svg
@@ -69,9 +69,9 @@ const AdminDashboard = () => {
     <>
       <AdminHeader />
 
-      <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-50 dark:from-gray-900 dark:to-gray-800 pt-24 flex flex-col items-center">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-blue-700 dark:text-white mb-10 tracking-wide">
-          Employer Dashboard
+      <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-50 pt-24 flex flex-col items-center">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-blue-700 mb-10 tracking-wide">
+          Hi! {userData?.username}. Welcome to Dashboard
         </h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-6 md:px-16">
@@ -79,7 +79,7 @@ const AdminDashboard = () => {
             <div
               key={index}
               onClick={() => navigate(card.path)}
-              className={`relative cursor-pointer rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-white/40 dark:bg-gray-800/60 backdrop-blur-lg border border-gray-200 dark:border-gray-700`}
+              className={`relative cursor-pointer rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-white/40 backdrop-blur-lg border border-gray-200`}
             >
               <div
                 className={`absolute inset-0 rounded-2xl opacity-20 bg-gradient-to-br ${card.gradient}`}

@@ -1,5 +1,5 @@
-const BASE_URL = "https://job-portal-8rp9.onrender.com";
-// const BASE_URL = "http://localhost:3000"
+// const BASE_URL = "https://job-portal-8rp9.onrender.com";
+const BASE_URL = "http://localhost:3000"
 
 const END_POINTS = {
   //authentications
@@ -14,7 +14,8 @@ const END_POINTS = {
   //Job Seeker's
   JOBS: `jobs`,
   USER_PROFILE: `getuser`,
-  APPLIED_JOBS: `jobs/user`
+  APPLIED_JOBS: `jobs/user`,
+  APPLY_JOB:`job-applications`
 };
 
 export { BASE_URL, END_POINTS };

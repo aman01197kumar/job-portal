@@ -31,7 +31,7 @@ const ApplicationSent = ({ userid }) => {
             const response = await axios.get(
                 `${BASE_URL}/${END_POINTS.APPLIED_JOBS}/${userid}`,
             );
-            setAppliedJobs(response?.data?.data?.sentApplications)
+            setAppliedJobs(response?.data?.data)
         }
         catch (err) {
             console.log(err);

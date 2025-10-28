@@ -40,9 +40,13 @@ const sampleUser = {
   joinDate: "2021-03-15",
 };
 
-export const ProfilePage = () => {
+export const ProfilePage = ({token}) => {
   const [user, setUser] = useState(sampleUser);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // const fetchUserData = async()=>{
+  //     const response = 
+  // }
 
   const handleSaveProfile = (updatedUser) => {
     setUser(updatedUser);

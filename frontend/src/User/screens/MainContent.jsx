@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL, END_POINTS } from "../../assets/END_POINTS";
-import Loader from "../../utilities/components/Loader";
 import {
   FileText,
-  Building,
-  Eye,
-  ExternalLink,
-  IndianRupee
 } from "lucide-react";
 import { Header } from "../../utilities/components/Header";
 import StatusCards from "../../utilities/components/StatusCards";
@@ -17,14 +12,15 @@ import { useDispatch } from "react-redux";
 import SavedJobs from "../../utilities/components/SavedJobs";
 import Notifications from "../../utilities/components/Notifications"
 import JobCards from "../../utilities/components/JobCards";
+import { useNavigate } from "react-router-dom";
 
 const MainContent = ({ userId }) => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [buttonLoadingId, setButtonLoadingId] = useState(null);
   const [allJobs, setAllJobs] = useState([])
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
 
   const fetchJobs = async () => {
@@ -33,9 +29,9 @@ const MainContent = ({ userId }) => {
       const response = await axios.get(`${BASE_URL}/${END_POINTS.JOBS}/${userId}`, {
         "content-type": "application/json",
       });
-  
-      setDashboardJobPosted(response?.data?.jobs);
-      setAllJobs(response?.data?.jobs)
+      console.log(response, 'redd');
+      setDashboardJobPosted(response?.data?.data);
+      setAllJobs(response?.data?.data)
     } catch (err) {
       console.error("Error fetching jobs:", err);
     } finally {
@@ -51,15 +47,10 @@ const MainContent = ({ userId }) => {
 
 
   const jobAppliedHandler = async (application) => {
-    const jobId = application._id;
-    if (isApplied(jobId)) return;
-    setAppliedJobs(application);
-    dispatch(addAppliedJobs(application));
-
-    setButtonLoadingId(jobId);
 
     try {
       const payload = {
+        jobId: application?._id,
         organisation_name: application?.organisation_name,
         job_profile: application?.job_profile,
         ctc: application?.ctc,
@@ -70,30 +61,27 @@ const MainContent = ({ userId }) => {
 
       if (!userId) {
         toast.error("User ID not found. Please log in again.");
+        navigate('/login')
         return;
       }
 
       const response = await axios.post(
-        `${BASE_URL}/${END_POINTS.APPLICATION_SUBMITTED}/${userId}`,
+        `${BASE_URL}/${END_POINTS.APPLY_JOB}/${userId}`,
         payload,
         {
           headers: { "Content-Type": "application/json" },
         }
       );
 
-      const { status, message } = response?.data;
+      const { success, message } = response?.data;
 
-      if (status === 200) {
+      if (success) {
         toast.success(message);
-        fetchJobApplications();
-      } else {
-        toast.error(message);
+        window.location.reload()
       }
     } catch (err) {
       console.error("Apply error:", err);
       toast.error("Something went wrong.");
-    } finally {
-      setButtonLoadingId(null);
     }
   };
 
@@ -127,7 +115,6 @@ const MainContent = ({ userId }) => {
                   loading={loading}
                   jobAppliedHandler={jobAppliedHandler}
                   isApplied={isApplied}
-                  buttonLoadingId={buttonLoadingId}
                 />
               </div>
             </div>

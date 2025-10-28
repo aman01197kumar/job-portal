@@ -65,6 +65,7 @@ const JobCards = ({
                       ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                       : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     }`}
+                  
                 >
                   {buttonLoadingId === application?._id ? (
                     <Loader width={5} height={5} />
@@ -74,6 +75,7 @@ const JobCards = ({
                       {isApplied(application?._id)
                         ? "Applied"
                         : "Apply Now"}
+
                     </>
                   )}
                 </button>

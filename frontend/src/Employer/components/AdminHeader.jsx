@@ -18,48 +18,6 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/imgs/oppmore_logo.png'
-import { useSelector } from 'react-redux';
-
-const jobCategories = [
-  {
-    id: 1,
-    name: "Technology",
-    description: "Software, IT, and tech roles",
-    href: "#",
-    icon: Briefcase,
-    count: "2,340 jobs"
-  },
-  {
-    id: 2,
-    name: "Design",
-    description: "UI/UX, Graphic, and Product Design",
-    href: "#",
-    icon: BookOpen,
-    count: "890 jobs"
-  },
-  {
-    id: 3,
-    name: "Marketing",
-    description: "Digital marketing and growth roles",
-    href: "#",
-    icon: Users,
-    count: "1,250 jobs"
-  },
-  {
-    id: 4,
-    name: "Sales",
-    description: "Business development and sales",
-    href: "#",
-    icon: Building,
-    count: "980 jobs"
-  }
-];
-
-const quickActions = [
-  { name: "Saved Jobs", href: "#", icon: Heart, count: "12" },
-  { name: "Applications", href: "#", icon: FileText, count: "8" },
-  { name: "Messages", href: "#", icon: MessageSquare, count: "3" },
-];
 
 
 
@@ -69,7 +27,6 @@ const AdminHeader = ({ setDashboardJobPosted, allJobs }) => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const navigate = useNavigate()
-  const username = useSelector(state => state.user)
   const handleLogout = () => {
     localStorage.removeItem('userData');
     navigate('/');
@@ -120,20 +77,8 @@ const AdminHeader = ({ setDashboardJobPosted, allJobs }) => {
             <div onClick={()=>navigate('/admin/stats')} className="cursor-pointer text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
               Statistics
             </div>
-          </div>
-
-          {/* Search Bar */}
-          <div className="hidden md:flex flex-1 max-w-lg mx-8">
-            <div className="relative w-full">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search jobs, companies, or skills..."
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                onChange={(e) => searchJobHandler(e)}
-              />
+            <div onClick={()=>navigate('/admin/assign-mentors')} className="cursor-pointer text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
+              Assign Mentors
             </div>
           </div>
 
@@ -181,29 +126,6 @@ const AdminHeader = ({ setDashboardJobPosted, allJobs }) => {
                     </div>
                   </div>
 
-                  <div className="py-2">
-                    <a
-                      href="/user-profile"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
-                    >
-                      <User className="h-4 w-4 mr-3" />
-                      View Profile
-                    </a>
-                    <a
-                      href="#"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
-                    >
-                      <Settings className="h-4 w-4 mr-3" />
-                      Account Settings
-                    </a>
-                    <a
-                      href="#"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
-                    >
-                      <FileText className="h-4 w-4 mr-3" />
-                      Resume Builder
-                    </a>
-                  </div>
 
                   <div className="border-t border-gray-200 py-2">
                     <button
@@ -266,49 +188,9 @@ const AdminHeader = ({ setDashboardJobPosted, allJobs }) => {
               </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-3 gap-4 py-4 border-b border-gray-200">
-              {quickActions.map((action) => (
-                <a
-                  key={action.name}
-                  href={action.href}
-                  className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                >
-                  <div className="relative">
-                    <action.icon className="h-6 w-6 text-gray-600" />
-                    {action.count && (
-                      <span className="absolute -top-2 -right-2 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                        {action.count}
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-xs text-gray-600 mt-1">{action.name}</span>
-                </a>
-              ))}
-            </div>
-
-            {/* Navigation Links */}
-            <div className="space-y-2">
-              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-                Find Jobs
-              </a>
-              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-                Companies
-              </a>
-              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-                Salary Guide
-              </a>
-              <a href="career-advice" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-                Career Advice
-              </a>
-            </div>
 
             {/* Account Actions */}
             <div className="pt-4 border-t border-gray-200 space-y-2">
-              <a href="#" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-                <User className="h-5 w-5 mr-3" />
-                View Profile
-              </a>
               <a href="#" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
                 <Settings className="h-5 w-5 mr-3" />
                 Settings

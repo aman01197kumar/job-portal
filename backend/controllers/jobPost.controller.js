@@ -1,12 +1,11 @@
 import { JobPost } from "../models/jobPost.schema.js";
 import mongoose from "mongoose";
 import { APPLIEDJOBS } from "../models/appliedJobs.schema.js";
-import { jobs } from "googleapis/build/src/apis/jobs/index.js";
 
 export const createJobPost = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { jobId, organisation_name, job_profile, ctc, job_location, job_type, job_description } = req.body;
+    const { organisation_name, job_profile, ctc, job_location, job_type, job_description } = req.body;
 
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Please login again" });
@@ -20,31 +19,20 @@ export const createJobPost = async (req, res) => {
     if (Number(ctc) < 100000)
       return res.status(400).json({ success: false, message: 'CTC cannot be less than 100000' })
 
-
-    const jobsDatabase = await JobPost.findOne({ userId })
-
-    const newJob = {
+    const newJob = new JobPost({
+      userId,
       organisation_name,
       job_profile,
       ctc,
       job_location,
       job_type,
       job_description
-    }
+    })
 
-    if (jobsDatabase) {
-      jobsDatabase.postedJobs.push(newJob)
-      await jobsDatabase.save()
-    }
-    else {
-      const newDatabase = new JobPost({
-        userId, postedJobs: [newJob]
-      })
-      await newDatabase.save()
-    }
+    await newJob.save()
 
 
-    return res.status(200).json({ success: true, message: 'new job generated' })
+    return res.status(200).json({ success: true, message: 'new job generated', newJob })
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -57,16 +45,35 @@ export const getAllJobPosts = async (req, res) => {
   try {
     const { userId } = req.params;
 
+    // 🧩 Validate userId
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid or missing userId" });
     }
 
-    const allJobsApplications = await JobPost.find()
-    const arr = []
-    allJobsApplications.forEach(jobs => jobs.postedJobs.forEach(job => arr.push(job)))
-    res.status(200).json({ jobs: arr, success: true })
+    // 🧩 Get all jobIds user has applied to
+    const appliedJobIds = await APPLIEDJOBS.find({ userId }).distinct("jobId");
 
+    let filteredJobs;
+
+    if (appliedJobIds.length === 0) {
+      // 🧩 If user hasn't applied anywhere, show all jobs
+      filteredJobs = await JobPost.find();
+    } else {
+      // 🧩 Show jobs that are *not* in appliedJobIds → DIFFERENCE
+      filteredJobs = await JobPost.find({ _id: { $nin: appliedJobIds } });
+    }
+
+    return res.status(200).json({
+      success: true,
+      totalJobs: filteredJobs.length,
+      message:
+        appliedJobIds.length === 0
+          ? "No jobs applied yet — showing all jobs"
+          : "Showing jobs not yet applied",
+      data: filteredJobs,
+    });
   } catch (error) {
+    console.error("❌ Error fetching jobs:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -78,12 +85,12 @@ export const getJobsEmployerPanel = async (req, res) => {
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid or missing userId. Please login again" });
     }
-    const fetchJobs = await JobPost.findOne({ userId })
+    const fetchJobs = await JobPost.find({ userId })
 
     if (!fetchJobs)
       return res.status(404).json({ message: 'No jobs posted yet!!', success: false })
 
-    return res.status(200).json({ message: 'jobs fetched successfully!', data:fetchJobs.postedJobs })
+    return res.status(200).json({ message: 'jobs fetched successfully!', data: fetchJobs })
   }
   catch (err) {
     return res.status(500).json({ message: err.message, success: false })
@@ -95,7 +102,7 @@ export const getAppliedJobsByCandidate = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const jobPosts = await APPLIEDJOBS.findOne({ userId }).populate("userId", "full_name email");
+    const jobPosts = await APPLIEDJOBS.find({ userId }).populate("userId", "full_name email");
 
     if (!jobPosts) {
       return res.status(404).json({
@@ -141,81 +148,69 @@ export const getAppliedJobsByCandidate = async (req, res) => {
 //   }
 // }
 export const sentJobApplicationController = async (req, res) => {
-  const { organisation_name, job_profile, ctc, job_location, job_type, description } = req.body;
-  const { userId } = req.params;
-
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({
-      message: "Invalid or missing userId",
-      status: 400,
-      success: false,
-    });
-  }
-
   try {
-    // Find user's applications
-    let userApplication = await APPLIEDJOBS.findOne({ userId });
+    const { userId } = req.params;
+    const { jobId, organisation_name, job_profile, ctc, job_location, job_type, description } = req.body;
 
-    if (userApplication) {
-      // ✅ Check if a job with same details already exists
-      const alreadyApplied = userApplication.sentApplications.some(
-        (app) =>
-          app.organisation_name === organisation_name &&
-          app.job_profile === job_profile &&
-          app.ctc === ctc &&
-          app.job_location === job_location &&
-          app.job_type === job_type
-      );
-
-      if (alreadyApplied) {
-        return res.status(200).json({
-          message: "Application already sent for this job profile",
-          success: false,
-          status: 401,
-        });
-      }
-
-      // Push new application
-      userApplication.sentApplications.push({
-        organisation_name,
-        job_profile,
-        ctc,
-        job_location,
-        job_type,
-        description,
+    // 🧩 Validate userId
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or missing userId. Please login again.",
       });
-
-      await userApplication.save();
-    } else {
-      // Create a new document if not found
-      const newApplication = new APPLIEDJOBS({
-        userId,
-        sentApplications: [
-          {
-            organisation_name,
-            job_profile,
-            ctc,
-            job_location,
-            job_type,
-            description,
-          },
-        ],
-      });
-
-      await newApplication.save();
     }
 
-    return res.status(200).json({
-      message: "Application sent successfully!",
-      status: 200,
-      success: true,
+    // 🧩 Validate jobId
+    if (!jobId || !mongoose.Types.ObjectId.isValid(jobId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or missing jobId.",
+      });
+    }
+
+    // 🧩 Check if the job exists in JobPost collection
+    const jobExists = await JobPost.findById(jobId);
+    if (!jobExists) {
+      return res.status(404).json({
+        success: false,
+        message: "Job not found.",
+      });
+    }
+
+    // 🧩 Check if user already applied for this job
+    const alreadyApplied = await APPLIEDJOBS.findOne({ userId, jobId });
+    if (alreadyApplied) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already applied for this job.",
+      });
+    }
+
+    // 🧩 Create a new applied job record
+    const newApplication = new APPLIEDJOBS({
+      userId,
+      jobId,
+      organisation_name: organisation_name || jobExists.organisation_name,
+      job_profile: job_profile || jobExists.job_profile,
+      ctc: ctc || jobExists.ctc,
+      job_location: job_location || jobExists.job_location,
+      job_type: job_type || jobExists.job_type,
+      description: description || jobExists.job_description,
     });
+
+    await newApplication.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Application sent successfully!",
+      data: newApplication,
+    });
+
   } catch (error) {
-    console.error("Error while sending application:", error);
+    console.error("❌ Error while sending application:", error);
     return res.status(500).json({
-      message: "Internal server error",
       success: false,
-      status: 500,
+      message: "Internal server error: " + error.message,
     });
   }
 };

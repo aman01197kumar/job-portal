@@ -67,7 +67,7 @@ const userLogin = async (req, res) => {
       return res.status(200).json({ message: "Incorrect password", status: 401 });
 
     const token = await jwt.sign(
-      { userid: user._id, username: user.full_name },
+      { userid: user._id, username: user.full_name, email:user.email },
       process.env.SECRET_KEY
     );
 
@@ -85,30 +85,35 @@ const userLogin = async (req, res) => {
   }
 };
 
-export const updateUserData = async (req, res) => {
+const userProfile = async (req, res) => {
   try {
-    const { email } = req.query;
+
     const { full_name, description, skills } = req.body;
+    const token = req.headers['authorization'].split(' ')[1]
 
-    const user_img = req.files?.image?.[0];
-    const resume = req.file;
-
-    const user = await User.findOne({ email });
-
-    user.full_name = full_name;
-    user.description = description;
-    user.skills = skills;
-    user.resume = resume ? resume.path : user.resume;
-    user.profile_img = user_img ? user_img.path : user.profile_img;
+    const decode = await jwt.verify(token,process.env.SECRET_KEY)
 
 
-    await user.save();
-    return res.status(200).json({
-      success: true,
-      message: "data updated successfully!!",
-      status: 200,
-      user,
-    });
+    // const user_img = req.files?.image?.[0];
+    // const resume = req.file;
+
+    // const user = await User.findOne({ email });
+
+    // user.full_name = full_name;
+    // user.description = description;
+    // user.skills = skills;
+    // user.resume = resume ? resume.path : user.resume;
+    // user.profile_img = user_img ? user_img.path : user.profile_img;
+
+
+    // await user.save();
+    // return res.status(200).json({
+    //   success: true,
+    //   message: "data updated successfully!!",
+    //   status: 200,
+    //   user,
+    // });
+    res.send(decode)
   } catch (err) {
     return res
       .status(500)
@@ -135,4 +140,4 @@ export const getUserData = async (req, res) => {
   }
 };
 
-export { userSignup, userLogin };
+export { userSignup, userLogin,userProfile };

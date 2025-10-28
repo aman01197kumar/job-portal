@@ -24,7 +24,7 @@ catch (err) {
   console.log(console.log(err))
 }
 app.use(router);
-app.use("/uploads", express.static("uploads")); // Serve images statically
+// app.use("/uploads", express.static("uploads")); // Serve images statically
 app.use(user_router);
 app.use('/auth', googleRoutes)
-app.listen(PORT, () => console.log(`Server is running at ${PORT}`));
+app.listen(PORT, () => console.log(`Server is running at ${PORT}`))
