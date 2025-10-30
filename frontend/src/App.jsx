@@ -16,7 +16,8 @@ import { addUsername } from "./redux/userInfo";
 import ProtectedRoute from "./utilities/components/ProtectedRoute";
 
 const App = () => {
-  const [userData, setUserData] = useState(() => {
+  const dispatch = useDispatch();
+  const getUserData = () => {
     const storedUser = localStorage.getItem("userData");
     if (storedUser) {
       try {
@@ -27,12 +28,13 @@ const App = () => {
       }
     }
     return null;
-  });
-  const dispatch = useDispatch();
+  };
 
-  useEffect(() => {
-    dispatch(addUsername(userData?.username));
-  }, [userData, dispatch]);
+  const userData = getUserData()
+
+  console.log(userData?.username,'usrrrt');
+  dispatch(addUsername(userData?.username));
+  
 
   return (
     <GoogleOAuthProvider clientId="1731036921-prm09e148mv69jnpqtpnioe6tqisi8lr.apps.googleusercontent.com">
@@ -45,7 +47,7 @@ const App = () => {
           <Route element={<ProtectedRoute userData={userData} />}>
             <Route
               path="/dashboard"
-              element={<Dashboard userData={userData} user_type={userData?.user_type} userId={userData?.userId} />}
+              element={<Dashboard userData={userData} />}
             />
             <Route
               path="/admin/job-posting"
@@ -67,3 +69,4 @@ const App = () => {
 };
 
 export default App;
+

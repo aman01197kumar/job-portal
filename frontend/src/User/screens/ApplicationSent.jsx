@@ -7,6 +7,7 @@ import Loader from "../../utilities/components/Loader";
 import { useDispatch } from "react-redux";
 import { addJobDescription } from "../../redux/jobDescription";
 import { useNavigate } from "react-router-dom";
+import { setAppliedJobsCount } from "../../redux/sentApplications";
 
 
 const NoJobsFound = () => {
@@ -32,6 +33,7 @@ const ApplicationSent = ({ userid }) => {
                 `${BASE_URL}/${END_POINTS.APPLIED_JOBS}/${userid}`,
             );
             setAppliedJobs(response?.data?.data)
+            dispatch(setAppliedJobsCount(response?.data?.data?.length))
         }
         catch (err) {
             console.log(err);

@@ -1,14 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL, END_POINTS } from "../../assets/END_POINTS";
-import {
-  FileText,
-} from "lucide-react";
+import {FileText} from "lucide-react";
 import { Header } from "../../utilities/components/Header";
 import StatusCards from "../../utilities/components/StatusCards";
 import toast, { Toaster } from 'react-hot-toast';
-import { addAppliedJobs } from "../../redux/sentApplications";
-import { useDispatch } from "react-redux";
 import SavedJobs from "../../utilities/components/SavedJobs";
 import Notifications from "../../utilities/components/Notifications"
 import JobCards from "../../utilities/components/JobCards";
@@ -16,10 +12,8 @@ import { useNavigate } from "react-router-dom";
 
 const MainContent = ({ userId }) => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
-  const [appliedJobs, setAppliedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [allJobs, setAllJobs] = useState([])
-  const dispatch = useDispatch()
   const navigate = useNavigate()
 
 
@@ -29,7 +23,6 @@ const MainContent = ({ userId }) => {
       const response = await axios.get(`${BASE_URL}/${END_POINTS.JOBS}/${userId}`, {
         "content-type": "application/json",
       });
-      console.log(response, 'redd');
       setDashboardJobPosted(response?.data?.data);
       setAllJobs(response?.data?.data)
     } catch (err) {
@@ -80,14 +73,10 @@ const MainContent = ({ userId }) => {
         window.location.reload()
       }
     } catch (err) {
-      console.error("Apply error:", err);
-      toast.error("Something went wrong.");
+      toast.error(err.message);
     }
   };
 
-
-  const isApplied = (jobId) =>
-    appliedJobs.some((item) => item._id === jobId);
 
   return (
     <>
@@ -114,7 +103,6 @@ const MainContent = ({ userId }) => {
                   dashboardJobPosted={dashboardJobPosted}
                   loading={loading}
                   jobAppliedHandler={jobAppliedHandler}
-                  isApplied={isApplied}
                 />
               </div>
             </div>

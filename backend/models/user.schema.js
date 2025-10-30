@@ -14,11 +14,6 @@ const userSchema = mongoose.Schema({
   phone_number: { type: String, required: true, unique: true, index: true },
   password: { type: String, required: true },
   user: { type: String, required: true },
-  description: String,
-  user_img: String,
-  skills: Object,
-  resume: String,
-  profile_img: String,
-});
+}, { timestamps: true });
 
 export const User = mongoose.model("User", userSchema);

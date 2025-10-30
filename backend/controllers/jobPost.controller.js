@@ -45,21 +45,21 @@ export const getAllJobPosts = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // 🧩 Validate userId
+    // Validate userId
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid or missing userId" });
     }
 
-    // 🧩 Get all jobIds user has applied to
+    // Get all jobIds user has applied to
     const appliedJobIds = await APPLIEDJOBS.find({ userId }).distinct("jobId");
 
     let filteredJobs;
 
     if (appliedJobIds.length === 0) {
-      // 🧩 If user hasn't applied anywhere, show all jobs
+      // If user hasn't applied anywhere, show all jobs
       filteredJobs = await JobPost.find();
     } else {
-      // 🧩 Show jobs that are *not* in appliedJobIds → DIFFERENCE
+      // Show jobs that are *not* in appliedJobIds → DIFFERENCE
       filteredJobs = await JobPost.find({ _id: { $nin: appliedJobIds } });
     }
 

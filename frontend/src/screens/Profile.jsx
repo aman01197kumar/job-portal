@@ -40,7 +40,7 @@ const sampleUser = {
   joinDate: "2021-03-15",
 };
 
-export const ProfilePage = ({token}) => {
+export const ProfilePage = () => {
   const [user, setUser] = useState(sampleUser);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 

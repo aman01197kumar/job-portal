@@ -1,6 +1,8 @@
 import { User } from "../models/user.schema.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { UserProfile } from "../models/userProfile.schema.js";
+import mongoose from "mongoose";
 const userSignup = async (req, res) => {
   try {
     const { first_name, last_name, email, password, phone_number, user } = req.body;
@@ -67,7 +69,7 @@ const userLogin = async (req, res) => {
       return res.status(200).json({ message: "Incorrect password", status: 401 });
 
     const token = await jwt.sign(
-      { userid: user._id, username: user.full_name, email:user.email },
+      { userid: user._id, username: user.full_name, email: user.email },
       process.env.SECRET_KEY
     );
 
@@ -76,7 +78,7 @@ const userLogin = async (req, res) => {
       status: 200,
       user: user.user,
       userId: user._id,
-      username:user.full_name,
+      username: user.full_name,
       token: token,
     });
   }
@@ -85,35 +87,22 @@ const userLogin = async (req, res) => {
   }
 };
 
-const userProfile = async (req, res) => {
+export const getUserProfile = async (req, res) => {
   try {
 
-    const { full_name, description, skills } = req.body;
     const token = req.headers['authorization'].split(' ')[1]
 
-    const decode = await jwt.verify(token,process.env.SECRET_KEY)
+    const decode = await jwt.verify(token, process.env.SECRET_KEY)
 
+    const { userid } = decode
 
-    // const user_img = req.files?.image?.[0];
-    // const resume = req.file;
+    if (!userid)
+      return res.status(404).json({ success: false, message: 'Session expired. Please login again' })
 
-    // const user = await User.findOne({ email });
+    const user = await UserProfile.findOne({ userId: userid })
 
-    // user.full_name = full_name;
-    // user.description = description;
-    // user.skills = skills;
-    // user.resume = resume ? resume.path : user.resume;
-    // user.profile_img = user_img ? user_img.path : user.profile_img;
+    return res.status(200).json({ success: true, data: user })
 
-
-    // await user.save();
-    // return res.status(200).json({
-    //   success: true,
-    //   message: "data updated successfully!!",
-    //   status: 200,
-    //   user,
-    // });
-    res.send(decode)
   } catch (err) {
     return res
       .status(500)
@@ -121,23 +110,65 @@ const userProfile = async (req, res) => {
   }
 };
 
-export const getUserData = async (req, res) => {
+
+export const updateUserProfile = async (req, res) => {
   try {
-    const { email } = req.query;
+    const { userId } = req.params;
 
-    const user = await User.findOne({ email });
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or missing userId. Please login again.",
+      });
+    }
 
-    if (!user)
-      return res
-        .status(200)
-        .json({ success: false, status: 404, message: "User not found" });
+    const {
+      techStack,
+      bio,
+      location,
+      website,
+      github,
+      linkedIn,
+      jobTitle,
+      company,
+      yearsOfExperience,
+      availabilityStatus
+    } = req.body;
 
-    return res
-      .status(200)
-      .json({ success: true, status: 200, message: "User found", user });
+    const profile_img = req.files?.image?.[0]?.path;
+    const resume = req.files?.resume?.[0]?.path;
+
+    const user = await UserProfile.findByIdAndUpdate(
+      { _id: userId },
+      {
+        $set: {
+          techStack,
+          bio,
+          location,
+          website,
+          github,
+          linkedIn,
+          jobTitle,
+          company,
+          yearsOfExperience,
+          availabilityStatus,
+          resume,
+          profile_img
+        }
+      },
+      { new: true, upsert: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "User Data updated successfully!",
+      user,
+    });
   } catch (err) {
-    console.log(err);
+    console.error("❌ Error updating user profile:", err);
+    return res.status(500).json({ success: false, message: err.message });
   }
 };
 
-export { userSignup, userLogin,userProfile };
+
+export { userSignup, userLogin };

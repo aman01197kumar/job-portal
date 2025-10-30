@@ -7,16 +7,15 @@ const JobCards = ({
   dashboardJobPosted,
   loading,
   jobAppliedHandler,
-  isApplied,
   buttonLoadingId,
 
 }) => {
-  
+
   const dispatch = useDispatch()
 
   const viewDetailHandler = (application) => {
     dispatch(addJobDescription(application))
-  
+
   }
   return (
     <div className="p-6">
@@ -57,24 +56,17 @@ const JobCards = ({
 
                 <button
                   onClick={() => jobAppliedHandler(application)}
-                  disabled={
-                    isApplied(application?._id) ||
-                    buttonLoadingId === application?._id
-                  }
-                  className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${isApplied(application?._id)
-                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                      : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    }`}
-                  
+
+                  className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200
+                      bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+
                 >
                   {buttonLoadingId === application?._id ? (
                     <Loader width={5} height={5} />
                   ) : (
                     <>
                       <ExternalLink size={16} />
-                      {isApplied(application?._id)
-                        ? "Applied"
-                        : "Apply Now"}
+                      Apply Now
 
                     </>
                   )}

@@ -9,7 +9,8 @@ const userInfoSlice = createSlice({
     initialState,
     reducers: {
         addUsername: (state, action) => {
-            state.username = action.payload
+            console.log(action.payload,'knkcn');
+            state.username=action.payload
         },
         
     },

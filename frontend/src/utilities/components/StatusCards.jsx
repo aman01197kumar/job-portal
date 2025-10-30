@@ -3,12 +3,13 @@ import StatusCard from './StatusCard'
 
 const StatusCards = () => {
 
-  const sentApplications = useSelector(state => state?.sentApplication?.selectedJobApplications)
+
+  const { appliedJobsCount } = useSelector(state => state?.sentApplication)
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatusCard
         title="Applications Sent"
-        value={sentApplications.length}
+        value={appliedJobsCount}
         url="application-sent"
       />
       <StatusCard

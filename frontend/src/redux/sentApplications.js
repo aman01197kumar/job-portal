@@ -1,20 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    selectedJobApplications: [],
-    jobApplications:[]
+    appliedJobsCount : 0,
 };
 
 const sentApplicationSlice = createSlice({
     name: "applications",
     initialState,
     reducers: {
-        addAppliedJobs: (state, action) => {
-            state.selectedJobApplications = [...action.payload]
-        },
-        
+        setAppliedJobsCount:(state,action)=>{
+            state.appliedJobsCount = action.payload
+        }
     },
 });
 
-export const { addAppliedJobs } = sentApplicationSlice.actions;
+export const { setAppliedJobsCount } = sentApplicationSlice.actions;
 export default sentApplicationSlice.reducer;
