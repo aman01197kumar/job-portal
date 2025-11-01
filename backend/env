@@ -1,3 +1,0 @@
-MONGO_URL = mongodb+srv://dbUser:Admin1234@jobportal.cp89u6e.mongodb.net/jobportal
-PORT = 3000
-SECRET_KEY = jobportaltoken
