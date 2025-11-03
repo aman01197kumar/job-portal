@@ -1,10 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
-import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  persistReducer,
+  persistStore,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from "redux-persist";
 import { combineReducers } from "redux";
-import jobReducer from "./jobDescription"; // ✅ Correct import
-import sentApplicationReducer from './sentApplications'
-import userInfoReducer from './userInfo'
+import jobReducer from "./jobDescription";
+import sentApplicationReducer from "./sentApplications"; // ✅
+import userInfoReducer from "./userInfo";
 
 const persistConfig = {
   key: "root",
@@ -12,9 +21,9 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-  jobDescription: jobReducer, // ✅ Use the actual reducer
-  sentApplication: sentApplicationReducer,
-  userInfo: userInfoReducer
+  jobDescription: jobReducer,
+  sentApplication: sentApplicationReducer, // ✅ matches slice name
+  userInfo: userInfoReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -24,7 +33,6 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ignore redux-persist actions that have non-serializable values
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),

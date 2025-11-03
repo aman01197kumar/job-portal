@@ -2,18 +2,19 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 const ViewJobDescription = () => {
+  const { id } = useParams();
 
-  const { id } = useParams()
-
-  const jobFromStore = useSelector((state) =>
-    state?.jobDescription?.selectedJob
+  const jobFromStore = useSelector(
+    (state) => state?.jobDescription?.selectedJob
   );
 
+  const { appliedJobsCount, sentApplicationsIds } = useSelector(
+    (state) => state?.sentApplication
+  );
 
-  const sentApplications = useSelector(state => state?.sentApplication?.selectedJobApplications)
+  const isApplied = sentApplicationsIds?.includes(id); // ✅ fixed
 
-  const isApplied = sentApplications.some(job => id === job._id)
-  document.title = 'Oppmore | Job Description'
+  document.title = "Oppmore | Job Description";
 
   if (!jobFromStore) {
     return (
@@ -52,11 +53,18 @@ const ViewJobDescription = () => {
       </div>
 
       <div className="mt-6">
-        <button className={`${isApplied ? "bg-gray-500" : "bg-green-600"} hover:bg-green-700 text-white py-2 px-4 rounded`} disabled={isApplied}>
+        <button
+          className={`w-full py-2 px-4 rounded text-white font-semibold transition-colors ${
+            isApplied
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
+          disabled={isApplied}
+        >
           {isApplied ? "Applied" : "Apply Now"}
         </button>
       </div>
-    </div >
+    </div>
   );
 };
 

@@ -32,7 +32,6 @@ const App = () => {
 
   const userData = getUserData()
 
-  console.log(userData?.username,'usrrrt');
   dispatch(addUsername(userData?.username));
   
 
