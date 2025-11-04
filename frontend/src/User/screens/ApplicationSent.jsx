@@ -8,7 +8,7 @@ import {
 import { Header } from "../../utilities/components/Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { BASE_URL, END_POINTS } from "../../assets/END_POINTS";
+import { END_POINTS } from "../../assets/END_POINTS";
 import Loader from "../../utilities/components/Loader";
 import { useDispatch } from "react-redux";
 import { addJobDescription } from "../../redux/jobDescription";
@@ -30,6 +30,7 @@ const ApplicationSent = ({ userid }) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const BASE_URL = import.meta.env.BASE_URL;
   const fetchAppliedJobs = async () => {
     try {
       setIsLoading(true);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Menu,
   X,
@@ -15,11 +15,10 @@ import {
   Heart,
   FileText,
   MessageSquare,
-  CloudHail
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/imgs/oppmore_logo.png'
-import { useSelector } from 'react-redux';
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import logo from "../../assets/imgs/oppmore_logo.png";
+import { useSelector } from "react-redux";
 
 const jobCategories = [
   {
@@ -28,7 +27,7 @@ const jobCategories = [
     description: "Software, IT, and tech roles",
     href: "#",
     icon: Briefcase,
-    count: "2,340 jobs"
+    count: "2,340 jobs",
   },
   {
     id: 2,
@@ -36,7 +35,7 @@ const jobCategories = [
     description: "UI/UX, Graphic, and Product Design",
     href: "#",
     icon: BookOpen,
-    count: "890 jobs"
+    count: "890 jobs",
   },
   {
     id: 3,
@@ -44,7 +43,7 @@ const jobCategories = [
     description: "Digital marketing and growth roles",
     href: "#",
     icon: Users,
-    count: "1,250 jobs"
+    count: "1,250 jobs",
   },
   {
     id: 4,
@@ -52,8 +51,8 @@ const jobCategories = [
     description: "Business development and sales",
     href: "#",
     icon: Building,
-    count: "980 jobs"
-  }
+    count: "980 jobs",
+  },
 ];
 
 const quickActions = [
@@ -62,19 +61,19 @@ const quickActions = [
   { name: "Messages", href: "#", icon: MessageSquare, count: "3" },
 ];
 
-
-
 export const Header = ({ setDashboardJobPosted, allJobs }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [jobsDropdownOpen, setJobsDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
-  const navigate = useNavigate()
-  const username = useSelector(state => state?.userInfo?.username)
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+  const navigate = useNavigate();
+  const userInfo = useSelector((state) => state?.userInfo?.user);
 
   const handleLogout = () => {
-    localStorage.removeItem('userData');
-    navigate('/');
+    localStorage.removeItem("userData");
+    navigate("/");
     window.location.reload();
   };
 
@@ -87,19 +86,19 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
       return;
     }
 
-    const filteredJobs = allJobs.filter((job) =>
-      job.job_profile.toLowerCase().includes(searchValue) ||
-      job.organisation_name.toLowerCase().includes(searchValue) // Optional: search by company too
+    const filteredJobs = allJobs.filter(
+      (job) =>
+        job.job_profile.toLowerCase().includes(searchValue) ||
+        job.organisation_name.toLowerCase().includes(searchValue) // Optional: search by company too
     );
 
     setDashboardJobPosted(filteredJobs);
   };
 
-
   const firstCharacters = (str) => {
-    const words = str.split(' ')
-    return words.map(word => word[0]).join('')
-  }
+    const words = str.split(" ");
+    return words.map((word) => word[0]).join("");
+  };
   return (
     <header className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -110,7 +109,7 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
               src={logo}
               alt="logo"
               className="w-28 mt-3 object-contain cursor-pointer"
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
             />
           </div>
 
@@ -123,13 +122,19 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
                 className="flex items-center text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200"
               >
                 Find Jobs
-                <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-200 ${jobsDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown
+                  className={`ml-1 h-4 w-4 transition-transform duration-200 ${
+                    jobsDropdownOpen ? "rotate-180" : ""
+                  }`}
+                />
               </button>
 
               {jobsDropdownOpen && (
                 <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
                   <div className="p-4">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-3">Browse by Category</h3>
+                    <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                      Browse by Category
+                    </h3>
                     <div className="space-y-2">
                       {jobCategories.map((category) => (
                         <a
@@ -141,9 +146,15 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
                             <category.icon className="h-6 w-6 text-blue-600" />
                           </div>
                           <div className="ml-3 flex-1">
-                            <p className="text-sm font-medium text-gray-900">{category.name}</p>
-                            <p className="text-xs text-gray-500">{category.description}</p>
-                            <p className="text-xs text-blue-600 font-medium">{category.count}</p>
+                            <p className="text-sm font-medium text-gray-900">
+                              {category.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {category.description}
+                            </p>
+                            <p className="text-xs text-blue-600 font-medium">
+                              {category.count}
+                            </p>
                           </div>
                         </a>
                       ))}
@@ -162,10 +173,16 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
             </div>
 
             {/* Navigation Links */}
-            <a href="#" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
+            <a
+              href="#"
+              className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200"
+            >
               Companies
             </a>
-            <a href="career-advice" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
+            <a
+              href="career-advice"
+              className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200"
+            >
               Career Advice
             </a>
           </div>
@@ -204,21 +221,31 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                 className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
               >
-                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-200 ">{firstCharacters(username)}</div>
-                {/* <img
-                  src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400"
-                  alt="Profile"
-                  className="h-8 w-8 rounded-full object-cover"
-                /> */}
-                <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${profileDropdownOpen ? 'rotate-180' : ''}`} />
+                {userInfo?.profileImage ? (
+                  <img
+                    src={`${BASE_URL}/${userInfo?.profileImage}`}
+                    alt="Profile"
+                    className="h-8 w-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-200 ">
+                    {firstCharacters(userInfo?.username)}
+                  </div>
+                )}
+                <ChevronDown
+                  className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${
+                    profileDropdownOpen ? "rotate-180" : ""
+                  }`}
+                />
               </button>
 
               {profileDropdownOpen && (
                 <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
                   <div className="p-4 border-b border-gray-200">
                     <div className="flex items-center space-x-3">
-
-                      <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-200 ">{firstCharacters(username)}</div>
+                      <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-200 ">
+                        {firstCharacters(userInfo?.username)}
+                      </div>
 
                       {/* <img
                         src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400"
@@ -226,16 +253,22 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
                         className="h-12 w-12 rounded-full object-cover"
                       /> */}
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{username}</p>
-                        <p className="text-xs text-gray-500">Software Engineer</p>
-                        <p className="text-xs text-green-600">Profile 85% complete</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {userInfo?.username}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Software Engineer
+                        </p>
+                        <p className="text-xs text-green-600">
+                          Profile 85% complete
+                        </p>
                       </div>
                     </div>
                   </div>
 
                   <div className="py-2">
                     <a
-                      href={`/user-profile/${username}`}
+                      href={`/user-profile/${userInfo?.username}`}
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
                     >
                       <User className="h-4 w-4 mr-3" />
@@ -313,7 +346,9 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
                 className="h-10 w-10 rounded-full object-cover"
               />
               <div>
-                <p className="text-sm font-medium text-gray-900">{username}</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {userInfo?.username}
+                </p>
                 <p className="text-xs text-gray-500">Software Engineer</p>
               </div>
             </div>
@@ -334,34 +369,54 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
                       </span>
                     )}
                   </div>
-                  <span className="text-xs text-gray-600 mt-1">{action.name}</span>
+                  <span className="text-xs text-gray-600 mt-1">
+                    {action.name}
+                  </span>
                 </a>
               ))}
             </div>
 
             {/* Navigation Links */}
             <div className="space-y-2">
-              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+              <a
+                href="#"
+                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+              >
                 Find Jobs
               </a>
-              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+              <a
+                href="#"
+                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+              >
                 Companies
               </a>
-              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+              <a
+                href="#"
+                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+              >
                 Salary Guide
               </a>
-              <a href="career-advice" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+              <a
+                href="career-advice"
+                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+              >
                 Career Advice
               </a>
             </div>
 
             {/* Account Actions */}
             <div className="pt-4 border-t border-gray-200 space-y-2">
-              <a href="#" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+              <a
+                href="#"
+                className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+              >
                 <User className="h-5 w-5 mr-3" />
                 View Profile
               </a>
-              <a href="#" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+              <a
+                href="#"
+                className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+              >
                 <Settings className="h-5 w-5 mr-3" />
                 Settings
               </a>

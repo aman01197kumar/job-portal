@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-import { BASE_URL, END_POINTS } from "../../assets/END_POINTS";
+import { END_POINTS } from "../../assets/END_POINTS";
 import AdminHeader from "../components/AdminHeader";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -17,6 +17,7 @@ const INITIAL_STATE = {
 const JobPosting = ({ userId }) => {
   const [createJob, setCreateJob] = useState(INITIAL_STATE);
   const [isLoading, setIsLoading] = useState(false);
+  const BASE_URL = import.meta.env.BASE_URL;
 
   const addJobOpportunityHandler = async () => {
     if (Object.values(createJob).some((value) => !value.trim())) {

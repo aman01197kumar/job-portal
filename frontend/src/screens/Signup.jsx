@@ -4,26 +4,24 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import toast, { Toaster } from 'react-hot-toast';
-import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
+import toast, { Toaster } from "react-hot-toast";
+import { END_POINTS } from "../assets/END_POINTS";
 
 const Signup = () => {
   const [userSignupDetails, setUserSignupDetails] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    password: '',
-    phone_number: '',
-    user: '',
-  })
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+    phone_number: "",
+    user: "",
+  });
   const [confirmPassword, setConfirmPassword] = useState("");
-
-
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const BASE_URL = import.meta.env.BASE_URL;
 
   const onSubmitHandler = async () => {
-    
     if (
       !userSignupDetails?.first_name?.trim() ||
       !userSignupDetails?.last_name?.trim() ||
@@ -59,7 +57,6 @@ const Signup = () => {
     }
 
     try {
-
       const response = await axios.post(
         `${BASE_URL}/${END_POINTS.SIGNUP}`,
         userSignupDetails,
@@ -69,7 +66,6 @@ const Signup = () => {
           },
         }
       );
-
 
       if (response.status == 409) {
         toast.error("somthing went wrong");
@@ -85,7 +81,7 @@ const Signup = () => {
       navigate("/");
     } catch (err) {
       console.log(err);
-      toast.error(err?.response?.data?.message)
+      toast.error(err?.response?.data?.message);
     }
   };
 
@@ -95,35 +91,57 @@ const Signup = () => {
       style={{ backgroundImage: `url(${signup})` }}
     >
       <div className="bg-white bg-opacity-90 w-full max-w-3xl p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-6">Create an Account</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">
+          Create an Account
+        </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input
             type="text"
             placeholder="First Name"
             value={userSignupDetails?.first_name}
-            onChange={(e) => setUserSignupDetails(prev => ({ ...prev, first_name: e.target.value }))}
+            onChange={(e) =>
+              setUserSignupDetails((prev) => ({
+                ...prev,
+                first_name: e.target.value,
+              }))
+            }
             className="input-field"
           />
           <input
             type="text"
             placeholder="Last Name"
             value={userSignupDetails?.last_name}
-            onChange={(e) => setUserSignupDetails(prev => ({ ...prev, last_name: e.target.value }))}
+            onChange={(e) =>
+              setUserSignupDetails((prev) => ({
+                ...prev,
+                last_name: e.target.value,
+              }))
+            }
             className="input-field"
           />
           <input
             type="email"
             placeholder="Email"
             value={userSignupDetails?.email}
-            onChange={(e) => setUserSignupDetails(prev => ({ ...prev, email: e.target.value }))}
+            onChange={(e) =>
+              setUserSignupDetails((prev) => ({
+                ...prev,
+                email: e.target.value,
+              }))
+            }
             className="input-field"
           />
           <input
             type="text"
             placeholder="Contact Number"
             value={userSignupDetails?.phone_number}
-            onChange={(e) => setUserSignupDetails(prev => ({ ...prev, phone_number: e.target.value }))}
+            onChange={(e) =>
+              setUserSignupDetails((prev) => ({
+                ...prev,
+                phone_number: e.target.value,
+              }))
+            }
             className="input-field"
           />
           <div className="relative">
@@ -131,7 +149,12 @@ const Signup = () => {
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={userSignupDetails?.password}
-              onChange={(e) => setUserSignupDetails(prev => ({ ...prev, password: e.target.value }))}
+              onChange={(e) =>
+                setUserSignupDetails((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }))
+              }
               className="input-field pr-10"
             />
             {showPassword ? (
@@ -154,7 +177,12 @@ const Signup = () => {
           />
           <select
             value={userSignupDetails?.user}
-            onChange={(e) => setUserSignupDetails(prev => ({ ...prev, user: e.target.value }))}
+            onChange={(e) =>
+              setUserSignupDetails((prev) => ({
+                ...prev,
+                user: e.target.value,
+              }))
+            }
             className="input-field"
           >
             <option value="">User Type</option>
@@ -185,7 +213,6 @@ const Signup = () => {
       </div>
     </div>
   );
-
 };
 
 export default Signup;

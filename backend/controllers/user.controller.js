@@ -5,20 +5,26 @@ import { UserProfile } from "../models/userProfile.schema.js";
 import mongoose from "mongoose";
 const userSignup = async (req, res) => {
   try {
-    const { first_name, last_name, email, password, phone_number, user } = req.body;
-    const full_name = `${first_name} ${last_name}`
+    const { first_name, last_name, email, password, phone_number, user } =
+      req.body;
+    const full_name = `${first_name} ${last_name}`;
 
     if (!email || !full_name || !phone_number || !password || !user) {
-      return res.status(401).json({ status: 401, message: "Fill all the fields" });
+      return res
+        .status(401)
+        .json({ status: 401, message: "Fill all the fields" });
     }
 
     // ✅ Check using actual DB field names
     const userData = await User.findOne({
-      $or: [{ email }, { phone_number }]
+      $or: [{ email }, { phone_number }],
     });
 
     if (userData) {
-      return res.status(409).json({ status: 409, message: "Email or Contact Number already exists." });
+      return res.status(409).json({
+        status: 409,
+        message: "Email or Contact Number already exists.",
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -48,30 +54,30 @@ const userSignup = async (req, res) => {
   }
 };
 
-
 const userLogin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-
     if (!email || !password)
       return res
         .status(200)
         .json({ message: "Fill all the details", status: 400 });
     const user = await User.findOne({ email });
 
-
     if (!user)
       return res.status(200).json({ message: "User not found", status: 404 });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
-      return res.status(200).json({ message: "Incorrect password", status: 401 });
+      return res
+        .status(200)
+        .json({ message: "Incorrect password", status: 401 });
 
     const token = await jwt.sign(
       { userid: user._id, username: user.full_name, email: user.email },
       process.env.SECRET_KEY
     );
+    const fetchUserImage = await UserProfile.findOne({ userId: user._id });
 
     return res.status(200).json({
       message: "login successful",
@@ -80,29 +86,32 @@ const userLogin = async (req, res) => {
       userId: user._id,
       username: user.full_name,
       token: token,
+      profileImage: fetchUserImage.profile_img ,
     });
-  }
-  catch (err) {
-    return res.status(500).json({ message: "Internal Server Error", status: 500, success: false })
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", status: 500, success: false });
   }
 };
 
 export const getUserProfile = async (req, res) => {
   try {
+    const token = req.headers["authorization"].split(" ")[1];
 
-    const token = req.headers['authorization'].split(' ')[1]
+    const decode = await jwt.verify(token, process.env.SECRET_KEY);
 
-    const decode = await jwt.verify(token, process.env.SECRET_KEY)
-
-    const { userid } = decode
+    const { userid } = decode;
 
     if (!userid)
-      return res.status(404).json({ success: false, message: 'Session expired. Please login again' })
+      return res.status(404).json({
+        success: false,
+        message: "Session expired. Please login again",
+      });
 
-    const user = await UserProfile.findOne({ userId: userid })
+    const user = await UserProfile.findOne({ userId: userid });
 
-    return res.status(200).json({ success: true, data: user })
-
+    return res.status(200).json({ success: true, data: user });
   } catch (err) {
     return res
       .status(500)
@@ -110,16 +119,24 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-
 export const updateUserProfile = async (req, res) => {
   try {
     const { userId } = req.params;
 
+    // ✅ Validate userId
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({
         success: false,
         message: "Invalid or missing userId. Please login again.",
       });
+    }
+
+    // ✅ Fetch main user (for name & email)
+    const findUser = await User.findById(userId);
+    if (!findUser) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     const {
@@ -132,16 +149,21 @@ export const updateUserProfile = async (req, res) => {
       jobTitle,
       company,
       yearsOfExperience,
-      availabilityStatus
+      availabilityStatus,
     } = req.body;
 
+    // ✅ Optional files
     const profile_img = req.files?.image?.[0]?.path;
     const resume = req.files?.resume?.[0]?.path;
 
-    const user = await UserProfile.findByIdAndUpdate(
-      { _id: userId },
+    // ✅ Upsert user profile
+    const updatedProfile = await UserProfile.findOneAndUpdate(
+      { userId }, // ✅ keep linked by userId
       {
         $set: {
+          userId, // maintain relationship
+          username: findUser.full_name, // ✅ from User model
+          email: findUser.email, // ✅ from User model
           techStack,
           bio,
           location,
@@ -152,23 +174,20 @@ export const updateUserProfile = async (req, res) => {
           company,
           yearsOfExperience,
           availabilityStatus,
-          resume,
-          profile_img
-        }
+          ...(resume && { resume }),
+          ...(profile_img && { profile_img }),
+        },
       },
-      { new: true, upsert: true }
+      { new: true, upsert: true } // create if doesn't exist
     );
 
     return res.status(200).json({
       success: true,
       message: "User Data updated successfully!",
-      user,
     });
   } catch (err) {
-    console.error("❌ Error updating user profile:", err);
     return res.status(500).json({ success: false, message: err.message });
   }
 };
-
 
 export { userSignup, userLogin };

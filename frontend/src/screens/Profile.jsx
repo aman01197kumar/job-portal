@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Edit3,
   MapPin,
@@ -14,51 +14,47 @@ import {
   Award,
 } from "lucide-react";
 
-import { techStacks } from "../assets/tech_stacks";
 import { Header } from "../utilities/components/Header";
 import { EditProfileModal } from "../User/screens/UserProfile/EditProfileModal";
+import axios from "axios";
+import { END_POINTS } from "../assets/END_POINTS";
 
-
-// Sample user data
-const sampleUser = {
-  id: "1",
-  username: "johndoe",
-  email: "john.doe@example.com",
-  fullName: "John Doe",
-  bio: "Full-stack developer with 5 years of experience building scalable web applications. Passionate about clean code, user experience, and continuous learning.",
-  location: "San Francisco, CA",
-  website: "https://johndoe.dev",
-  github: "johndoe",
-  linkedin: "johndoe",
-  jobTitle: "Senior Software Engineer",
-  company: "Tech Corp",
-  yearsOfExperience: 5,
-  profileImage:
-    "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400",
-  techStacks: ["react", "nodejs", "typescript", "python", "aws", "docker"],
-  availabilityStatus: "available",
-  joinDate: "2021-03-15",
-};
-
-export const ProfilePage = () => {
-  const [user, setUser] = useState(sampleUser);
+export const ProfilePage = ({ token,userId }) => {
+  const [user, setUser] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  // const fetchUserData = async()=>{
-  //     const response = 
-  // }
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-  const handleSaveProfile = (updatedUser) => {
-    setUser(updatedUser);
+  // Fetch user data
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/${END_POINTS.GET_USER_PROFILE}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response?.data?.data,'vmkm')
+      setUser(response?.data?.data);
+    } catch (err) {
+      console.error("Error fetching user profile:", err);
+    }
   };
+
+  useEffect(() => {
+    if (token) fetchUserData();
+  }, [token]);
 
   const getAvailabilityColor = (status) => {
     switch (status) {
-      case "available":
+      case "Available":
         return "bg-green-500";
-      case "busy":
+      case "Busy":
         return "bg-yellow-500";
-      case "unavailable":
+      case "Unavailable":
         return "bg-red-500";
       default:
         return "bg-gray-500";
@@ -67,20 +63,23 @@ export const ProfilePage = () => {
 
   const getAvailabilityText = (status) => {
     switch (status) {
-      case "available":
+      case "Available":
         return "Available for work";
-      case "busy":
+      case "Busy":
         return "Currently busy";
-      case "unavailable":
+      case "Unavailable":
         return "Not available";
       default:
         return "Status unknown";
     }
   };
 
-  const getUserTechStacks = () => {
-    return techStacks.filter((tech) => user.techStacks.includes(tech.id));
-  };
+  if (!user)
+    return (
+      <div className="flex items-center justify-center h-screen text-gray-600">
+        Loading user profile...
+      </div>
+    );
 
   return (
     <>
@@ -93,9 +92,9 @@ export const ProfilePage = () => {
             <div className="relative px-8 pb-8">
               <div className="flex flex-col md:flex-row items-start md:items-end -mt-16 mb-6">
                 <div className="relative mb-4 md:mb-0">
-                  {user.profileImage ? (
+                  {user.profile_img ? (
                     <img
-                      src={user.profileImage}
+                      src={`${BASE_URL}/${user?.profile_img}`}
                       alt="Profile"
                       className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
                     />
@@ -106,7 +105,7 @@ export const ProfilePage = () => {
                   )}
                   <div
                     className={`absolute bottom-2 right-2 w-6 h-6 rounded-full border-2 border-white ${getAvailabilityColor(
-                      user.availabilityStatus
+                      user?.availabilityStatus
                     )}`}
                   ></div>
                 </div>
@@ -114,19 +113,16 @@ export const ProfilePage = () => {
                 <div className="flex-1 md:ml-6">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                     <div>
-                      <h1 className="text-3xl font-bold text-gray-900">
-                        {user.fullName}
-                      </h1>
                       <p className="text-xl text-gray-600 mb-2">
                         @{user.username}
                       </p>
                       <div className="flex items-center text-sm text-gray-500 mb-2">
                         <div
                           className={`w-2 h-2 rounded-full mr-2 ${getAvailabilityColor(
-                            user.availabilityStatus
+                            user?.availabilityStatus
                           )}`}
                         ></div>
-                        {getAvailabilityText(user.availabilityStatus)}
+                        {getAvailabilityText(user?.availabilityStatus)}
                       </div>
                     </div>
                     <button
@@ -185,20 +181,22 @@ export const ProfilePage = () => {
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
                   Tech Stacks
                 </h2>
-                {getUserTechStacks().length > 0 ? (
-                  <div className="flex flex-wrap gap-3">
-                    {getUserTechStacks().map((tech) => (
+                <div className="flex flex-wrap gap-3">
+                  {user.techStack && user.techStack.length > 0 ? (
+                    user.techStack.map((stack, index) => (
                       <span
-                        key={tech.id}
-                        className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium text-white ${tech.color} shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105`}
+                        key={index}
+                        className="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
                       >
-                        {tech.name}
+                        {stack}
                       </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500">No tech stacks added yet.</p>
-                )}
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-sm">
+                      No tech stacks added.
+                    </p>
+                  )}
+                </div>
               </div>
 
               {/* Stats */}
@@ -320,7 +318,8 @@ export const ProfilePage = () => {
           user={user}
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
-          onSave={handleSaveProfile}
+          userId = {userId}
+          token={token}
         />
       </div>
     </>

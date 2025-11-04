@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Dashboard from "./screens/Dashboard";
 import UserLogin from "./screens/UserLogin";
@@ -9,14 +8,16 @@ import JobPosted from "./Employer/screens/JobPosted";
 import { ProfilePage } from "./screens/Profile";
 import ApplicationSent from "./User/screens/ApplicationSent";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import Loader from "./utilities/components/Loader";
 import CareerAdvice from "./utilities/components/CareerAdvice";
 import { useDispatch } from "react-redux";
-import { addUsername } from "./redux/userInfo";
+import { addUserInfo } from "./redux/userInfo";
 import ProtectedRoute from "./utilities/components/ProtectedRoute";
 
 const App = () => {
   const dispatch = useDispatch();
+
+  const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
   const getUserData = () => {
     const storedUser = localStorage.getItem("userData");
     if (storedUser) {
@@ -30,17 +31,33 @@ const App = () => {
     return null;
   };
 
-  const userData = getUserData()
+  const userData = getUserData();
 
-  dispatch(addUsername(userData?.username));
-  
+  console.log(userData,'userdata')
+
+  dispatch(
+    addUserInfo({
+      username: userData?.username,
+      profileImage: userData?.profileImage,
+    })
+  );
 
   return (
-    <GoogleOAuthProvider clientId="1731036921-prm09e148mv69jnpqtpnioe6tqisi8lr.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={CLIENT_ID}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={!userData?.token ? <UserLogin /> : <Navigate to="/dashboard" />} />
-          <Route path="/signup" element={!userData?.token ? <Signup /> : <Navigate to="/dashboard" />} />
+          <Route
+            path="/"
+            element={
+              !userData?.token ? <UserLogin /> : <Navigate to="/dashboard" />
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              !userData?.token ? <Signup /> : <Navigate to="/dashboard" />
+            }
+          />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute userData={userData} />}>
@@ -57,8 +74,19 @@ const App = () => {
               path="/admin/stats"
               element={<JobPosted userid={userData?.userId} />}
             />
-            <Route path="/user-profile/:username" element={<ProfilePage token={userData?.token} />} />
-            <Route path="application-sent" element={<ApplicationSent userid={userData?.userId} />} />
+            <Route
+              path="/user-profile/:username"
+              element={
+                <ProfilePage
+                  token={userData?.token}
+                  userId={userData?.userId}
+                />
+              }
+            />
+            <Route
+              path="application-sent"
+              element={<ApplicationSent userid={userData?.userId} />}
+            />
             <Route path="/career-advice" element={<CareerAdvice />} />
           </Route>
         </Routes>
@@ -68,4 +96,3 @@ const App = () => {
 };
 
 export default App;
-

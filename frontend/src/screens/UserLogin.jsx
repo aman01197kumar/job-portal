@@ -7,7 +7,7 @@ import axios from "axios";
 import { GoogleLogin } from "@react-oauth/google";
 import toast, { Toaster } from 'react-hot-toast';
 import Loader from "../utilities/components/Loader";
-import { BASE_URL, END_POINTS } from "../assets/END_POINTS";
+import { END_POINTS } from "../assets/END_POINTS";
 import { responseGoogle } from "../auth/googleAuth";
 
 
@@ -16,6 +16,9 @@ const UserLogin = () => {
   const [loggedBy, setLoggedBy] = useState({ email: "", password: "" });
   const [isLoading, setIsloading] = useState(false);
   const navigate = useNavigate();
+
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 
   const { email, password } = loggedBy;
 
@@ -60,7 +63,8 @@ const UserLogin = () => {
           userId: data.userId,
           user_type: data.user,
           token: data.token,
-          username:data.username
+          username:data.username,
+          profileImage:data.profileImage
         });
 
         localStorage.setItem("userData", userData);

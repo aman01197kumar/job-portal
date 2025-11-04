@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { BASE_URL, END_POINTS } from "../../assets/END_POINTS";
+import { END_POINTS } from "../../assets/END_POINTS";
 import AdminHeader from "../components/AdminHeader";
 import JobPostedCard from "../components/JobPostedCard";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
@@ -8,6 +8,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recha
 const EmployerDashboard = ({ userid }) => {
   const [jobDetails, setJobDetails] = useState([]);
   const [analyticsData, setAnalyticsData] = useState([]);
+  const BASE_URL = import.meta.env.BASE_URL;
 
   // Fetch posted jobs
   const fetchJobDetails = async () => {

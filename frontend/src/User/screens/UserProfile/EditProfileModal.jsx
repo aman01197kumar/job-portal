@@ -1,39 +1,129 @@
-import React, { useState } from 'react';
-import { X, Save, User, Mail, MapPin, Globe, Github, Linkedin, Briefcase, Building, Calendar } from 'lucide-react';
-import { TechStackDropdown } from './TechStackDropdown';
-import ImageUpload from './ImageUpload';
+import React, { useState, useEffect } from "react";
+import {
+  X,
+  Save,
+  User,
+  Mail,
+  MapPin,
+  Globe,
+  Github,
+  Linkedin,
+  Briefcase,
+  Building,
+  Calendar,
+  Locate,
+} from "lucide-react";
+import { TechStackDropdown } from "./TechStackDropdown";
+import ImageUpload from "./ImageUpload";
+import { useGeolocated } from "react-geolocated";
+import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
+import { END_POINTS } from "../../../assets/END_POINTS";
 
-export const EditProfileModal = ({
-  user,
-  isOpen,
-  onClose,
-  onSave,
-}) => {
+export const EditProfileModal = ({ user, isOpen, onClose, userId, token }) => {
   const [formData, setFormData] = useState(user);
-  const [file, setFile] = useState('')
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+    useGeolocated({
+      positionOptions: { enableHighAccuracy: true },
+      userDecisionTimeout: 10000,
+    });
 
-  console.log(file, 'fileee');
+  const GEO_LOCATION_API_KEY = import.meta.env.VITE_GEO_LOCATION_API_KEY;
+
   if (!isOpen) return null;
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleTechStackChange = (techStacks) => {
-    setFormData(prev => ({
+  const handleTechStackChange = (techStack) => {
+    setFormData((prev) => ({
       ...prev,
-      techStacks,
+      techStack,
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave(formData);
-    onClose();
+  const handleImageSelect = (file, base64Image) => {
+    setFormData((prev) => ({
+      ...prev,
+      image: file, // actual File object for upload
+      imagePreview: base64Image, // optional, for showing preview
+    }));
+  };
+
+  const handleUseCurrentLocation = async () => {
+    if (!isGeolocationAvailable) {
+      alert("Your browser does not support Geolocation.");
+      return;
+    }
+    if (!isGeolocationEnabled) {
+      alert("Please enable location services.");
+      return;
+    }
+
+    if (coords) {
+      const lat = coords.latitude.toFixed(4);
+      const lng = coords.longitude.toFixed(4);
+
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GEO_LOCATION_API_KEY}`
+      );
+
+      const address = response?.data?.results[0]?.formatted_address.split(" ");
+      const requiredAddress =
+        address && address[6] + "" + address[7] + "," + address[9];
+
+      setFormData((prev) => ({
+        ...prev,
+        location: requiredAddress,
+      }));
+    }
+  };
+
+  console.log(formData, "fomm");
+  const handleSubmit = async () => {
+    try {
+      const formDataToSend = new FormData();
+
+      // append text fields
+      formDataToSend.append("bio", formData.bio || "");
+      formDataToSend.append("location", formData.location || "");
+      formDataToSend.append("website", formData.website || "");
+      formDataToSend.append("github", formData.github || "");
+      formDataToSend.append("linkedIn", formData.linkedIn || "");
+      formDataToSend.append("jobTitle", formData.jobTitle || "");
+      formDataToSend.append("company", formData.company || "");
+      formDataToSend.append(
+        "yearsOfExperience",
+        formData.yearsOfExperience || ""
+      );
+      formDataToSend.append(
+        "availabilityStatus",
+        formData.availabilityStatus || ""
+      );
+      for (let i = 0; i < formData.techStack.length; i++) {
+        formDataToSend.append(`techStack[${i}]`, formData.techStack[i]);
+      }
+
+      // append files (make sure you're setting them in state correctly)
+      if (formData.image) formDataToSend.append("image", formData.image);
+      if (formData.resume) formDataToSend.append("resume", formData.resume);
+
+      const response = await axios.put(
+        `${BASE_URL}/${END_POINTS.UPDATE_USER_PROFILE}/${userId}`,
+        formDataToSend
+      );
+
+      toast.success(response?.data?.message);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile");
+    }
   };
 
   return (
@@ -56,9 +146,10 @@ export const EditProfileModal = ({
             {/* Profile Image */}
             <div className="flex justify-center pb-6 border-b border-gray-100">
               <ImageUpload
-                currentImage={formData.profileImage}
-                onImageChange={(image) => handleInputChange('profileImage', image)}
-                setFile={setFile}
+                currentImage={
+                  formData.imagePreview || `${BASE_URL}/${formData.profile_img}`
+                }
+                onImageSelect={handleImageSelect}
               />
             </div>
 
@@ -76,25 +167,9 @@ export const EditProfileModal = ({
                   </label>
                   <input
                     type="text"
-                    value={formData.username || ''}
-                    onChange={(e) => handleInputChange('username', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                    placeholder="Enter username"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.fullName || ''}
-                    onChange={(e) => handleInputChange('fullName', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                    placeholder="Enter full name"
-                    required
+                    value={formData.username || ""}
+                    disabled
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                   />
                 </div>
 
@@ -105,26 +180,36 @@ export const EditProfileModal = ({
                   </label>
                   <input
                     type="email"
-                    value={formData.email || ''}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                    placeholder="Enter email address"
-                    required
+                    value={formData.email || ""}
+                    disabled
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                   />
                 </div>
 
-                <div>
+                <div className="w-full">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <MapPin size={16} className="inline mr-2" />
                     Location
                   </label>
+
                   <input
                     type="text"
-                    value={formData.location || ''}
-                    onChange={(e) => handleInputChange('location', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                    value={formData.location || ""}
+                    onChange={(e) =>
+                      handleInputChange("location", e.target.value)
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                     placeholder="Enter location"
                   />
+
+                  <button
+                    type="button"
+                    onClick={handleUseCurrentLocation}
+                    className="flex items-center mt-2 text-sm text-blue-500 hover:underline"
+                  >
+                    <Locate className="w-4 h-4 mr-1" />
+                    Use current location
+                  </button>
                 </div>
               </div>
             </div>
@@ -143,9 +228,11 @@ export const EditProfileModal = ({
                   </label>
                   <input
                     type="text"
-                    value={formData.jobTitle || ''}
-                    onChange={(e) => handleInputChange('jobTitle', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                    value={formData.jobTitle || ""}
+                    onChange={(e) =>
+                      handleInputChange("jobTitle", e.target.value)
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                     placeholder="Enter job title"
                   />
                 </div>
@@ -157,9 +244,11 @@ export const EditProfileModal = ({
                   </label>
                   <input
                     type="text"
-                    value={formData.company || ''}
-                    onChange={(e) => handleInputChange('company', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                    value={formData.company || ""}
+                    onChange={(e) =>
+                      handleInputChange("company", e.target.value)
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                     placeholder="Enter company name"
                   />
                 </div>
@@ -172,8 +261,13 @@ export const EditProfileModal = ({
                   <input
                     type="number"
                     value={formData.yearsOfExperience || 0}
-                    onChange={(e) => handleInputChange('yearsOfExperience', parseInt(e.target.value) || 0)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                    onChange={(e) =>
+                      handleInputChange(
+                        "yearsOfExperience",
+                        parseInt(e.target.value) || 0
+                      )
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                     min="0"
                     placeholder="0"
                   />
@@ -184,9 +278,11 @@ export const EditProfileModal = ({
                     Availability Status
                   </label>
                   <select
-                    value={formData.availabilityStatus || 'available'}
-                    onChange={(e) => handleInputChange('availabilityStatus', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                    value={formData.availabilityStatus || "available"}
+                    onChange={(e) =>
+                      handleInputChange("availabilityStatus", e.target.value)
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                   >
                     <option value="available">Available</option>
                     <option value="busy">Busy</option>
@@ -196,7 +292,7 @@ export const EditProfileModal = ({
               </div>
             </div>
 
-            {/* Bio */}
+            {/* About */}
             <div className="space-y-4">
               <h4 className="text-lg font-semibold text-gray-900">About</h4>
               <div>
@@ -204,10 +300,10 @@ export const EditProfileModal = ({
                   Bio
                 </label>
                 <textarea
-                  value={formData.bio || ''}
-                  onChange={(e) => handleInputChange('bio', e.target.value)}
+                  value={formData.bio || ""}
+                  onChange={(e) => handleInputChange("bio", e.target.value)}
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200 resize-none"
                   placeholder="Tell us about yourself..."
                 />
               </div>
@@ -227,9 +323,11 @@ export const EditProfileModal = ({
                   </label>
                   <input
                     type="url"
-                    value={formData.website || ''}
-                    onChange={(e) => handleInputChange('website', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                    value={formData.website || ""}
+                    onChange={(e) =>
+                      handleInputChange("website", e.target.value)
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                     placeholder="https://yourwebsite.com"
                   />
                 </div>
@@ -241,9 +339,11 @@ export const EditProfileModal = ({
                   </label>
                   <input
                     type="text"
-                    value={formData.github || ''}
-                    onChange={(e) => handleInputChange('github', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                    value={formData.github || ""}
+                    onChange={(e) =>
+                      handleInputChange("github", e.target.value)
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                     placeholder="username"
                   />
                 </div>
@@ -255,9 +355,11 @@ export const EditProfileModal = ({
                   </label>
                   <input
                     type="text"
-                    value={formData.linkedin || ''}
-                    onChange={(e) => handleInputChange('linkedin', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                    value={formData.linkedIn || ""}
+                    onChange={(e) =>
+                      handleInputChange("linkedin", e.target.value)
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                     placeholder="username"
                   />
                 </div>
@@ -266,16 +368,18 @@ export const EditProfileModal = ({
 
             {/* Tech Stacks */}
             <div className="space-y-4">
-              <h4 className="text-lg font-semibold text-gray-900">Tech Stacks</h4>
+              <h4 className="text-lg font-semibold text-gray-900">
+                Tech Stacks
+              </h4>
               <TechStackDropdown
-                selectedTechs={formData.techStacks || []}
                 onSelectionChange={handleTechStackChange}
+                profileTechStacks={user.techStack}
               />
             </div>
           </form>
         </div>
 
-        {/* Footer with Action Buttons */}
+        {/* Footer */}
         <div className="flex justify-end space-x-4 p-6 border-t border-gray-200 bg-gray-50">
           <button
             type="button"
@@ -285,6 +389,7 @@ export const EditProfileModal = ({
             Cancel
           </button>
           <button
+            type="button"
             onClick={handleSubmit}
             className="px-6 py-3 bg-blue-500 text-white hover:bg-blue-600 rounded-lg transition-all duration-200 flex items-center font-medium shadow-lg hover:shadow-xl"
           >
@@ -293,6 +398,7 @@ export const EditProfileModal = ({
           </button>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 };

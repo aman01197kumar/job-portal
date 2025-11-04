@@ -1,30 +1,35 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { BASE_URL, END_POINTS } from "../../assets/END_POINTS";
-import {FileText} from "lucide-react";
+import {  END_POINTS } from "../../assets/END_POINTS";
+import { FileText } from "lucide-react";
 import { Header } from "../../utilities/components/Header";
 import StatusCards from "../../utilities/components/StatusCards";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 import SavedJobs from "../../utilities/components/SavedJobs";
-import Notifications from "../../utilities/components/Notifications"
+import Notifications from "../../utilities/components/Notifications";
 import JobCards from "../../utilities/components/JobCards";
 import { useNavigate } from "react-router-dom";
 
 const MainContent = ({ userId }) => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [allJobs, setAllJobs] = useState([])
-  const navigate = useNavigate()
+  const [allJobs, setAllJobs] = useState([]);
+  const navigate = useNavigate();
 
-
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+  
+  
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${BASE_URL}/${END_POINTS.JOBS}/${userId}`, {
-        "content-type": "application/json",
-      });
+      const response = await axios.get(
+        `${BASE_URL}/${END_POINTS.JOBS}/${userId}`,
+        {
+          "content-type": "application/json",
+        }
+      );
       setDashboardJobPosted(response?.data?.data);
-      setAllJobs(response?.data?.data)
+      setAllJobs(response?.data?.data);
     } catch (err) {
       console.error("Error fetching jobs:", err);
     } finally {
@@ -34,13 +39,10 @@ const MainContent = ({ userId }) => {
 
   useEffect(() => {
     fetchJobs();
-    document.title = "Oppmore | Home"
+    document.title = "Oppmore | Home";
   }, []);
 
-
-
   const jobAppliedHandler = async (application) => {
-
     try {
       const payload = {
         jobId: application?._id,
@@ -54,7 +56,7 @@ const MainContent = ({ userId }) => {
 
       if (!userId) {
         toast.error("User ID not found. Please log in again.");
-        navigate('/login')
+        navigate("/login");
         return;
       }
 
@@ -70,13 +72,12 @@ const MainContent = ({ userId }) => {
 
       if (success) {
         toast.success(message);
-        window.location.reload()
+        window.location.reload();
       }
     } catch (err) {
       toast.error(err.message);
     }
   };
-
 
   return (
     <>
@@ -84,7 +85,7 @@ const MainContent = ({ userId }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
           {/* Stats Grid */}
-          <StatusCards />
+          <StatusCards userId={userId} />
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
