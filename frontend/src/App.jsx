@@ -33,7 +33,6 @@ const App = () => {
 
   const userData = getUserData();
 
-  console.log(userData,'userdata')
 
   dispatch(
     addUserInfo({

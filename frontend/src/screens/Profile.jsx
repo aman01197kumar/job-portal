@@ -37,7 +37,6 @@ export const ProfilePage = ({ token,userId }) => {
           },
         }
       );
-      console.log(response?.data?.data,'vmkm')
       setUser(response?.data?.data);
     } catch (err) {
       console.error("Error fetching user profile:", err);

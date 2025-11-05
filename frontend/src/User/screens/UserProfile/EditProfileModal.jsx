@@ -85,7 +85,6 @@ export const EditProfileModal = ({ user, isOpen, onClose, userId, token }) => {
     }
   };
 
-  console.log(formData, "fomm");
   const handleSubmit = async () => {
     try {
       const formDataToSend = new FormData();
