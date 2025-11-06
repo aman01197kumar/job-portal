@@ -7,7 +7,6 @@ import ViewJobDescription from "./User/screens/ViewJobDescription";
 import JobPosted from "./Employer/screens/JobPosted";
 import { ProfilePage } from "./screens/Profile";
 import ApplicationSent from "./User/screens/ApplicationSent";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import CareerAdvice from "./utilities/components/CareerAdvice";
 import { useDispatch } from "react-redux";
 import { addUserInfo } from "./redux/userInfo";
@@ -42,55 +41,55 @@ const App = () => {
   );
 
   return (
-    <GoogleOAuthProvider clientId={CLIENT_ID}>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              !userData?.token ? <UserLogin /> : <Navigate to="/dashboard" />
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              !userData?.token ? <Signup /> : <Navigate to="/dashboard" />
-            }
-          />
+    
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            !userData?.token ? <UserLogin /> : <Navigate to="/dashboard" />
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            !userData?.token ? <Signup /> : <Navigate to="/dashboard" />
+          }
+        />
 
-          {/* Protected Routes */}
-          <Route element={<ProtectedRoute userData={userData} />}>
-            <Route
-              path="/dashboard"
-              element={<Dashboard userData={userData} />}
-            />
-            <Route
-              path="/admin/job-posting"
-              element={<JobPosting userId={userData?.userId} />}
-            />
-            <Route path="/job-details/:id" element={<ViewJobDescription />} />
-            <Route
-              path="/admin/stats"
-              element={<JobPosted userid={userData?.userId} />}
-            />
-            <Route
-              path="/user-profile/:username"
-              element={
-                <ProfilePage
-                  token={userData?.token}
-                  userId={userData?.userId}
-                />
-              }
-            />
-            <Route
-              path="application-sent"
-              element={<ApplicationSent userid={userData?.userId} />}
-            />
-            <Route path="/career-advice" element={<CareerAdvice />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </GoogleOAuthProvider>
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute userData={userData} />}>
+          <Route
+            path="/dashboard"
+            element={<Dashboard userData={userData} />}
+          />
+          <Route
+            path="/admin/job-posting"
+            element={<JobPosting userId={userData?.userId} />}
+          />
+          <Route path="/job-details/:id" element={<ViewJobDescription />} />
+          <Route
+            path="/admin/stats"
+            element={<JobPosted userid={userData?.userId} />}
+          />
+          <Route
+            path="/user-profile/:username"
+            element={
+              <ProfilePage
+                token={userData?.token}
+                userId={userData?.userId}
+              />
+            }
+          />
+          <Route
+            path="application-sent"
+            element={<ApplicationSent userid={userData?.userId} />}
+          />
+          <Route path="/career-advice" element={<CareerAdvice />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  
   );
 };
 

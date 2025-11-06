@@ -4,12 +4,10 @@ import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
-import { GoogleLogin } from "@react-oauth/google";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 import Loader from "../utilities/components/Loader";
 import { END_POINTS } from "../assets/END_POINTS";
 import { responseGoogle } from "../auth/googleAuth";
-
 
 const UserLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,7 +16,6 @@ const UserLogin = () => {
   const navigate = useNavigate();
 
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-
 
   const { email, password } = loggedBy;
 
@@ -43,10 +40,12 @@ const UserLogin = () => {
 
     try {
       setIsloading(true);
-      const response = await axios.post(`${BASE_URL}/${END_POINTS.LOGIN}`, user);
+      const response = await axios.post(
+        `${BASE_URL}/${END_POINTS.LOGIN}`,
+        user
+      );
 
       const { data } = response;
-
 
       if (data.status === 400 || data.status === 401) {
         toast.warn(data.message);
@@ -63,13 +62,13 @@ const UserLogin = () => {
           userId: data.userId,
           user_type: data.user,
           token: data.token,
-          username:data.username,
-          profileImage:data.profileImage
+          username: data.username,
+          profileImage: data.profileImage,
         });
 
         localStorage.setItem("userData", userData);
         toast.success("Login successful!");
-        navigate('/')
+        navigate("/");
         window.location.reload();
       }
     } catch (err) {
@@ -80,26 +79,23 @@ const UserLogin = () => {
     }
   };
 
-
   return (
     <>
       <div className="flex justify-center items-center h-screen bg-gray-100">
         <div className="relative flex h-100 md:h-auto flex-col-reverse md:flex-row w-full m-3 md:m-auto p-7 md:p-auto md:w-3/4 max-w-5xl bg-white rounded-lg shadow-lg overflow-hidden">
-
           {/* Image Section */}
           <div className="w-full md:w-1/2 md:h-auto">
-            <img
-              src={login}
-              alt="Login"
-              className="w-full object-cover"
-            />
+            <img src={login} alt="Login" className="w-full object-cover" />
             <div className="absolute inset-0 bg-black opacity-30 md:hidden"></div>
           </div>
 
           {/* Form Section */}
           <div className="absolute md:static top-0 left-0 w-full md:w-1/2 h-full p-6 md:p-8 z-10 flex flex-col justify-center bg-white/90 backdrop-blur-sm animate-fadeIn rounded-lg md:rounded-none shadow-lg md:shadow-none">
             <div className="mb-5">
-              <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">
+              <label
+                htmlFor="email"
+                className="block mb-2 text-sm font-medium text-gray-900"
+              >
                 Your email
               </label>
               <input
@@ -108,12 +104,17 @@ const UserLogin = () => {
                 className="p-2 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
                 placeholder="name@xyz.com"
                 value={email}
-                onChange={(e) => setLoggedBy({ ...loggedBy, email: e.target.value })}
+                onChange={(e) =>
+                  setLoggedBy({ ...loggedBy, email: e.target.value })
+                }
               />
             </div>
 
             <div className="mb-5">
-              <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">
+              <label
+                htmlFor="password"
+                className="block mb-2 text-sm font-medium text-gray-900"
+              >
                 Your password
               </label>
               <div className="relative">
@@ -122,7 +123,9 @@ const UserLogin = () => {
                   id="password"
                   placeholder="..............."
                   className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5"
-                  onChange={(e) => setLoggedBy({ ...loggedBy, password: e.target.value })}
+                  onChange={(e) =>
+                    setLoggedBy({ ...loggedBy, password: e.target.value })
+                  }
                 />
                 {showPassword ? (
                   <VisibilityOffIcon
@@ -145,7 +148,10 @@ const UserLogin = () => {
                   type="checkbox"
                   className="w-4 h-4 border border-gray-300 rounded-sm focus:ring-3 focus:ring-blue-300"
                 />
-                <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900">
+                <label
+                  htmlFor="remember"
+                  className="ml-2 text-sm font-medium text-gray-900"
+                >
                   Remember me
                 </label>
               </div>
@@ -172,13 +178,6 @@ const UserLogin = () => {
               >
                 {isLoading ? <Loader width={5} height={5} /> : "Submit"}
               </button>
-
-              <div className="text-center text-sm text-gray-500">or</div>
-
-              <GoogleLogin
-                onSuccess={responseGoogle}
-                onError={responseGoogle}
-              />
             </div>
           </div>
         </div>

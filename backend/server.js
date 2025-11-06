@@ -6,27 +6,39 @@ import router from "./routes/jobPost.route.js";
 import cors from "cors";
 import { googleRoutes } from "./routes/google.route.js";
 import { statusRouter } from "./routes/statusCards.route.js";
+import path from "path";
+import { fileURLToPath } from "url"; // ✅ Needed for __dirname
+import { dirname } from "path"; // ✅
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 const PORT = process.env.PORT || 3001;
-
 const MONGO_URL = process.env.MONGO_URL;
 
-app.use(cors({ origin: true }));
+// ✅ Recreate __dirname for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-try {
-  mongoose.connect(MONGO_URL);
-  console.log("database connected!!!");
-} catch (err) {
-  console.log(console.log(err));
-}
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
+
+// ✅ Database connection
+mongoose
+  .connect(MONGO_URL)
+  .then(() => console.log("✅ Database connected!"))
+  .catch((err) => console.error("❌ Database connection failed:", err));
+
+// ✅ Routes
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(router);
-
-app.use("/uploads", express.static("uploads")); // Serve images statically
-
 app.use(user_router);
 app.use("/status", statusRouter);
 app.use("/auth", googleRoutes);
-app.listen(PORT, () => console.log(`Server is running at ${PORT}`));
+
+// ✅ Start server
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
