@@ -86,12 +86,12 @@ const userLogin = async (req, res) => {
       userId: user._id,
       username: user.full_name,
       token: token,
-      profileImage: fetchUserImage.profile_img ,
+      profileImage: fetchUserImage?.profile_img,
     });
   } catch (err) {
     return res
       .status(500)
-      .json({ message: "Internal Server Error", status: 500, success: false });
+      .json({ message: err.message, status: 500, success: false });
   }
 };
 
@@ -180,7 +180,7 @@ export const updateUserProfile = async (req, res) => {
       },
       { new: true, upsert: true } // create if doesn't exist
     );
-
+    await updatedProfile.save();
     return res.status(200).json({
       success: true,
       message: "User Data updated successfully!",
