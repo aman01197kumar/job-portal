@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { UserProfile } from "../models/userProfile.schema.js";
 import mongoose from "mongoose";
+import { ReturnDocument } from "mongodb";
 const userSignup = async (req, res) => {
   try {
     const { first_name, last_name, email, password, phone_number, user } =
@@ -133,6 +134,8 @@ export const updateUserProfile = async (req, res) => {
 
     // ✅ Fetch main user (for name & email)
     const findUser = await User.findById(userId);
+
+    console.log(findUser, "find");
     if (!findUser) {
       return res
         .status(404)
@@ -164,26 +167,29 @@ export const updateUserProfile = async (req, res) => {
           userId, // maintain relationship
           username: findUser.full_name, // ✅ from User model
           email: findUser.email, // ✅ from User model
-          techStack,
-          bio,
-          location,
-          website,
-          github,
-          linkedIn,
-          jobTitle,
-          company,
-          yearsOfExperience,
-          availabilityStatus,
+          techStack: techStack ? techStack : null,
+          bio: bio ? bio : null,
+          location: location ? location : null,
+          website: website ? website : null,
+          github: github ? github : null,
+          linkedIn: linkedIn ? linkedIn : null,
+          jobTitle: jobTitle ? jobTitle : null,
+          company: company ? company : null,
+          yearsOfExperience: yearsOfExperience ? yearsOfExperience : null,
+          availabilityStatus: availabilityStatus ? availabilityStatus : null,
           ...(resume && { resume }),
           ...(profile_img && { profile_img }),
         },
       },
-      { new: true, upsert: true } // create if doesn't exist
+      { new: true, upsert: true, returnDocument: "after" } // create if doesn't exist
     );
+
+    console.log(updatedProfile, "updatedProfile");
     await updatedProfile.save();
     return res.status(200).json({
       success: true,
       message: "User Data updated successfully!",
+      data: updatedProfile,
     });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });

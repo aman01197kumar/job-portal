@@ -19,9 +19,11 @@ import { useGeolocated } from "react-geolocated";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { END_POINTS } from "../../../assets/END_POINTS";
+import Loader from "../../../utilities/components/Loader";
 
 export const EditProfileModal = ({ user, isOpen, onClose, userId, token }) => {
   const [formData, setFormData] = useState(user);
+  const [savingChanges, setSavingChanges] = useState(false);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const { coords, isGeolocationAvailable, isGeolocationEnabled } =
@@ -86,32 +88,34 @@ export const EditProfileModal = ({ user, isOpen, onClose, userId, token }) => {
   };
 
   const handleSubmit = async () => {
+    const formDataToSend = new FormData();
+
+    // append text fields
+    formDataToSend.append("bio", formData.bio || "");
+    formDataToSend.append("location", formData.location || "");
+    formDataToSend.append("website", formData.website || "");
+    formDataToSend.append("github", formData.github || "");
+    formDataToSend.append("linkedIn", formData.linkedIn || "");
+    formDataToSend.append("jobTitle", formData.jobTitle || "");
+    formDataToSend.append("company", formData.company || "");
+    formDataToSend.append(
+      "yearsOfExperience",
+      formData.yearsOfExperience || ""
+    );
+    formDataToSend.append(
+      "availabilityStatus",
+      formData.availabilityStatus || ""
+    );
+    for (let i = 0; i < formData?.techStack?.length; i++) {
+      formDataToSend.append(`techStack[${i}]`, formData.techStack[i]);
+    }
+
+    // append files (make sure you're setting them in state correctly)
+    if (formData.image) formDataToSend.append("image", formData.image);
+    if (formData.resume) formDataToSend.append("resume", formData.resume);
+
     try {
-      const formDataToSend = new FormData();
-
-      // append text fields
-      formDataToSend.append("bio", formData.bio || "");
-      formDataToSend.append("location", formData.location || "");
-      formDataToSend.append("website", formData.website || "");
-      formDataToSend.append("github", formData.github || "");
-      formDataToSend.append("linkedIn", formData.linkedIn || "");
-      formDataToSend.append("jobTitle", formData.jobTitle || "");
-      formDataToSend.append("company", formData.company || "");
-      formDataToSend.append(
-        "yearsOfExperience",
-        formData.yearsOfExperience || ""
-      );
-      formDataToSend.append(
-        "availabilityStatus",
-        formData.availabilityStatus || ""
-      );
-      for (let i = 0; i < formData.techStack.length; i++) {
-        formDataToSend.append(`techStack[${i}]`, formData.techStack[i]);
-      }
-
-      // append files (make sure you're setting them in state correctly)
-      if (formData.image) formDataToSend.append("image", formData.image);
-      if (formData.resume) formDataToSend.append("resume", formData.resume);
+      setSavingChanges(true);
 
       const response = await axios.put(
         `${BASE_URL}/${END_POINTS.UPDATE_USER_PROFILE}/${userId}`,
@@ -119,9 +123,16 @@ export const EditProfileModal = ({ user, isOpen, onClose, userId, token }) => {
       );
 
       toast.success(response?.data?.message);
+
+      // Give the toast a moment, then reload the page
+      // window.location.reload();
+      setSavingChanges(false);
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error("Failed to update profile");
+    } finally {
+      // Always reset the loader, even if there's an error
+      setSavingChanges(false);
     }
   };
 
@@ -356,7 +367,7 @@ export const EditProfileModal = ({ user, isOpen, onClose, userId, token }) => {
                     type="text"
                     value={formData.linkedIn || ""}
                     onChange={(e) =>
-                      handleInputChange("linkedin", e.target.value)
+                      handleInputChange("linkedIn", e.target.value)
                     }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                     placeholder="username"
@@ -372,7 +383,7 @@ export const EditProfileModal = ({ user, isOpen, onClose, userId, token }) => {
               </h4>
               <TechStackDropdown
                 onSelectionChange={handleTechStackChange}
-                profileTechStacks={user.techStack}
+                profileTechStacks={user?.techStack || []}
               />
             </div>
           </form>
@@ -392,8 +403,17 @@ export const EditProfileModal = ({ user, isOpen, onClose, userId, token }) => {
             onClick={handleSubmit}
             className="px-6 py-3 bg-blue-500 text-white hover:bg-blue-600 rounded-lg transition-all duration-200 flex items-center font-medium shadow-lg hover:shadow-xl"
           >
-            <Save size={16} className="mr-2" />
-            Save Changes
+            {savingChanges ? (
+              <>
+                <Loader width={5} height={5} />
+                Saving Changes
+              </>
+            ) : (
+              <>
+                <Save size={16} className="mr-2" />
+                Save Changes
+              </>
+            )}
           </button>
         </div>
       </div>

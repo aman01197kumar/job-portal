@@ -115,7 +115,7 @@ const ImageUpload = ({ currentImage, onImageSelect }) => {
             <button
               type="button"
               onClick={(e) => {
-                e.preventDefault();
+                // e.preventDefault();
                 fileInputRef.current.click();
               }}
               className="flex items-center gap-1 text-white text-2xl rounded-full shadow cursor-pointer hover:bg-white/80 hover:p-2 transition-all"
@@ -136,7 +136,7 @@ const ImageUpload = ({ currentImage, onImageSelect }) => {
       {/* Crop Modal */}
       {showCrop && (
         <div className="fixed inset-0 bg-black/70 flex flex-col items-center justify-center z-50 p-4">
-          <div className="bg-white p-4 rounded-xl shadow-lg flex flex-col items-center">
+          <div className="bg-white p-auto rounded-xl shadow-lg flex flex-col items-center overflow-auto max-h-[90vh] max-w-[65vw]">
             <h3 className="mb-3 font-semibold text-gray-700">
               Crop your image
             </h3>
@@ -153,7 +153,7 @@ const ImageUpload = ({ currentImage, onImageSelect }) => {
                   alt="Crop target"
                   src={selectedImage}
                   onLoad={onImageLoad}
-                  className="max-h-80"
+                  className="max-w-[90vw] max-h-[70vh] object-contain"
                 />
               </ReactCrop>
             )}

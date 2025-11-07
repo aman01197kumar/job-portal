@@ -8,6 +8,8 @@ export const TechStackDropdown = ({ onSelectionChange, profileTechStacks }) => {
   const [allTechStacks, setAllTechStacks] = useState(techStacks);
   const menuRef = useRef(null);
 
+  console.log(profileTechStacks, "pro");
+
   // ✅ Close dropdown if clicked outside
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -21,21 +23,14 @@ export const TechStackDropdown = ({ onSelectionChange, profileTechStacks }) => {
 
   // ✅ Add selected tech stack and remove it from dropdown list
   const addedTechStackHandler = (item) => {
-    if (!selectedTechStack.includes(item)) {
-      setSelectedTechStack((prev) => [...prev, item]);
-      setAllTechStacks((prev) => prev.filter((tech) => tech.name !== item));
-    }
+    const isAlreadySelected = selectedTechStack.includes(item);
+    if (isAlreadySelected) return;
+    setSelectedTechStack((prev) => [...prev, item]);
   };
 
   // ✅ Remove from selected and add it back to dropdown
   const removeTechStackHandler = (item) => {
     setSelectedTechStack((prev) => prev.filter((tech) => tech !== item));
-
-    // Add it back into the available tech stacks
-    const techToAddBack = techStacks.find((t) => t.name === item);
-    if (techToAddBack) {
-      setAllTechStacks((prev) => [...prev, techToAddBack]);
-    }
   };
 
   useEffect(() => {
@@ -60,7 +55,7 @@ export const TechStackDropdown = ({ onSelectionChange, profileTechStacks }) => {
 
       {/* Selected Tech Stack Chips */}
       <div className="flex flex-wrap items-center mt-2">
-        {selectedTechStack.map((item) => (
+        {selectedTechStack?.map((item) => (
           <div
             key={item}
             className="flex items-center px-3 py-1 text-sm font-medium text-white rounded-full bg-blue-600 mr-2 mb-2"

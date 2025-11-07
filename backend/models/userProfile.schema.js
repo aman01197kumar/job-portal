@@ -22,7 +22,6 @@ const userProfile = mongoose.Schema({
 
   profile_img: {
     type: String,
-    required: true,
   },
   bio: {
     type: String,

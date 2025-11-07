@@ -9,7 +9,7 @@ import { ProfilePage } from "./screens/Profile";
 import ApplicationSent from "./User/screens/ApplicationSent";
 import CareerAdvice from "./utilities/components/CareerAdvice";
 import { useDispatch } from "react-redux";
-import { addUserInfo } from "./redux/userInfo";
+import { addUsername } from "./redux/userInfo";
 import ProtectedRoute from "./utilities/components/ProtectedRoute";
 
 const App = () => {
@@ -32,16 +32,9 @@ const App = () => {
 
   const userData = getUserData();
 
-
-  dispatch(
-    addUserInfo({
-      username: userData?.username,
-      profileImage: userData?.profileImage,
-    })
-  );
+  dispatch(addUsername(userData?.username));
 
   return (
-    
     <BrowserRouter>
       <Routes>
         <Route
@@ -52,9 +45,7 @@ const App = () => {
         />
         <Route
           path="/signup"
-          element={
-            !userData?.token ? <Signup /> : <Navigate to="/dashboard" />
-          }
+          element={!userData?.token ? <Signup /> : <Navigate to="/dashboard" />}
         />
 
         {/* Protected Routes */}
@@ -75,10 +66,7 @@ const App = () => {
           <Route
             path="/user-profile/:username"
             element={
-              <ProfilePage
-                token={userData?.token}
-                userId={userData?.userId}
-              />
+              <ProfilePage token={userData?.token} userId={userData?.userId} />
             }
           />
           <Route
@@ -89,7 +77,6 @@ const App = () => {
         </Route>
       </Routes>
     </BrowserRouter>
-  
   );
 };
 
