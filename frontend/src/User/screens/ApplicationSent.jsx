@@ -13,7 +13,10 @@ import Loader from "../../utilities/components/Loader";
 import { useDispatch } from "react-redux";
 import { addJobDescription } from "../../redux/jobDescription";
 import { useNavigate } from "react-router-dom";
-import { setAppliedJobsCount, setSentApplicationsIds } from "../../redux/sentApplications";
+import {
+  setAppliedJobsCount,
+  setSentApplicationsIds,
+} from "../../redux/sentApplications";
 
 const NoJobsFound = () => {
   return (
@@ -30,7 +33,7 @@ const ApplicationSent = ({ userid }) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const BASE_URL = import.meta.env.BASE_URL;
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
   const fetchAppliedJobs = async () => {
     try {
       setIsLoading(true);
@@ -38,8 +41,7 @@ const ApplicationSent = ({ userid }) => {
       const response = await axios.get(
         `${BASE_URL}/${END_POINTS.APPLIED_JOBS}/${userid}`
       );
-      setAppliedJobs(response?.data?.data);
-      dispatch(setAppliedJobsCount(response?.data?.data?.length));
+      setAppliedJobs(response?.data?.data)
 
       const applicationIds = response?.data?.data?.map((app) => app._id);
       dispatch(setSentApplicationsIds(applicationIds));

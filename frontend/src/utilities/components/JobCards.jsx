@@ -22,7 +22,7 @@ const JobCards = ({
       <div className="space-y-4">
         {loading ? (
           <Loader width={10} height={10} />
-        ) : dashboardJobPosted.length > 0 ? (
+        ) : dashboardJobPosted?.length > 0 ? (
           dashboardJobPosted.map((application) => (
             <div
               key={application?._id}

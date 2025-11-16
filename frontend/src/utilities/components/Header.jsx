@@ -413,7 +413,7 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
             {/* Account Actions */}
             <div className="pt-4 border-t border-gray-200 space-y-2">
               <a
-                href="#"
+                href={`/user-profile/${userInfo}`}
                 className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
               >
                 <User className="h-5 w-5 mr-3" />
