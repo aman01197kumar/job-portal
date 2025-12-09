@@ -11,11 +11,11 @@ import CareerAdvice from "./utilities/components/CareerAdvice";
 import { useDispatch } from "react-redux";
 import { addUsername } from "./redux/userInfo";
 import ProtectedRoute from "./utilities/components/ProtectedRoute";
+import AdminProtectedRoute from "./protectedRoutes/AdminProjectedRoute";
+import JobSeekerProtectedRoute from "./protectedRoutes/JobseekerProtectedRoutes";
 
 const App = () => {
   const dispatch = useDispatch();
-
-  const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   const getUserData = () => {
     const storedUser = localStorage.getItem("userData");
@@ -37,6 +37,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public Routes */}
         <Route
           path="/"
           element={
@@ -48,32 +49,42 @@ const App = () => {
           element={!userData?.token ? <Signup /> : <Navigate to="/dashboard" />}
         />
 
-        {/* Protected Routes */}
+        {/* Shared Protected Routes */}
         <Route element={<ProtectedRoute userData={userData} />}>
+          {/* Accessible by Both Roles */}
           <Route
             path="/dashboard"
             element={<Dashboard userData={userData} />}
           />
-          <Route
-            path="/admin/job-posting"
-            element={<JobPosting userId={userData?.userId} />}
-          />
-          <Route path="/job-details/:id" element={<ViewJobDescription />} />
-          <Route
-            path="/admin/stats"
-            element={<JobPosted userid={userData?.userId} />}
-          />
+          <Route path="/career-advice" element={<CareerAdvice />} />
+
           <Route
             path="/user-profile/:username"
             element={
               <ProfilePage token={userData?.token} userId={userData?.userId} />
             }
           />
-          <Route
-            path="application-sent"
-            element={<ApplicationSent userid={userData?.userId} />}
-          />
-          <Route path="/career-advice" element={<CareerAdvice />} />
+
+          {/* Admin Only Routes */}
+          <Route element={<AdminProtectedRoute userData={userData} />}>
+            <Route
+              path="/admin/job-posting"
+              element={<JobPosting userId={userData?.userId} />}
+            />
+            <Route
+              path="/admin/stats"
+              element={<JobPosted userid={userData?.userId} />}
+            />
+          </Route>
+
+          {/* Job Seeker Only Routes */}
+          <Route element={<JobSeekerProtectedRoute userData={userData} />}>
+            <Route
+              path="/application-sent"
+              element={<ApplicationSent userid={userData?.userId} />}
+            />
+            <Route path="/job-details/:id" element={<ViewJobDescription />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

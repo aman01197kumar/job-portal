@@ -61,6 +61,8 @@ const ApplicationSent = ({ userid }) => {
     dispatch(addJobDescription(application));
     navigate(`/job-details/${application?._id}`);
   };
+
+  console.log('ndvni')
   return (
     <>
       <Header />
