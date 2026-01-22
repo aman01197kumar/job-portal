@@ -27,11 +27,15 @@ app.use(
   })
 );
 
+
 // ✅ Database connection
-mongoose
-  .connect(MONGO_URL)
-  .then(() => console.log("✅ Database connected!"))
-  .catch((err) => console.error("❌ Database connection failed:", err));
+try {
+  mongoose.connect(MONGO_URL)
+  console.log('connected')
+}
+catch (err) {
+  console.log(err)
+}
 
 // ✅ Routes
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

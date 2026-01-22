@@ -1,9 +1,9 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, Outlet } from "react-router-dom";
 
-const AdminProtectedRoute = ({ userData, children }) => {
+const AdminProtectedRoute = ({ userData }) => {
   const location = useLocation();
 
-  // If no token → redirect to login
+  // Not logged in
   if (!userData?.token) {
     return (
       <Navigate
@@ -14,22 +14,22 @@ const AdminProtectedRoute = ({ userData, children }) => {
     );
   }
 
-  // If role mismatch → redirect with message
+  // Not employer / admin
   if (userData?.user_type !== "employer") {
     return (
       <Navigate
         to="/unauthorized"
         replace
         state={{
-          message: "Unauthorized Access! Please login",
+          message: "Unauthorized Access!",
           from: location.pathname,
         }}
       />
     );
   }
 
-  // If everything is correct
-  return children;
+  // ✅ Allow nested admin routes
+  return <Outlet />;
 };
 
 export default AdminProtectedRoute;

@@ -5,11 +5,12 @@ import AdminHeader from "../components/AdminHeader";
 import JobPostedCard from "../components/JobPostedCard";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-const EmployerDashboard = ({ userid }) => {
+const JobPosted = ({ userid }) => {
   const [jobDetails, setJobDetails] = useState([]);
   const [analyticsData, setAnalyticsData] = useState([]);
-  const BASE_URL = import.meta.env.BASE_URL;
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+  console.log('ere')
   // Fetch posted jobs
   const fetchJobDetails = async () => {
     try {
@@ -107,4 +108,4 @@ const EmployerDashboard = ({ userid }) => {
   );
 };
 
-export default EmployerDashboard;
+export default JobPosted;

@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { UserProfile } from "../models/userProfile.schema.js";
 import mongoose from "mongoose";
-import { ReturnDocument } from "mongodb";
 const userSignup = async (req, res) => {
   try {
     const { first_name, last_name, email, password, phone_number, user } =
