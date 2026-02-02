@@ -1,8 +1,12 @@
+import { OAuth2Client } from "google-auth-library";
 import { User } from "../models/user.schema.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { UserProfile } from "../models/userProfile.schema.js";
 import mongoose from "mongoose";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 const userSignup = async (req, res) => {
   try {
     const { first_name, last_name, email, password, phone_number, user } =
@@ -53,6 +57,57 @@ const userSignup = async (req, res) => {
     });
   }
 };
+
+
+export const googleAuth = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return res.status(401).json({ message: "Token missing" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    let user = await User.findOne({ email });
+
+    // 🟡 OAuth success, but onboarding not complete
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        needsOnboarding: true,
+        user: {
+          email,
+          name,
+          picture,
+        },
+      });
+    }
+
+    // 🟢 User exists and fully onboarded
+    return res.status(200).json({
+      success: true,
+      needsOnboarding: false,
+      user,
+    });
+
+  } catch (err) {
+    console.error("Google auth error:", err);
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired Google token",
+    });
+  }
+};
+
 
 const userLogin = async (req, res) => {
   const { email, password } = req.body;

@@ -5,6 +5,9 @@ const ProtectedRoute = ({ userData }) => {
     // user is not authenticated
     return <Navigate to="/" />;
   }
+  // if (!userData?.user?.user_type) {
+  //   return <Navigate to="/feature-selection" replace />;
+  // }
   return <Outlet />;
 };
 

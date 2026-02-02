@@ -33,4 +33,5 @@ router.get("/jobs/user/:userId", getAppliedJobsByCandidate);
 //GET all sent jobs application
 router.get('/get-job-applications/:userId', getSentJobApplication)
 
+
 export default router;
