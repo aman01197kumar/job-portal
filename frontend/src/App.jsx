@@ -1,38 +1,35 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Dashboard from "./screens/Dashboard";
-import UserLogin from "./screens/UserLogin";
-import Signup from "./screens/Signup";
 import JobPosting from "./Employer/screens/JobPosting";
 import ViewJobDescription from "./User/screens/ViewJobDescription";
 import JobPosted from "./Employer/screens/JobPosted";
 import { ProfilePage } from "./screens/Profile";
 import ApplicationSent from "./User/screens/ApplicationSent";
 import CareerAdvice from "./utilities/components/CareerAdvice";
-import { useDispatch } from "react-redux";
-import { addUsername } from "./redux/userInfo";
 import ProtectedRoute from "./utilities/components/ProtectedRoute";
 import AdminProtectedRoute from "./protectedRoutes/AdminProjectedRoute";
 import JobSeekerProtectedRoute from "./protectedRoutes/JobseekerProtectedRoutes";
+import FeatureSelection from "./features/FeatureSelection";
+import Signup from "./auth/Signup";
+import UserLogin from "./auth/UserLogin";
+import { useEffect, useState } from "react";
+import JobSeekerForm from "./Forms/JobSeekerForm";
+import { useDispatch } from "react-redux";
+import { addUser, addUsername } from "./redux/userInfo";
 
 const App = () => {
-  const dispatch = useDispatch();
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch()
 
-  const getUserData = () => {
+  useEffect(() => {
     const storedUser = localStorage.getItem("userData");
-    if (storedUser) {
-      try {
-        return JSON.parse(storedUser);
-      } catch (error) {
-        console.error("Failed to parse userData:", error);
-        return null;
-      }
-    }
-    return null;
-  };
 
-  const userData = getUserData();
+    storedUser && setUserData(JSON.parse(storedUser));
+    setLoading(false);
+  }, []);
 
-  dispatch(addUsername(userData?.username));
+  userData && dispatch(addUsername(userData.username))
 
   return (
     <BrowserRouter>
@@ -41,9 +38,16 @@ const App = () => {
         <Route
           path="/"
           element={
-            !userData?.token ? <UserLogin /> : <Navigate to="/dashboard" />
+            !userData?.token ? (
+              <UserLogin />
+            ) : !userData?.user_type ? (
+              <Navigate to="/feature-selection" replace />
+            ) : (
+              <Navigate to="/dashboard" replace />
+            )
           }
         />
+
         <Route
           path="/signup"
           element={!userData?.token ? <Signup /> : <Navigate to="/dashboard" />}
@@ -52,6 +56,18 @@ const App = () => {
         {/* Shared Protected Routes */}
         <Route element={<ProtectedRoute userData={userData} />}>
           {/* Accessible by Both Roles */}
+          <Route
+            path="/feature-selection"
+            element={<FeatureSelection user={userData?.user} />}
+          />
+          <Route
+            path="/jobseeker"
+            element={<JobSeekerForm user={userData?.user} />}
+          />
+          {/* <Route
+            path="/recruiter"
+            element={<Recruit />}
+          /> */}
           <Route
             path="/dashboard"
             element={<Dashboard userData={userData} />}
@@ -72,7 +88,7 @@ const App = () => {
               element={<JobPosting userId={userData?.userId} />}
             />
             <Route
-              path="/admin/stats"
+              path="recruiter/dashboard"
               element={<JobPosted userid={userData?.userId} />}
             />
           </Route>

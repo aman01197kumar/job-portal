@@ -3,6 +3,7 @@ const END_POINTS = {
   //authentications
   LOGIN: `login`,
   SIGNUP: `signup`,
+  GOOGLE_AUTH: 'google-auth',
 
   //Employer's
   JOB_POSTED_BY_EMPLOYER: `jobs/user`,

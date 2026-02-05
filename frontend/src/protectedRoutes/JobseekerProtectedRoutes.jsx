@@ -5,7 +5,7 @@ const JobSeekerProtectedRoute = ({ userData}) => {
 
   if (!userData?.token) return <Navigate to="/" />;
 
-  if (userData?.user_type !== "job-seeker")
+  if (userData?.user_type !== "job seeker")
     return (
       <>
         <h1>Unauthorized Access! Please Login</h1>

@@ -70,13 +70,13 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const userInfo = useSelector((state) => state?.userInfo?.username);
-  const profile_img = useSelector((state) => state?.userInfo?.profileImage);
+  const { username } = useSelector((state) => state.userInfo);
+  const { profileImage } = useSelector((state) => state.userInfo);
+
+  console.log(username, 'pro')
 
   const handleLogout = () => {
     localStorage.removeItem("userData");
-    // dispatch(ad)
     navigate("/");
     window.location.reload();
   };
@@ -123,9 +123,8 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
               >
                 Find Jobs
                 <ChevronDown
-                  className={`ml-1 h-4 w-4 transition-transform duration-200 ${
-                    jobsDropdownOpen ? "rotate-180" : ""
-                  }`}
+                  className={`ml-1 h-4 w-4 transition-transform duration-200 ${jobsDropdownOpen ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 
@@ -221,21 +220,20 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                 className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
               >
-                {profile_img ? (
+                {profileImage ? (
                   <img
-                    src={`${BASE_URL}/${profile_img}`}
+                    src={`${BASE_URL}/${profileImage}`}
                     alt="Profile"
                     className="h-8 w-8 rounded-full object-cover"
                   />
                 ) : (
                   <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-200 ">
-                    {firstCharacters(userInfo)}
+                    {firstCharacters(username)}
                   </div>
                 )}
                 <ChevronDown
-                  className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${
-                    profileDropdownOpen ? "rotate-180" : ""
-                  }`}
+                  className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${profileDropdownOpen ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 
@@ -243,20 +241,20 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
                 <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
                   <div className="p-4 border-b border-gray-200">
                     <div className="flex items-center space-x-3">
-                      {profile_img ? (
+                      {profileImage ? (
                         <img
-                          src={`${BASE_URL}/${profile_img}`}
+                          src={`${BASE_URL}/${profileImage}`}
                           alt="Profile"
                           className="h-8 w-8 rounded-full object-cover"
                         />
                       ) : (
                         <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-200 ">
-                          {firstCharacters(userInfo)}
+                          {firstCharacters(username)}
                         </div>
                       )}
                       <div>
                         <p className="text-sm font-medium text-gray-900">
-                          {userInfo}
+                          {username}
                         </p>
                         <p className="text-xs text-gray-500">
                           Software Engineer
@@ -269,13 +267,13 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
                   </div>
 
                   <div className="py-2">
-                    <a
-                      href={`/user-profile/${userInfo}`}
+                    <span
+                      onClick={()=>navigate(`/user-profile/${username}`)}
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
                     >
                       <User className="h-4 w-4 mr-3" />
                       View Profile
-                    </a>
+                    </span>
                     <a
                       href="#"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
