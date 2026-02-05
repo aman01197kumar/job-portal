@@ -14,31 +14,33 @@ import Signup from "./auth/Signup";
 import UserLogin from "./auth/UserLogin";
 import { useEffect, useState } from "react";
 import JobSeekerForm from "./Forms/JobSeekerForm";
+import { useDispatch } from "react-redux";
+import { addUser, addUsername } from "./redux/userInfo";
 
 const App = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const storedUser = localStorage.getItem("userData");
-    if (storedUser) {
-      setUserData(JSON.parse(storedUser));
-    }
+
+    storedUser && setUserData(JSON.parse(storedUser));
     setLoading(false);
   }, []);
 
-  if (loading) return
-  console.log(userData, 'userdata')
+  userData && dispatch(addUsername(userData.username))
+
   return (
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-         <Route
+        <Route
           path="/"
           element={
             !userData?.token ? (
               <UserLogin />
-            ) : !userData?.user?.user_type ? (
+            ) : !userData?.user_type ? (
               <Navigate to="/feature-selection" replace />
             ) : (
               <Navigate to="/dashboard" replace />
@@ -86,7 +88,7 @@ const App = () => {
               element={<JobPosting userId={userData?.userId} />}
             />
             <Route
-              path="/admin/stats"
+              path="recruiter/dashboard"
               element={<JobPosted userid={userData?.userId} />}
             />
           </Route>

@@ -1,3 +1,4 @@
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const StatusCard = (stat) => {
@@ -23,4 +24,4 @@ const StatusCard = (stat) => {
   );
 };
 
-export default StatusCard;
+export default React.memo(StatusCard);

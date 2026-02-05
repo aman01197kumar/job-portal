@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectedRoute = ({ userData }) => {
+  console.log(userData,'userDaa')
   if (!userData?.token) {
     // user is not authenticated
     return <Navigate to="/" />;

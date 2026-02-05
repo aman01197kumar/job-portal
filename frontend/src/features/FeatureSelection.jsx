@@ -25,7 +25,7 @@ const FeatureSelection = ({ user }) => {
             description:
                 "Post jobs, review candidates, and hire faster with smart filtering.",
             icon: "🏢",
-            action: () => navigate("/recruiter"),
+            action: () => navigate("/recruiter/dashboard"),
             gradient: "from-emerald-500 to-teal-500",
             user_type: "recruiter"
         },

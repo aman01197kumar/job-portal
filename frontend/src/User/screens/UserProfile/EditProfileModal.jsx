@@ -21,7 +21,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { END_POINTS } from "../../../assets/END_POINTS";
 import Loader from "../../../utilities/components/Loader";
 
-export const EditProfileModal = ({ user, isOpen, onClose, userId, token }) => {
+export const EditProfileModal = ({ user, isOpen, onClose, userId }) => {
   const [formData, setFormData] = useState(user);
   const [savingChanges, setSavingChanges] = useState(false);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -288,12 +288,16 @@ export const EditProfileModal = ({ user, isOpen, onClose, userId, token }) => {
                     Availability Status
                   </label>
                   <select
-                    value={formData.availabilityStatus || "available"}
+                    value={formData.availabilityStatus}
                     onChange={(e) =>
-                      handleInputChange("availabilityStatus", e.target.value)
+                      handleInputChange(
+                        "availabilityStatus",
+                        e.target.value
+                      )
                     }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                   >
+                    <option>Availability Status</option>
                     <option value="available">Available</option>
                     <option value="busy">Busy</option>
                     <option value="unavailable">Unavailable</option>

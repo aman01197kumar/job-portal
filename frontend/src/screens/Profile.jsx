@@ -18,7 +18,7 @@ import { Header } from "../utilities/components/Header";
 import { EditProfileModal } from "../User/screens/UserProfile/EditProfileModal";
 import axios from "axios";
 import { END_POINTS } from "../assets/END_POINTS";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addProfileImage } from "../redux/userInfo";
 import Loader from "../utilities/components/Loader";
 import { firstCharacters } from "../utilities/custom_modules/firstCharacter";
@@ -31,6 +31,8 @@ export const ProfilePage = ({ token, userId }) => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const dispatch = useDispatch();
+  const { username } = useSelector(state => state.userInfo)
+
 
   // Fetch user data
   const fetchUserData = async () => {
@@ -46,8 +48,21 @@ export const ProfilePage = ({ token, userId }) => {
         }
       );
 
-      setUser(response?.data?.data);
-      dispatch(addProfileImage(response?.data?.data?.profile_img));
+      console.log(response, 'userpro')
+
+      if (response?.data?.data) {
+        setUser(response?.data?.data);
+        dispatch(addProfileImage(response?.data?.data?.profile_img));
+      }
+
+      else {
+        setUser({
+          username: username
+        })
+      }
+
+
+
       setLoading(false);
     } catch (err) {
       console.error("Error fetching user profile:", err);
@@ -62,9 +77,9 @@ export const ProfilePage = ({ token, userId }) => {
 
   const getAvailabilityColor = (status) => {
     switch (status) {
-      case "Available":
+      case "available":
         return "bg-green-500";
-      case "Busy":
+      case "busy":
         return "bg-yellow-500";
       case "Unavailable":
         return "bg-red-500";
@@ -75,9 +90,9 @@ export const ProfilePage = ({ token, userId }) => {
 
   const getAvailabilityText = (status) => {
     switch (status) {
-      case "Available":
+      case "available":
         return "Available for work";
-      case "Busy":
+      case "busy":
         return "Currently busy";
       case "Unavailable":
         return "Not available";
@@ -110,7 +125,7 @@ export const ProfilePage = ({ token, userId }) => {
                           className="h-32 w-32 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="w-32 h-32 flex items-center justify-center rounded-full bg-blue-200 ">
+                        <div className="w-32 h-32 flex items-center justify-center font-semi-bold text-white text-5xl rounded-full bg-blue-200 ">
                           {firstCharacters(user?.username)}
                         </div>
                       )}{" "}
@@ -334,7 +349,6 @@ export const ProfilePage = ({ token, userId }) => {
               isOpen={isEditModalOpen}
               onClose={() => setIsEditModalOpen(false)}
               userId={userId}
-              token={token}
             />
           </div>
         </>

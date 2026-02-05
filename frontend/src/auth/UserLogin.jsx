@@ -35,7 +35,7 @@ const UserLogin = () => {
 
   const handleCredentialLogin = async (response) => {
 
-    const res = await axios.get("http://localhost:3000/google-auth", {
+    const res = await axios.get(`${BASE_URL}/${END_POINTS.GOOGLE_AUTH}`, {
       headers: {
         Authorization: `Bearer ${response.credential}`,
       },
@@ -105,10 +105,12 @@ const UserLogin = () => {
         return;
       }
 
+      console.log(data,'daata')
+
       if (data.status === 200) {
         const userData = JSON.stringify({
           userId: data.userId,
-          user_type: data.user,
+          user_type: data.user.toLowerCase(),
           token: data.token,
           username: data.username,
           profileImage: data.profileImage,
