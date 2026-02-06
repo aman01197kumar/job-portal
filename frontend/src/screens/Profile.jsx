@@ -48,8 +48,6 @@ export const ProfilePage = ({ token, userId }) => {
         }
       );
 
-      console.log(response, 'userpro')
-
       if (response?.data?.data) {
         setUser(response?.data?.data);
         dispatch(addProfileImage(response?.data?.data?.profile_img));

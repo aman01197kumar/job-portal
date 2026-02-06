@@ -105,8 +105,6 @@ const UserLogin = () => {
         return;
       }
 
-      console.log(data,'daata')
-
       if (data.status === 200) {
         const userData = JSON.stringify({
           userId: data.userId,

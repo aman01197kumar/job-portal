@@ -14,7 +14,6 @@ const userInfoSlice = createSlice({
       state.username = action.payload;
     },
     addProfileImage: (state, action) => {
-      // console.log(action.payload,'oaj')
       state.profileImage = action.payload;
     },
     addUser: (state, action) => {

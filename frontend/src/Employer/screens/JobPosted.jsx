@@ -10,7 +10,6 @@ const JobPosted = ({ userid }) => {
   const [analyticsData, setAnalyticsData] = useState([]);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-  console.log('ere')
   // Fetch posted jobs
   const fetchJobDetails = async () => {
     try {

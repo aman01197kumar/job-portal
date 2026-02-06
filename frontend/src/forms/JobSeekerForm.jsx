@@ -32,7 +32,6 @@ const JobSeekerForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formData,'form')
         navigate('/', { replace: true });
 
     };

@@ -8,7 +8,6 @@ export const TechStackDropdown = ({ onSelectionChange, profileTechStacks }) => {
   const [allTechStacks, setAllTechStacks] = useState(techStacks);
   const menuRef = useRef(null);
 
-  console.log(profileTechStacks, "pro");
 
   // ✅ Close dropdown if clicked outside
   useEffect(() => {
