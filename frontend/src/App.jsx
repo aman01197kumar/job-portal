@@ -19,14 +19,13 @@ import JobSeekerForm from "./Forms/JobSeekerForm";
 
 const App = () => {
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch()
 
   useEffect(() => {
     const storedUser = localStorage.getItem("userData");
 
     storedUser && setUserData(JSON.parse(storedUser));
-    setLoading(false);
+
   }, []);
 
   userData && dispatch(addUsername(userData.username))
