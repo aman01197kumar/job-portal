@@ -73,7 +73,7 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
   const { username } = useSelector((state) => state.userInfo);
   const { profileImage } = useSelector((state) => state.userInfo);
 
-  console.log(username, 'pro')
+  console.log(`${BASE_URL}/${profileImage}`, 'pro')
 
   const handleLogout = () => {
     localStorage.removeItem("userData");

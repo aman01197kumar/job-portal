@@ -189,7 +189,6 @@ export const updateUserProfile = async (req, res) => {
     // ✅ Fetch main user (for name & email)
     const findUser = await User.findById(userId);
 
-    console.log(findUser, "find");
     if (!findUser) {
       return res
         .status(404)

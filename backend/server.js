@@ -21,7 +21,10 @@ const __dirname = dirname(__filename);
 
 app.use(
   cors({
-    origin: true,
+    origin: [
+      "http://localhost:5173",
+      "https://oppmore.vercel.app"
+    ],
     credentials: true,
   })
 );

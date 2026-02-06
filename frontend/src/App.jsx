@@ -15,7 +15,7 @@ import UserLogin from "./auth/UserLogin";
 import { useEffect, useState } from "react";
 import JobSeekerForm from "./Forms/JobSeekerForm";
 import { useDispatch } from "react-redux";
-import { addUser, addUsername } from "./redux/userInfo";
+import { addUsername } from "./redux/userInfo";
 
 const App = () => {
   const [userData, setUserData] = useState(null);
