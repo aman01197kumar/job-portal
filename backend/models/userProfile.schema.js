@@ -50,6 +50,12 @@ const userProfile = mongoose.Schema({
   availabilityStatus: {
     type: String,
   },
+  job_role: {
+    type: String
+  },
+  experience_level:{
+    type:Number
+  }
 });
 
 export const UserProfile = mongoose.model("UserProfile", userProfile);

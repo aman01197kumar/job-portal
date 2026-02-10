@@ -7,6 +7,8 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import Loader from "../utilities/components/Loader";
 import { END_POINTS } from "../assets/END_POINTS";
+import { useDispatch } from "react-redux";
+import { addUser } from "../redux/userInfo";
 
 
 const UserLogin = () => {
@@ -15,6 +17,7 @@ const UserLogin = () => {
   const [isLoading, setIsloading] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -34,39 +37,35 @@ const UserLogin = () => {
   }, []);
 
   const handleCredentialLogin = async (response) => {
-
     const res = await axios.get(`${BASE_URL}/${END_POINTS.GOOGLE_AUTH}`, {
       headers: {
         Authorization: `Bearer ${response.credential}`,
       },
     });
 
-    if (res.data.needsOnboarding) {
-      localStorage.setItem(
-        "userData",
-        JSON.stringify({
-          token: response.credential,
-          // role: null,
-          user: res.data.user,
-        })
-      );
+    // localStorage.setItem(
+    //   "userData",
+    //   JSON.stringify({
+    //     token: response.credential,
+    //     isOnboarding: res.data.needsOnboarding,
+    //     user: {
+    //       username: res.data.user.name,
+    //       email: res.data.user.email,
+    //       picture: res.data.user.picture,
+    //       user_type: res.data.user.user_type || null,
+    //     },
+    //   })
+    // );
 
-      window.location.href = "/feature-selection"
-    } else {
-      localStorage.setItem(
-        "userData",
-        JSON.stringify({
-          token: response.credential,
-          // role: res.data.user.user_type,
-          user: res.data.user,
-        })
-      );
+    // localStorage.setItem('token',response?.credential)
+    // dispatch(addUser({
+    //   name: res?.data?.user?.name,
+    //   email: res?.data?.user?.email
+    // }))
 
-
-      window.location.href = "/"
-    }
-
+    window.location.href = "feature-selection                                                                                                                                                                                                        zZzx";
   };
+
   const userLoginHandler = async () => {
     if (!email || !password) {
       toast.warn("Please enter email and password");
@@ -213,10 +212,27 @@ const UserLogin = () => {
               Don’t have an account?{" "}
               <span
                 className="text-blue-600 cursor-pointer font-medium"
-                onClick={() => navigate("signup")}
+                onClick={() => {
+                  localStorage.setItem(
+                    "userData",
+                    JSON.stringify({
+                      token: null,
+                      isOnboarding: true,
+                      user: {
+                        username: "",
+                        email: "",
+                        picture: "",
+                        user_type: null,
+                      },
+                    })
+                  );
+                  navigate("/feature-selection");
+                }}
               >
                 Create Account
               </span>
+
+
             </p>
           </div>
         </div>

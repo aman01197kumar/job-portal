@@ -1,9 +1,8 @@
-import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addUser } from "../redux/userInfo";
 
-const FeatureSelection = ({ user }) => {
+const FeatureSelection = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch()
 
@@ -15,7 +14,7 @@ const FeatureSelection = ({ user }) => {
             description:
                 "Create your profile, showcase your skills, and get hired by top companies.",
             icon: "💼",
-            action: () => navigate("/jobseeker"),
+            action: () => navigate("/onboarding"),
             gradient: "from-indigo-500 to-blue-500",
             user_type: "Job Seeker"
         },
@@ -41,29 +40,26 @@ const FeatureSelection = ({ user }) => {
         },
     ];
 
-    const featureActionHandler = (item) => {
+   const featureActionHandler = (item) => {
+//   const stored = JSON.parse(localStorage.getItem("userData"));
 
-        dispatch(addUser({
-            username: user?.name,
-            user_email: user?.email,
-            picture: user?.picture,
-            user_type: item?.user_type
-        }));
+  const updated = {
+    // ...stored,
+    isOnboarding: true,
+    user: {
+    //   ...stored.user,
+      user_type: item.user_type,
+    },
+  };
 
-        const stored = JSON.parse(localStorage.getItem("userData"));
+//   localStorage.setItem("userData", JSON.stringify(updated));
 
-        const updated = {
-            ...stored,
-            user: {
-                ...stored.user,
-                user_type: item?.user_type,
-            },
-        };
+  dispatch(addUser(updated.user));
 
-        localStorage.setItem("userData", JSON.stringify(updated));
+  item.action();
+};
 
-        item.action()
-    }
+
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-6">
