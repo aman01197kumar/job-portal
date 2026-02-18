@@ -9,55 +9,93 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const userSignup = async (req, res) => {
   try {
-    const { first_name, last_name, email, password, phone_number, user } =
-      req.body;
-    const full_name = `${first_name} ${last_name}`;
+    const {
+      fullName,
+      email,
+      password,
+      confirm_password,
+      phone,
+      feature_selection,
+      location,
+    } = req.body;
 
-    if (!email || !full_name || !phone_number || !password || !user) {
-      return res
-        .status(401)
-        .json({ status: 401, message: "Fill all the fields" });
-    }
-
-    // ✅ Check using actual DB field names
-    const userData = await User.findOne({
-      $or: [{ email }, { phone_number }],
-    });
-
-    if (userData) {
-      return res.status(409).json({
-        status: 409,
-        message: "Email or Contact Number already exists.",
+    // 🔎 Basic Validation
+    if (!fullName || !email || !password || !confirm_password || !phone || !feature_selection || !location) {
+      return res.status(400).json({
+        status: 400,
+        message: "All fields are required",
       });
     }
 
+    if (phone.length !== 10) {
+      return res.status(422).json({
+        status: 422,
+        message: "Contact Number must be 10 digits",
+      });
+    }
+
+    if (password !== confirm_password) {
+      return res.status(400).json({
+        status: 400,
+        message: "Passwords do not match",
+      });
+    }
+
+    // ✅ Check existing user (use actual DB field name)
+    const existingUser = await User.findOne({
+      $or: [{ email }, { phone }],
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        status: 409,
+        message: "Email or Contact Number already exists",
+      });
+    }
+
+    // 🔐 Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const users = new User({
-      full_name,
+    const newUser = new User({
+      fullName,
       email,
-      phone_number,
+      phone,
       password: hashedPassword,
-      user,
+      feature_selection,
+      location,
     });
 
-    await users.save();
+    await newUser.save()
 
-    return res.status(200).json({
-      status: 200,
-      message: "Data saved successfully",
-      users,
+    return res.status(201).json({
+      status: 201,
+      message: "User registered successfully",
+      user_id: newUser._id,
     });
-  } catch (err) {
-    console.error("Signup error:", err);
+
+  } catch (error) {
+
+    // 🚨 Handle Mongo Duplicate Key Error (important)
+    if (error.code === 11000) {
+      return res.status(409).json({
+        status: 409,
+        message: "Email or Contact Number already exists",
+      });
+    }
+
+    console.error(error);
 
     return res.status(500).json({
       status: 500,
-      message: "Internal server error",
+      message: "Internal Server Error",
     });
   }
 };
 
+export const getAllUser = async(req,res)=>{
+  const users = await User.find()
+  return res.json({users})
+}
 
 export const googleAuth = async (req, res) => {
   try {

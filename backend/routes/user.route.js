@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getAllUser,
   getUserProfile,
   googleAuth,
   updateUserProfile,
@@ -19,3 +20,4 @@ user_router.put('/update-user-profile/:userId', upload.fields([
 ]), updateUserProfile)
 
 user_router.get('/google-auth',googleAuth)
+user_router.get('/get-all-users',getAllUser)

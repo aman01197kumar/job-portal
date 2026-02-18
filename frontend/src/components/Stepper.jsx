@@ -29,10 +29,10 @@ const Stepper = ({ steps, activeStep, setActiveStep }) => {
                             {/* icon */}
                             <div
                                 className={`shrink-0 ${isCompleted
-                                        ? "text-green-400"
-                                        : isActive
-                                            ? "text-white"
-                                            : "text-gray-400"
+                                    ? "text-green-400"
+                                    : isActive
+                                        ? "text-white"
+                                        : "text-gray-400"
                                     }`}
                             >
                                 {step.icon}

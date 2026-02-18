@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, X } from "lucide-react";
-import { techStacks } from "../../../assets/tech_stacks";
+import { techStacks } from "../../../assets/data/tech_stacks";
 
 export const TechStackDropdown = ({ onSelectionChange, profileTechStacks }) => {
   const [open, setOpen] = useState(false);

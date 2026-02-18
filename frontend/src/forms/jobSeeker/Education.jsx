@@ -1,109 +1,98 @@
 import React, { useState } from "react";
 import NextButton from "../../components/NextButton";
+import { educationData } from "../../assets/data/education";
+import Calender from "../../components/Calender";
 
 const Education = ({ setActiveStep }) => {
-  const [educationList, setEducationList] = useState([
-    {
-      degree: "",
-      institution: "",
-      field: "",
-      startYear: "",
-      endYear: "",
-    },
-  ]);
-
-  const handleChange = (index, e) => {
-    const { name, value } = e.target;
-    const updated = [...educationList];
-    updated[index][name] = value;
-    setEducationList(updated);
-  };
+  const [educationCount, setEducationCount] = useState(1);
 
   const addEducation = () => {
-    setEducationList([
-      ...educationList,
-      {
-        degree: "",
-        institution: "",
-        field: "",
-        startYear: "",
-        endYear: "",
-      },
-    ]);
+    setEducationCount(prev => prev + 1);
   };
 
-  const submitEducation = (e) => {
+  const educationDetailsSubmitHandler = (e) => {
     e.preventDefault();
-    setActiveStep((prev) => prev + 1);
+
+    const formData = new FormData(e.target);
+
+    const educationArray = [];
+
+    for (let i = 0; i < educationCount; i++) {
+      educationArray.push({
+        degree: formData.get(`degree-${i}`),
+        institution: formData.get(`institution-${i}`),
+        field: formData.get(`field-${i}`),
+        startYear: formData.get(`startYear-${i}`),
+        endYear: formData.get(`endYear-${i}`)
+      });
+    }
+
+    console.log(educationArray);
+
+    // setActiveStep(prev => prev + 1);
   };
 
-  const inputClass =
-    "w-full p-3 rounded-xl border border-gray-200 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20";
 
   return (
-    <>
+    <form onSubmit={educationDetailsSubmitHandler}>
       <section className="m-8">
         <h3 className="text-xl font-semibold mb-4 text-indigo-600">
           Education Details
         </h3>
 
-        {educationList.map((edu, index) => (
+        {[...Array(educationCount)].map((_, index) => (
           <div
             key={index}
             className="mb-6 rounded-xl border border-gray-100 p-6 shadow-sm"
           >
             <div className="grid md:grid-cols-2 gap-4">
-              <input
-                type="text"
-                name="degree"
-                placeholder="Degree (e.g. B.Tech, MCA)"
-                className={inputClass}
-                value={edu.degree}
-                onChange={(e) => handleChange(index, e)}
-              />
 
-              <input
-                type="text"
-                name="institution"
-                placeholder="Institution / University"
-                className={inputClass}
-                value={edu.institution}
-                onChange={(e) => handleChange(index, e)}
-              />
+              {/* Degree */}
+              <select
+                name={`degree-${index}`}
+                className='inputClass'
+              >
+                <option value="">Select Course</option>
+                {educationData.map((item, i) => (
+                  <option key={i} value={item.courseName}>
+                    {item.courseName}
+                  </option>
+                ))}
+              </select>
 
-              <input
-                type="text"
-                name="field"
-                placeholder="Field of Study"
-                className={inputClass}
-                value={edu.field}
-                onChange={(e) => handleChange(index, e)}
-              />
+              {/* Institution */}
+              <select
+                name={`institution-${index}`}
+                className="inputClass"
+              >
+                <option value="">Select Institution</option>
+                {educationData.map((item, i) => (
+                  <option key={i} value={item.collegeName}>
+                    {item.collegeName}
+                  </option>
+                ))}
+              </select>
 
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  name="startYear"
-                  placeholder="Start Year"
-                  className={inputClass}
-                  value={edu.startYear}
-                  onChange={(e) => handleChange(index, e)}
-                />
+              {/* Field */}
+              <select
+                name={`field-${index}`}
+                className="inputClass"
+              >
+                <option value="">Select Field</option>
+                {educationData.map((item, i) => (
+                  <option key={i} value={item.fieldOfStudy}>
+                    {item.fieldOfStudy}
+                  </option>
+                ))}
+              </select>
 
-                <input
-                  type="text"
-                  name="endYear"
-                  placeholder="End Year"
-                  className={inputClass}
-                  value={edu.endYear}
-                  onChange={(e) => handleChange(index, e)}
-                />
-              </div>
+              {/* Years */}
+              <Calender />
+
             </div>
           </div>
         ))}
 
-        {/* Add More */}
         <button
           type="button"
           onClick={addEducation}
@@ -113,9 +102,8 @@ const Education = ({ setActiveStep }) => {
         </button>
       </section>
 
-      {/* Next Button */}
-      <NextButton/>
-    </>
+      <NextButton />
+    </form>
   );
 };
 

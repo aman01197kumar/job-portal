@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { addUser } from "../redux/userInfo";
+import { addUserSelection } from "../redux/userInfo";
 
 const FeatureSelection = () => {
     const navigate = useNavigate();
@@ -40,24 +40,24 @@ const FeatureSelection = () => {
         },
     ];
 
-   const featureActionHandler = (item) => {
-//   const stored = JSON.parse(localStorage.getItem("userData"));
+    const featureActionHandler = (item) => {
+        //   const stored = JSON.parse(localStorage.getItem("userData"));
 
-  const updated = {
-    // ...stored,
-    isOnboarding: true,
-    user: {
-    //   ...stored.user,
-      user_type: item.user_type,
-    },
-  };
+        const updated = {
+            // ...stored,
+            isOnboarding: true,
+            user: {
+                //   ...stored.user,
+                user_type: item.user_type,
+            },
+        };
 
-//   localStorage.setItem("userData", JSON.stringify(updated));
+        //   localStorage.setItem("userData", JSON.stringify(updated));
 
-  dispatch(addUser(updated.user));
+        dispatch(addUserSelection(item.user_type))
 
-  item.action();
-};
+        item.action();
+    };
 
 
 

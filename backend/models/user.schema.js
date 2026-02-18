@@ -7,13 +7,14 @@ const userSchema = mongoose.Schema({
     unique: true,
     index: true,
   },
-  full_name: {
+  fullName: {
     type: String,
     required: true,
   },
-  phone_number: { type: String, required: true, unique: true, index: true },
+  phone: { type: String, required: true, unique: true, index: true },
   password: { type: String, required: true },
-  user: { type: String, required: true },
+  feature_selection: { type: String, required: true },
+  location: { type: String }
 }, { timestamps: true });
 
 export const User = mongoose.model("User", userSchema);
