@@ -1,124 +1,159 @@
 import { useState } from "react";
 import NextButton from "../../components/NextButton";
+import DateRangePicker from "../../components/Calender";
+import { useDispatch, useSelector } from "react-redux";
+import toast, { Toaster } from "react-hot-toast";
+import { addExperienceAction } from "../../redux/userInfo";
 
 const Experience = ({ setActiveStep }) => {
-  const [experiences, setExperiences] = useState([
-    {
-      company: "",
-      role: "",
-      startDate: "",
-      endDate: "",
-      description: "",
-    },
+  const [experienceCount, setExperienceCount] = useState(1);
+  const [experienceDates, setExperienceDates] = useState([
+    { from: null, to: null }
   ]);
 
-  const handleChange = (index, field, value) => {
-    const updated = [...experiences];
-    updated[index][field] = value;
-    setExperiences(updated);
-  };
+  const dispatch = useDispatch();
 
   const addExperience = () => {
-    setExperiences([
-      ...experiences,
-      {
-        company: "",
-        role: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-      },
-    ]);
+    setExperienceCount((prev) => prev + 1);
+    setExperienceDates((prev) => [...prev, { from: null, to: null }]);
   };
 
-  const removeExperience = (index) => {
-    if (experiences.length === 1) return;
-    setExperiences(experiences.filter((_, i) => i !== index));
-  };
+  const {user_onboarding_credentials} = useSelector(state=>state.userInfo)
+  const experienceSubmitHandler = (e) => {
+    e.preventDefault()
+
+    const formData = new FormData(e.target);
+    const experienceArray = [];
+
+    for (let i = 0; i < experienceCount; i++) {
+
+      const organization_name = formData.get(`organization_name-${i}`);
+      const job_profile = formData.get(`job_profile-${i}`);
+      const description = formData.get(`description-${i}`);
+      const fromDate = experienceDates[i]?.from;
+      const toDate = experienceDates[i]?.to;
+
+      if (!organization_name || !job_profile || !description || !fromDate || !toDate) {
+        toast.error("Please fill all experience details");
+        return;
+      }
+
+      experienceArray.push({
+        organization_name,
+        job_profile,
+        description,
+        startYear: fromDate.toISOString(),
+        endYear: toDate.toISOString(),
+        isExperienceFilled: true
+      });
+    }
+
+    
+    dispatch(addExperienceAction(experienceArray))
+    // setActiveStep(prev => prev + 1)
+  }
+  console.log(user_onboarding_credentials,'user')
 
   return (
-    <div>
-      <h3 className="text-lg font-semibold mb-4">Work Experience</h3>
+    <form className="m-8" onSubmit={experienceSubmitHandler}>
 
-      {experiences.map((exp, index) => (
+      <h3 className="text-xl font-semibold mb-4 text-indigo-600">
+        Work Experience
+      </h3>
+
+      {[...Array(experienceCount)].map((_, index) => (
         <div
           key={index}
-          className="mb-6 p-4 border rounded-lg relative"
+          className="mb-8 bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
         >
-          {experiences.length > 1 && (
-            <button
-              type="button"
-              onClick={() => removeExperience(index)}
-              className="absolute top-2 right-2 text-red-500 text-sm"
-            >
-              Remove
-            </button>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="Company Name"
-              value={exp.company}
-              onChange={(e) =>
-                handleChange(index, "company", e.target.value)
-              }
-              className="w-full p-3 rounded-xl border border-gray-200 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-            />
+            {/* Company */}
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                Company Name
+              </label>
+              <input
+                type="text"
+                name={`organization_name-${index}`}
+                placeholder="Google, Amazon..."
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 
+                           focus:outline-none focus:ring-2 focus:ring-indigo-500/30 
+                           focus:border-indigo-500 transition"
+              />
+            </div>
 
-            <input
-              type="text"
-              placeholder="Role / Designation"
-              value={exp.role}
-              onChange={(e) =>
-                handleChange(index, "role", e.target.value)
-              }
-              className="w-full p-3 rounded-xl border border-gray-200 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-            />
+            {/* Role */}
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                Role / Designation
+              </label>
+              <input
+                type="text"
+                name={`job_profile-${index}`}
+                placeholder="Software Engineer"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 
+                           focus:outline-none focus:ring-2 focus:ring-indigo-500/30 
+                           focus:border-indigo-500 transition"
+              />
+            </div>
 
-            <input
-              type="date"
-              value={exp.startDate}
-              onChange={(e) =>
-                handleChange(index, "startDate", e.target.value)
-              }
-              className="w-full p-3 rounded-xl border border-gray-200 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-            />
-
-            <input
-              type="date"
-              value={exp.endDate}
-              onChange={(e) =>
-                handleChange(index, "endDate", e.target.value)
-              }
-              className="w-full p-3 rounded-xl border border-gray-200 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-            />
-
+            {/* Date Range */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-600 mb-2">
+                Duration
+              </label>
+              <div className="flex flex-col md:flex-row gap-4">
+                <DateRangePicker
+                  fromValue={experienceDates[index]?.from}
+                  toValue={experienceDates[index]?.to}
+                  onFromChange={(date) => {
+                    const updated = [...experienceDates];
+                    updated[index].from = date;
+                    setExperienceDates(updated);
+                  }}
+                  onToChange={(date) => {
+                    const updated = [...experienceDates];
+                    updated[index].to = date;
+                    setExperienceDates(updated);
+                  }}
+                />
+              </div>
+            </div>
           </div>
-          <textarea
-            placeholder="Responsibilities / Achievements"
-            value={exp.description}
-            onChange={(e) =>
-              handleChange(index, "description", e.target.value)
-            }
-            className="mt-4  w-full p-3 rounded-xl border border-gray-200 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-            rows={3}
-          />
+
+          {/* Description */}
+          <div className="mt-5">
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Responsibilities / Achievements
+            </label>
+            <textarea
+              rows={3}
+              name={`description-${index}`}
+              placeholder="Describe your role and achievements..."
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 
+                         focus:outline-none focus:ring-2 focus:ring-indigo-500/30 
+                         focus:border-indigo-500 transition"
+            />
+          </div>
         </div>
       ))}
 
+      {/* Add Button */}
       <button
-        type="button"
+      type="button"
         onClick={addExperience}
-        className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+        className="text-indigo-600 font-medium hover:text-indigo-700 transition"
       >
         + Add Another Company
       </button>
-      <div>
 
-      <NextButton/>
+      {/* Next Button */}
+      <div className="mt-8">
+        <NextButton />
       </div>
-    </div>
+      <Toaster />
+    </form>
   );
 };
 
