@@ -12,95 +12,64 @@ import JobSeekerProtectedRoute from "./protectedRoutes/JobseekerProtectedRoutes"
 import FeatureSelection from "./features/FeatureSelection";
 import Signup from "./auth/Signup";
 import UserLogin from "./auth/UserLogin";
-import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux";
-import { addUsername } from "./redux/userInfo";
 import JobSeekerForm from "./Forms/JobSeekerForm";
+import { useSelector } from "react-redux";
 
 const App = () => {
-  const [userData, setUserData] = useState(null);
-  const dispatch = useDispatch()
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("userData");
-
-    storedUser && setUserData(JSON.parse(storedUser));
-
-  }, []);
-
-  userData && dispatch(addUsername(userData.username))
+  const { user_token } = useSelector(state => state.userInfo)
+  const token = user_token || localStorage.getItem('token')
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Routes */}
+
+        {/* Default Route */}
         <Route
           path="/"
           element={
-            !userData?.token ? (
-              <UserLogin />
-            ) : !userData?.user_type ? (
-              <Navigate to="/feature-selection" replace />
-            ) : (
+            token ? (
               <Navigate to="/dashboard" replace />
+            ) : (
+              <Navigate to="/login" replace />
             )
           }
         />
 
+        {/* Public Routes */}
         <Route
-          path="/signup"
-          element={!userData?.token ? <Signup /> : <Navigate to="/dashboard" />}
+          path="/login"
+          element={token ? <Navigate to="/dashboard" /> : <UserLogin />}
         />
 
-        {/* Shared Protected Routes */}
-        <Route element={<ProtectedRoute userData={userData} />}>
-          {/* Accessible by Both Roles */}
-          <Route
-            path="/feature-selection"
-            element={<FeatureSelection user={userData?.user} />}
-          />
-          <Route
-            path="/jobseeker"
-            element={<JobSeekerForm user={userData?.user} />}
-          />
-          {/* <Route
-            path="/recruiter"
-            element={<Recruit />}
-          /> */}
-          <Route
-            path="/dashboard"
-            element={<Dashboard userData={userData} />}
-          />
+        <Route
+          path="/signup"
+          element={token ? <Navigate to="/dashboard" /> : <Signup />}
+        />
+
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+
+          <Route path="/dashboard" element={<Dashboard token={token} />} />
           <Route path="/career-advice" element={<CareerAdvice />} />
+          <Route path="/feature-selection" element={<FeatureSelection />} />
+          <Route path="/jobseeker" element={<JobSeekerForm />} />
+          <Route path="/user-profile/:username" element={<ProfilePage />} />
 
-          <Route
-            path="/user-profile/:username"
-            element={
-              <ProfilePage token={userData?.token} userId={userData?.userId} />
-            }
-          />
-
-          {/* Admin Only Routes */}
-          <Route element={<AdminProtectedRoute userData={userData} />}>
-            <Route
-              path="/admin/job-posting"
-              element={<JobPosting userId={userData?.userId} />}
-            />
-            <Route
-              path="recruiter/dashboard"
-              element={<JobPosted userid={userData?.userId} />}
-            />
+          {/* Admin Only */}
+          <Route element={<AdminProtectedRoute />}>
+            <Route path="/admin/job-posting" element={<JobPosting />} />
+            <Route path="/recruiter/dashboard" element={<JobPosted />} />
           </Route>
 
-          {/* Job Seeker Only Routes */}
-          <Route element={<JobSeekerProtectedRoute userData={userData} />}>
-            <Route
-              path="/application-sent"
-              element={<ApplicationSent userid={userData?.userId} />}
-            />
+          {/* Job Seeker Only */}
+          <Route element={<JobSeekerProtectedRoute />}>
+            <Route path="/application-sent" element={<ApplicationSent />} />
             <Route path="/job-details/:id" element={<ViewJobDescription />} />
           </Route>
+
         </Route>
+
       </Routes>
     </BrowserRouter>
   );

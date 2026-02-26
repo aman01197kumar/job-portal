@@ -35,6 +35,8 @@ export const TechStackDropdown = ({ onSelectionChange, profileTechStacks }) => {
   useEffect(() => {
     onSelectionChange(selectedTechStack);
   }, [selectedTechStack]);
+
+  
   return (
     <div className="relative inline-block text-left w-full" ref={menuRef}>
       {/* Dropdown Trigger */}

@@ -115,17 +115,17 @@ const userLogin = async (req, res) => {
   try {
     if (!email || !password)
       return res
-        .status(200)
+        .status(400)
         .json({ message: "Fill all the details", status: 400 });
     const user = await User.findOne({ email });
 
     if (!user)
-      return res.status(200).json({ message: "User not found", status: 404 });
+      return res.status(404).json({ message: "User not found", status: 404 });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res
-        .status(200)
+        .status(401)
         .json({ message: "Incorrect password", status: 401 });
 
     const token = await jwt.sign(
@@ -137,11 +137,7 @@ const userLogin = async (req, res) => {
     return res.status(200).json({
       message: "login successful",
       status: 200,
-      user: user.user,
-      userId: user._id,
-      username: user.full_name,
       token: token,
-      profileImage: fetchUserImage?.profile_img,
     });
   } catch (err) {
     return res
@@ -149,6 +145,14 @@ const userLogin = async (req, res) => {
       .json({ message: err.message, status: 500, success: false });
   }
 };
+
+export const getUserDashboard = async (req, res) => {
+
+  const user = await User.findById(req.user.userid)
+
+  return res.status(200).json({ feature_selection: user.feature_selection })
+}
+
 
 export const getUserProfile = async (req, res) => {
   try {
@@ -237,7 +241,7 @@ export const updateUserProfile = async (req, res) => {
       { new: true, upsert: true, returnDocument: "after" } // create if doesn't exist
     );
 
-    console.log(updatedProfile, "updatedProfile");
+
     await updatedProfile.save();
     return res.status(200).json({
       success: true,
