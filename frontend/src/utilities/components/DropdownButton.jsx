@@ -60,8 +60,6 @@ export default function DropdownButton() {
     );
   };
 
-  const inputComponent = React.useMemo(() => <OutlinedInput label="Add your skills" />, []);
-
   return (
     <div>
       <FormControl className='w-full'>
@@ -72,7 +70,7 @@ export default function DropdownButton() {
           multiple
           value={personName}
           onChange={handleChange}
-          input={inputComponent}
+          input={<OutlinedInput label="Add your skills" />}
           renderValue={(selected) => selected.join(', ')}
           MenuProps={MenuProps}
         >

@@ -46,7 +46,7 @@ const ApplicationSent = ({ userid }) => {
       const applicationIds = response?.data?.data?.map((app) => app._id);
       dispatch(setSentApplicationsIds(applicationIds));
     } catch (err) {
-      toast.error(err?.response?.data?.message);
+      console.log(err);
     } finally {
       setIsLoading(false);
     }

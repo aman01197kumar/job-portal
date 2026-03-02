@@ -1,27 +1,26 @@
 import { APPLIEDJOBS } from "../models/appliedJobs.schema.js";
 import mongoose from "mongoose";
-import { User } from "../models/user.schema.js";
 
 export const statusCards = async (req, res) => {
   try {
-    const user = await User.findById(req.user.userid)
-    
+    const { userId } = req.params;
 
-    if (!user._id || !mongoose.Types.ObjectId.isValid(user._id)) {
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({
         success: false,
-        message: "Please login again.",
+        message: "Invalid or missing userId. Please login again.",
       });
     }
 
     // Use countDocuments for a precise count with a filter
-    const totalAppliedJobs = await APPLIEDJOBS.countDocuments({ userId: user._id });
+    const totalAppliedJobs = await APPLIEDJOBS.countDocuments({ userId });
 
     return res.status(200).json({
       success: true,
       totalAppliedJobs,
     });
   } catch (err) {
-    return res.status(500).json({ success: false, message: err.message });
+    console.error("Error fetching status cards data:", err);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };

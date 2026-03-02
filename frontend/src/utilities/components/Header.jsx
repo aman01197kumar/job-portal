@@ -19,7 +19,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/imgs/oppmore_logo.png";
 import { useDispatch, useSelector } from "react-redux";
-import { setLogout } from "../../redux/userInfo";
 import { firstCharacters } from "../custom_modules/firstCharacter";
 
 const jobCategories = [
@@ -71,14 +70,13 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { username } = useSelector((state) => state.userInfo);
   const { profileImage } = useSelector((state) => state.userInfo);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    dispatch(setLogout());
+    localStorage.removeItem("userData");
     navigate("/");
+    window.location.reload();
   };
 
   const searchJobHandler = (e) => {
@@ -340,19 +338,19 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
           <div className="px-4 pt-4 pb-6 space-y-4">
             {/* Profile Section */}
             <div className="flex items-center space-x-3 pb-4 border-b border-gray-200">
-              {profileImage ? (
+              {profile_img ? (
                 <img
-                  src={`${BASE_URL}/${profileImage}`}
+                  src={`${BASE_URL}/${profile_img}`}
                   alt="Profile"
                   className="h-8 w-8 rounded-full object-cover"
                 />
               ) : (
                 <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-200 ">
-                  {firstCharacters(username)}
+                  {firstCharacters(userInfo)}
                 </div>
               )}
               <div>
-                <p className="text-sm font-medium text-gray-900">{username}</p>
+                <p className="text-sm font-medium text-gray-900">{userInfo}</p>
                 <p className="text-xs text-gray-500">Software Engineer</p>
               </div>
             </div>
@@ -411,7 +409,7 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
             {/* Account Actions */}
             <div className="pt-4 border-t border-gray-200 space-y-2">
               <a
-                href={`/user-profile/${username}`}
+                href={`/user-profile/${userInfo}`}
                 className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
               >
                 <User className="h-5 w-5 mr-3" />

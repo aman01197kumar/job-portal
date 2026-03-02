@@ -40,6 +40,7 @@ const JobPosting = ({ userId }) => {
       const errorMessage =
         err.response?.data?.message || "An unexpected error occurred.";
       toast.error(errorMessage);
+      console.error("Job creation failed:", err);
     } finally {
       setIsLoading(false);
     }

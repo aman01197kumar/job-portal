@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import AdminHeader from "../Employer/components/AdminHeader";
+import AdminHeader from "../components/AdminHeader";
 
 const AdminDashboard = ({ userData }) => {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const AdminDashboard = ({ userData }) => {
     },
     {
       title: "All about you",
-      path: `/user-profile/${userData?.username}`,
+      path: "/user-profile",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"

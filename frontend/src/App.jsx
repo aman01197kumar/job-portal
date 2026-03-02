@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import DashboardSelection from "./dashboards/DashboardSelection";
+import Dashboard from "./screens/Dashboard";
 import JobPosting from "./Employer/screens/JobPosting";
 import ViewJobDescription from "./User/screens/ViewJobDescription";
 import JobPosted from "./Employer/screens/JobPosted";
@@ -17,8 +17,8 @@ import { useSelector } from "react-redux";
 
 const App = () => {
 
-  const token = useSelector(state => state.userInfo.user_token)
-  // const token = user_token || localStorage.getItem('token')
+  const { user_token } = useSelector(state => state.userInfo)
+  const token = user_token || localStorage.getItem('token')
 
   return (
     <BrowserRouter>
@@ -48,9 +48,9 @@ const App = () => {
         />
 
         {/* Protected Routes */}
-        <Route element={<ProtectedRoute token = {token}/>}>
+        <Route element={<ProtectedRoute />}>
 
-          <Route path="/dashboard" element={<DashboardSelection token={token} />} />
+          <Route path="/dashboard" element={<Dashboard token={token} />} />
           <Route path="/career-advice" element={<CareerAdvice />} />
           <Route path="/feature-selection" element={<FeatureSelection />} />
           <Route path="/jobseeker" element={<JobSeekerForm />} />
@@ -76,5 +76,3 @@ const App = () => {
 };
 
 export default App;
-
-

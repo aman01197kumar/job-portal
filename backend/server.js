@@ -34,8 +34,8 @@ await connectDB()
 
 // ✅ Routes
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/jobs",router);
-app.use("/user",user_router);
+app.use(router);
+app.use(user_router);
 app.use("/status", statusRouter);
 // app.use("/auth", googleRoutes);
 

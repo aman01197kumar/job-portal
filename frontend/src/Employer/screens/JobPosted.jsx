@@ -4,7 +4,6 @@ import { END_POINTS } from "../../assets/END_POINTS";
 import AdminHeader from "../components/AdminHeader";
 import JobPostedCard from "../components/JobPostedCard";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import toast, { Toaster } from "react-hot-toast";
 
 const JobPosted = ({ userid }) => {
   const [jobDetails, setJobDetails] = useState([]);
@@ -26,7 +25,7 @@ const JobPosted = ({ userid }) => {
       }));
       setAnalyticsData(chartData);
     } catch (err) {
-      toast.error(err?.response?.data?.message);
+      console.log(err);
     }
   };
 
@@ -104,7 +103,6 @@ const JobPosted = ({ userid }) => {
           <p className="text-center col-span-full mt-8">No jobs posted yet!</p>
         )}
       </div>
-      <Toaster/>
     </div>
   );
 };
