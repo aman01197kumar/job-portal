@@ -1,6 +1,7 @@
 import { JobPost } from "../models/jobPost.schema.js";
 import mongoose from "mongoose";
 import { APPLIEDJOBS } from "../models/appliedJobs.schema.js";
+import { User } from "../models/user.schema.js";
 
 export const createJobPost = async (req, res) => {
   try {
@@ -43,15 +44,10 @@ export const createJobPost = async (req, res) => {
 // Get all Job Posts
 export const getAllJobPosts = async (req, res) => {
   try {
-    const { userId } = req.params;
-
-    // Validate userId
-    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: "Invalid or missing userId" });
-    }
+    const user = await User.findById(req.user.userid)
 
     // Get all jobIds user has applied to
-    const appliedJobIds = await APPLIEDJOBS.find({ userId }).distinct("jobId");
+    const appliedJobIds = await APPLIEDJOBS.find({ userId: user._id }).distinct("jobId");
 
     let filteredJobs;
 
@@ -116,47 +112,18 @@ export const getAppliedJobsByCandidate = async (req, res) => {
   }
 };
 
-// Delete a Job Post (optional)
-// export const deleteJobPost = async (req, res) => {
-//   try {
-//     const { jobPostId } = req.params;
-//     const { jobIndex } = req.body;
-
-//     const jobPost = await JobApplication.findById(jobPostId);
-
-//     if (!jobPost) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "Job post not found" });
-//     }
-
-//     if (jobIndex < 0 || jobIndex >= jobPost.jobs.length) {
-//       return res
-//         .status(400)
-//         .json({ success: false, message: "Invalid job index" });
-//     }
-
-//     // Remove the job at the specific index
-//     jobPost.jobs.splice(jobIndex, 1);
-//     await jobPost.save();
-
-//     res
-//       .status(200)
-//       .json({ success: true, message: "Job deleted successfully" });
-//   } catch (error) {
-//     res.status(500).json({ success: false, message: error.message });
-//   }
-// }
 export const sentJobApplicationController = async (req, res) => {
   try {
-    const { userId } = req.params;
+  
+    const user = await User.findById(req.user.userid)
+    
     const { jobId, organisation_name, job_profile, ctc, job_location, job_type, description } = req.body;
 
     // 🧩 Validate userId
-    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    if (!user.user_id || !mongoose.Types.ObjectId.isValid(user.user_id)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid or missing userId. Please login again.",
+        message: "Please login again.",
       });
     }
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import login from "../assets/imgs/login.jpg";
 import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -8,7 +8,6 @@ import toast, { Toaster } from "react-hot-toast";
 import Loader from "../utilities/components/Loader";
 import { END_POINTS } from "../assets/END_POINTS";
 import { useDispatch } from "react-redux";
-import { setUserToken } from "../redux/userInfo";
 
 
 const UserLogin = () => {
@@ -74,8 +73,12 @@ const UserLogin = () => {
     const formData = new FormData(e.target)
     const user = Object.fromEntries(formData.entries())
 
+    
+    
     try {
       setIsloading(true);
+      
+      // console.log(`${BASE_URL}/${END_POINTS.LOGIN}`,user)
       const response = await axios.post(
         `${BASE_URL}/${END_POINTS.LOGIN}`,
         user
@@ -83,6 +86,7 @@ const UserLogin = () => {
 
       const { data } = response;
 
+      
       localStorage.setItem("token", data?.token)
       dispatch(setUserToken(data?.token))
       toast.success(data?.message)
@@ -90,7 +94,6 @@ const UserLogin = () => {
 
     }
     catch (err) {
-      console.log(err)
       toast.error(err?.response?.data?.message);
     }
     finally {

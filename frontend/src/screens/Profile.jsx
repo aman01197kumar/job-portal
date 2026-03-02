@@ -58,12 +58,9 @@ export const ProfilePage = ({ token, userId }) => {
           username: username
         })
       }
-
-
-
       setLoading(false);
     } catch (err) {
-      console.error("Error fetching user profile:", err);
+      toast.error(err?.response?.data?.message);
     } finally {
       setLoading(false);
     }

@@ -1,24 +1,35 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-const FetchUser = ({ token, END_POINT }) => {
-    const [data, setData] = useState(null)
+const useFetchFeatureSelection = (token, END_POINT) => {
+  const [featureSelection, setFeatureSelection] = useState(null);
 
-    const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-    useEffect(() => {
-        if (token) {
-            const response = axios.get(`${BASE_URL}/${END_POINT}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                })
-            setData(response?.data)
-        }
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (!token) return;
 
-    }, [])
-    return data
-}
+        const response = await axios.get(
+          `${BASE_URL}/${END_POINT}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-export default FetchUser
+        setFeatureSelection(response.data.feature_selection);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUser();
+  }, [token, END_POINT]);
+
+  return featureSelection;
+};
+
+export default useFetchFeatureSelection;    

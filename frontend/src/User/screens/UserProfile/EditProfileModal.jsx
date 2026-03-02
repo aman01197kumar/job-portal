@@ -128,8 +128,7 @@ export const EditProfileModal = ({ user, isOpen, onClose, userId }) => {
       // window.location.reload();
       setSavingChanges(false);
     } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error("Failed to update profile");
+      toast.error(err?.response?.data?.message);
     } finally {
       // Always reset the loader, even if there's an error
       setSavingChanges(false);

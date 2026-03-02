@@ -1,37 +1,40 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import {  END_POINTS } from "../../assets/END_POINTS";
+import { END_POINTS } from "../assets/END_POINTS";
 import { FileText } from "lucide-react";
-import { Header } from "../../utilities/components/Header";
-import StatusCards from "../../utilities/components/StatusCards";
+import { Header } from "../utilities/components/Header";
+import StatusCards from "../utilities/components/StatusCards";
 import toast, { Toaster } from "react-hot-toast";
-import SavedJobs from "../../utilities/components/SavedJobs";
-import Notifications from "../../utilities/components/Notifications";
-import JobCards from "../../utilities/components/JobCards";
+import SavedJobs from "../utilities/components/SavedJobs";
+import Notifications from "../utilities/components/Notifications";
+import JobCards from "../utilities/components/JobCards";
 import { useNavigate } from "react-router-dom";
 
-const MainContent = ({ userId }) => {
+const JobSeekerDashboard = ({ token }) => {
   const [dashboardJobPosted, setDashboardJobPosted] = useState([]);
   const [loading, setLoading] = useState(true);
   const [allJobs, setAllJobs] = useState([]);
   const navigate = useNavigate();
 
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-  
-  
+
+
   const fetchJobs = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_URL}/${END_POINTS.JOBS}/${userId}`,
+        `${BASE_URL}/${END_POINTS.RECENT_JOBS}`,
         {
-          "content-type": "application/json",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
       setDashboardJobPosted(response?.data?.data);
       setAllJobs(response?.data?.data);
     } catch (err) {
-      console.error("Error fetching jobs:", err);
+      toast.error(err?.response?.data?.message);
     } finally {
       setLoading(false);
     }
@@ -54,17 +57,14 @@ const MainContent = ({ userId }) => {
         job_type: application?.job_type,
       };
 
-      if (!userId) {
-        toast.error("User ID not found. Please log in again.");
-        navigate("/login");
-        return;
-      }
 
       const response = await axios.post(
-        `${BASE_URL}/${END_POINTS.APPLY_JOB}/${userId}`,
+        `${BASE_URL}/${END_POINTS.APPLY_JOB}/`,
         payload,
         {
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json" },
         }
       );
 
@@ -72,7 +72,7 @@ const MainContent = ({ userId }) => {
 
       if (success) {
         toast.success(message);
-        window.location.reload();
+        fetchJobs();
       }
     } catch (err) {
       toast.error(err.message);
@@ -85,7 +85,7 @@ const MainContent = ({ userId }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
           {/* Stats Grid */}
-          <StatusCards userId={userId} />
+          <StatusCards />
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -121,4 +121,4 @@ const MainContent = ({ userId }) => {
   );
 };
 
-export default MainContent;
+export default JobSeekerDashboard;

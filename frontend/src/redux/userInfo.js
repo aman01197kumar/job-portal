@@ -4,7 +4,7 @@ const initialState = {
   username: "",
   profileImage: "",
   user: {},
-  user_token: ""
+  user_token: localStorage.getItem("token") || null,
 };
 
 const userInfoSlice = createSlice({
@@ -20,11 +20,11 @@ const userInfoSlice = createSlice({
     addUser: (state, action) => {
       state.user = action.payload
     },
-    setUserToken: (state, action) => {
-      state.user_token = action.payload
+    setLogout: (state) => {
+      state.user_token = null
     }
   },
 });
 
-export const { addUsername, addProfileImage, addUser, setUserToken } = userInfoSlice.actions;
+export const { addUsername, addProfileImage, addUser, setUserToken,setLogout } = userInfoSlice.actions;
 export default userInfoSlice.reducer;

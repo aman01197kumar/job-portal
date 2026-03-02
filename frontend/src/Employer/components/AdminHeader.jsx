@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/imgs/oppmore_logo.png'
+import { useDispatch } from 'react-redux';
+import { setLogout } from '../../redux/userInfo';
 
 
 
@@ -27,10 +29,11 @@ const AdminHeader = ({ setDashboardJobPosted, allJobs }) => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const handleLogout = () => {
-    localStorage.removeItem('userData');
+    localStorage.removeItem('token');
+    dispatch(setLogout())
     navigate('/');
-    window.location.reload();
   };
 
   const searchJobHandler = (e) => {
