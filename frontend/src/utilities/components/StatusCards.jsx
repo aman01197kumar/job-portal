@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import StatusCard from "./StatusCard";
 import { useEffect, useState } from "react";
 import axios from "axios";
