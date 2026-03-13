@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema({
   },
   phone_number: { type: String, required: true, unique: true, index: true },
   password: { type: String, required: true },
-  user: { type: String, required: true },
+  feature_selection: { type: String, required: true },
 }, { timestamps: true });
 
 export const User = mongoose.model("User", userSchema);

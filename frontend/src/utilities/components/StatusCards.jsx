@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import StatusCard from "./StatusCard";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -21,6 +20,8 @@ const StatusCards = ({ userId }) => {
   useEffect(() => {
     fetchStatusCards();
   }, []);
+
+  
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatusCard

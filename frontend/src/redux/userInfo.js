@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   username: "",
   profileImage: "",
-  user: {}
+  user: {},
+  user_token: ""
 };
 
 const userInfoSlice = createSlice({
@@ -18,10 +19,12 @@ const userInfoSlice = createSlice({
     },
     addUser: (state, action) => {
       state.user = action.payload
+    },
+    setUserToken: (state, action) => {
+      state.user_token = action.payload
     }
-
   },
 });
 
-export const { addUsername, addProfileImage, addUser } = userInfoSlice.actions;
+export const { addUsername, addProfileImage, addUser, setUserToken } = userInfoSlice.actions;
 export default userInfoSlice.reducer;
