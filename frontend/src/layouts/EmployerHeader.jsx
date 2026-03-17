@@ -17,11 +17,11 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/imgs/oppmore_logo.png'
+import logo from '../assets/imgs/logo.png'
 
 
 
-const AdminHeader = ({ setDashboardJobPosted, allJobs }) => {
+const EmployerHeader = ({ setDashboardJobPosted, allJobs }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [jobsDropdownOpen, setJobsDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -221,4 +221,4 @@ const AdminHeader = ({ setDashboardJobPosted, allJobs }) => {
   );
 };
 
-export default AdminHeader
+export default EmployerHeader
