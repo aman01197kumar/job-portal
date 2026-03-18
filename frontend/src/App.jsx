@@ -14,12 +14,17 @@ import Signup from "./auth/Signup";
 import UserLogin from "./auth/UserLogin";
 import JobSeekerForm from "./Forms/JobSeekerForm";
 import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 const App = () => {
 
+  const[token,setToken] = useState(null)
   const { user_token } = useSelector(state => state.userInfo)
-  const token = user_token || localStorage.getItem('token')
-console.log(token,'token')
+
+  useEffect(()=>{
+    setToken(user_token || localStorage.getItem('token'))
+  },[])
+  
   return (
     <BrowserRouter>
       <Routes>

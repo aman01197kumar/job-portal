@@ -43,15 +43,16 @@ export const createJobPost = async (req, res) => {
 // Get all Job Posts
 export const getAllJobPosts = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userid } = req.user;
+    console.log(userid,'userid')
 
     // Validate userId
-    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: "Invalid or missing userId" });
+    if (!userid || !mongoose.Types.ObjectId.isValid(userid)) {
+      return res.status(400).json({ message: "Invalid or missing userid" });
     }
 
     // Get all jobIds user has applied to
-    const appliedJobIds = await APPLIEDJOBS.find({ userId }).distinct("jobId");
+    const appliedJobIds = await APPLIEDJOBS.find({ userid }).distinct("jobId");
 
     let filteredJobs;
 
@@ -149,11 +150,11 @@ export const getAppliedJobsByCandidate = async (req, res) => {
 // }
 export const sentJobApplicationController = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userid } = req.user;
     const { jobId, organisation_name, job_profile, ctc, job_location, job_type, description } = req.body;
 
     // 🧩 Validate userId
-    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    if (!userid || !mongoose.Types.ObjectId.isValid(userid)) {
       return res.status(400).json({
         success: false,
         message: "Invalid or missing userId. Please login again.",
