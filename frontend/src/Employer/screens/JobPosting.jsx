@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { END_POINTS } from "../../assets/END_POINTS";
-import AdminHeader from "../components/AdminHeader";
+import AdminHeader from "../../layouts/EmployerHeader";
 import "react-toastify/dist/ReactToastify.css";
 
 const INITIAL_STATE = {

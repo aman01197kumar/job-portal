@@ -4,6 +4,8 @@ export const auth = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
+    console.log(authHeader,'auth')
+    console.log(req.originalUrl, req.headers.authorization)
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ message: "Unauthorized - No token" });
     }

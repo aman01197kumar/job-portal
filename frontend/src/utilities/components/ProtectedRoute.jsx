@@ -1,10 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = ({ userData }) => {
-  if (!userData?.token) {
-    // user is not authenticated
-    return <Navigate to="/" />;
+const ProtectedRoute = () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
   }
+
   return <Outlet />;
 };
 

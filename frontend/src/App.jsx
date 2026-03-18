@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import Dashboard from "./screens/Dashboard";
+import DashboardAccess from "./dashboards/DashboardAccess";
 import JobPosting from "./Employer/screens/JobPosting";
 import ViewJobDescription from "./User/screens/ViewJobDescription";
 import JobPosted from "./Employer/screens/JobPosted";
@@ -14,12 +14,17 @@ import Signup from "./auth/Signup";
 import UserLogin from "./auth/UserLogin";
 import JobSeekerForm from "./Forms/JobSeekerForm";
 import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 const App = () => {
 
+  const[token,setToken] = useState(null)
   const { user_token } = useSelector(state => state.userInfo)
-  const token = user_token || localStorage.getItem('token')
 
+  useEffect(()=>{
+    setToken(user_token || localStorage.getItem('token'))
+  },[])
+  
   return (
     <BrowserRouter>
       <Routes>
@@ -35,7 +40,7 @@ const App = () => {
             )
           }
         />
-
+        {/* <Route path="/" element = {<Dashboard/>}/> */}
         {/* Public Routes */}
         <Route
           path="/login"
@@ -50,7 +55,7 @@ const App = () => {
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
 
-          <Route path="/dashboard" element={<Dashboard token={token} />} />
+          <Route path="/dashboard" element={<DashboardAccess token={token} />} />
           <Route path="/career-advice" element={<CareerAdvice />} />
           <Route path="/feature-selection" element={<FeatureSelection />} />
           <Route path="/jobseeker" element={<JobSeekerForm />} />

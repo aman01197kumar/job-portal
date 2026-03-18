@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { END_POINTS } from "../../assets/END_POINTS";
-import AdminHeader from "../components/AdminHeader";
+import AdminHeader from "../../layouts/EmployerHeader";
 import JobPostedCard from "../components/JobPostedCard";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
