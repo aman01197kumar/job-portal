@@ -21,18 +21,18 @@ const UserLogin = () => {
 
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-  useEffect(() => {
-    google.accounts.id.initialize({
-      client_id:
-        import.meta.env.VITE_GOOGLE_CLIENT_ID,
-      callback: handleCredentialLogin,
-    });
+  // useEffect(() => {
+  //   google.accounts.id.initialize({
+  //     client_id:
+  //       import.meta.env.VITE_GOOGLE_CLIENT_ID,
+  //     callback: handleCredentialLogin,
+  //   });
 
-    google.accounts.id.renderButton(
-      document.getElementById("googleSignInDiv"),
-      { theme: "outline", size: "large" }
-    );
-  }, []);
+  //   google.accounts.id.renderButton(
+  //     document.getElementById("googleSignInDiv"),
+  //     { theme: "outline", size: "large" }
+  //   );
+  // }, []);
 
   const handleCredentialLogin = async (response) => {
 
