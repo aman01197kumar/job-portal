@@ -12,7 +12,7 @@ import JobSeekerProtectedRoute from "./protectedRoutes/JobseekerProtectedRoutes"
 import FeatureSelection from "./features/FeatureSelection";
 import Signup from "./auth/Signup";
 import UserLogin from "./auth/UserLogin";
-import JobSeekerForm from "./Forms/JobSeekerForm";
+import JobSeekerForm from "./forms/JobSeekerForm";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
