@@ -17,9 +17,10 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/imgs/oppmore_logo.png";
+import logo from "../assets/imgs/logo.png";
 import { useDispatch, useSelector } from "react-redux";
-import { firstCharacters } from "../custom_modules/firstCharacter";
+import { firstCharacters } from "../utilities/custom_modules/firstCharacter";
+import { removeToken } from "../redux/userInfo";
 
 const jobCategories = [
   {
@@ -62,7 +63,7 @@ const quickActions = [
   { name: "Messages", href: "#", icon: MessageSquare, count: "3" },
 ];
 
-export const Header = ({ setDashboardJobPosted, allJobs }) => {
+export const JobSeekerHeader = ({ setDashboardJobPosted, allJobs }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [jobsDropdownOpen, setJobsDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -72,9 +73,11 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
   const navigate = useNavigate();
   const { username } = useSelector((state) => state.userInfo);
   const { profileImage } = useSelector((state) => state.userInfo);
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
-    localStorage.removeItem("userData");
+    localStorage.removeItem("token");
+    dispatch(removeToken())
     navigate("/");
     window.location.reload();
   };
@@ -106,7 +109,7 @@ export const Header = ({ setDashboardJobPosted, allJobs }) => {
             <img
               src={logo}
               alt="logo"
-              className="w-28 mt-3 object-contain cursor-pointer"
+              className="w-13 object-contain cursor-pointer"
               onClick={() => navigate("/")}
             />
           </div>

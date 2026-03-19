@@ -14,7 +14,7 @@ import {
   Award,
 } from "lucide-react";
 
-import { Header } from "../utilities/components/Header";
+import { JobSeekerHeader } from "../layouts/JobSeekerHeader";
 import { EditProfileModal } from "../User/screens/UserProfile/EditProfileModal";
 import axios from "axios";
 import { END_POINTS } from "../assets/END_POINTS";
@@ -107,7 +107,7 @@ export const ProfilePage = ({ token, userId }) => {
         </div>
       ) : (
         <>
-          <Header />
+          <JobSeekerHeader />
           <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
             <div className="max-w-4xl mx-auto p-6">
               {/* Header Card */}

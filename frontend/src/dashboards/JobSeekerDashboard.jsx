@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { END_POINTS } from "../assets/END_POINTS";
 import { FileText } from "lucide-react";
-import { Header } from "../utilities/components/Header";
+import { JobSeekerHeader } from "../layouts/JobSeekerHeader";
 import StatusCards from "../utilities/components/StatusCards";
 import toast, { Toaster } from "react-hot-toast";
 import SavedJobs from "../utilities/components/SavedJobs";
@@ -36,7 +36,6 @@ const JobSeekerDashboard
             }
           }
         );
-        console.log(response?.data?.data, 'ress')
         setDashboardJobPosted(response?.data?.data);
         setAllJobs(response?.data?.data);
       } catch (err) {
@@ -93,7 +92,7 @@ const JobSeekerDashboard
 
     return (
       <>
-        <Header setDashboardJobPosted={setDashboardJobPosted} allJobs={allJobs} />
+        <JobSeekerHeader setDashboardJobPosted={setDashboardJobPosted} allJobs={allJobs} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="space-y-8">
             {/* Stats Grid */}

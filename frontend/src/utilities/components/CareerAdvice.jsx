@@ -1,4 +1,4 @@
-import { Header } from './Header'
+import { JobSeekerHeader } from '../../layouts/JobSeekerHeader'
 import aman from '../../assets/imgs/advisers/aman.JPG'
 import pratyush from '../../assets/imgs/advisers/pratyush.jpeg'
 import vikas from '../../assets/imgs/advisers/vikas.jpeg'
@@ -30,7 +30,7 @@ const advisers = [
 const CareerAdvice = () => {
     return (
         <>
-            <Header />
+            <JobSeekerHeader />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {advisers?.map(
                     ({ adviser_name, adviser_description, adviser_skills, adviser_pic, profile }, index) => (

@@ -44,7 +44,6 @@ export const createJobPost = async (req, res) => {
 export const getAllJobPosts = async (req, res) => {
   try {
     const { userid } = req.user;
-    console.log(userid,'userid')
 
     // Validate userId
     if (!userid || !mongoose.Types.ObjectId.isValid(userid)) {

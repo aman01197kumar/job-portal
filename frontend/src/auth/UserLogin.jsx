@@ -34,40 +34,40 @@ const UserLogin = () => {
   //   );
   // }, []);
 
-  const handleCredentialLogin = async (response) => {
+  // const handleCredentialLogin = async (response) => {
 
-    const res = await axios.get(`${BASE_URL}/${END_POINTS.GOOGLE_AUTH}`, {
-      headers: {
-        Authorization: `Bearer ${response.credential}`,
-      },
-    });
+  //   const res = await axios.get(`${BASE_URL}/${END_POINTS.GOOGLE_AUTH}`, {
+  //     headers: {
+  //       Authorization: `Bearer ${response.credential}`,
+  //     },
+  //   });
 
-    if (res.data.needsOnboarding) {
-      localStorage.setItem(
-        "userData",
-        JSON.stringify({
-          token: response.credential,
-          // role: null,
-          user: res.data.user,
-        })
-      );
+  //   if (res.data.needsOnboarding) {
+  //     localStorage.setItem(
+  //       "userData",
+  //       JSON.stringify({
+  //         token: response.credential,
+  //         // role: null,
+  //         user: res.data.user,
+  //       })
+  //     );
 
-      window.location.href = "/feature-selection"
-    } else {
-      localStorage.setItem(
-        "userData",
-        JSON.stringify({
-          token: response.credential,
-          // role: res.data.user.user_type,
-          user: res.data.user,
-        })
-      );
+  //     window.location.href = "/feature-selection"
+  //   } else {
+  //     localStorage.setItem(
+  //       "userData",
+  //       JSON.stringify({
+  //         token: response.credential,
+  //         // role: res.data.user.user_type,
+  //         user: res.data.user,
+  //       })
+  //     );
 
 
-      window.location.href = "/"
-    }
+  //     window.location.href = "/"
+  //   }
 
-  };
+  // };
   const userLoginHandler = async (e) => {
 
     e.preventDefault()
@@ -87,10 +87,9 @@ const UserLogin = () => {
       dispatch(setUserToken(data?.token))
       toast.success(data?.message)
       navigate('/')
-
+      window.location.reload();
     }
     catch (err) {
-      console.log(err)
       toast.error(err?.response?.data?.message);
     }
     finally {
