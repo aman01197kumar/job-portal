@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  getAllUser,
+  getUserDashboard,
   getUserProfile,
   googleAuth,
   updateUserProfile,
@@ -8,11 +8,19 @@ import {
   userSignup,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/fileUpload.multer.js";
+import { auth } from "../middlewares/auth.middleware.js";
 
 export const user_router = express.Router();
 
 user_router.post("/signup", userSignup);
 user_router.post("/login", userLogin);
+user_router.get('/google-auth', googleAuth)
+
+
+//app level middleware
+user_router.use(auth)
+
+user_router.get('/dashboard',getUserDashboard)
 user_router.get('/get-user-details', getUserProfile)
 user_router.put('/update-user-profile/:userId', upload.fields([
   { name: "image", maxCount: 1 },
@@ -20,4 +28,3 @@ user_router.put('/update-user-profile/:userId', upload.fields([
 ]), updateUserProfile)
 
 user_router.get('/google-auth',googleAuth)
-user_router.get('/get-all-users',getAllUser)

@@ -1,0 +1,136 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { END_POINTS } from "../assets/END_POINTS";
+import { FileText } from "lucide-react";
+import { JobSeekerHeader } from "../layouts/JobSeekerHeader";
+import StatusCards from "../utilities/components/StatusCards";
+import toast, { Toaster } from "react-hot-toast";
+import SavedJobs from "../utilities/components/SavedJobs";
+import Notifications from "../utilities/components/Notifications";
+import JobCards from "../utilities/components/JobCards";
+import { useNavigate } from "react-router-dom";
+import FetchUser from "../hooks/useFetchUser";
+
+const JobSeekerDashboard
+  = ({ token }) => {
+    const [dashboardJobPosted, setDashboardJobPosted] = useState([])
+    const [allJobs, setAllJobs] = useState([])
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+
+    const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+
+    const fetchJobs = async () => {
+      setLoading(true);
+      try {
+        console.log(`${BASE_URL}/${END_POINTS.JOBS}`, token, 'url')
+        const response = await axios.post(
+          `${BASE_URL}/${END_POINTS.JOBS}`,{},
+          {
+            headers: {
+
+              Authorization: `Bearer ${token}`,
+              "content-type": "application/json",
+            }
+          }
+        );
+        setDashboardJobPosted(response?.data?.data);
+        setAllJobs(response?.data?.data);
+      } catch (err) {
+        console.error(err?.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    useEffect(() => {
+      fetchJobs()
+      document.title = "Oppmore | Home";
+    }, []);
+
+    const jobAppliedHandler = async (application) => {
+      try {
+        const payload = {
+          jobId: application?._id,
+          organisation_name: application?.organisation_name,
+          job_profile: application?.job_profile,
+          ctc: application?.ctc,
+          description: application?.job_description,
+          job_location: application?.job_location,
+          job_type: application?.job_type,
+        };
+
+        if (!token) {
+          toast.error("User not found. Please log in again.");
+          navigate("/login");
+          return;
+        }
+
+        const response = await axios.post(
+          `${BASE_URL}/${END_POINTS.APPLY_JOB}`,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json"
+            },
+          }
+        );
+
+        const { success, message } = response?.data;
+
+        if (success) {
+          toast.success(message);
+          window.location.reload();
+        }
+      } catch (err) {
+        toast.error(err.message);
+      }
+    };
+
+    return (
+      <>
+        <JobSeekerHeader setDashboardJobPosted={setDashboardJobPosted} allJobs={allJobs} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="space-y-8">
+            {/* Stats Grid */}
+            {/* <StatusCards userId={userId} /> */}
+
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Recent Applications */}
+              <div className="lg:col-span-2">
+                <div className="bg-white rounded-xl shadow-lg border border-gray-100">
+                  <div className="p-6 border-b border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+                        <FileText className="h-5 w-5 mr-2 text-blue-600" />
+                        Recent Applications
+                      </h2>
+                    </div>
+                  </div>
+                  <JobCards
+                    dashboardJobPosted={dashboardJobPosted}
+                    loading={loading}
+                    jobAppliedHandler={jobAppliedHandler}
+                  />
+                </div>
+              </div>
+
+              {/* Sidebar */}
+              <div className="space-y-6">
+                <SavedJobs />
+                <Notifications />
+              </div>
+            </div>
+          </div>
+        </div>
+        <Toaster />
+      </>
+    );
+  };
+
+export default JobSeekerDashboard
+  ;

@@ -1,21 +1,13 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = ({ userData }) => {
-  if (!userData) {
-    return <Navigate to="/" replace />;
+const ProtectedRoute = () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
   }
 
-  // allow onboarding users
-  if (!userData.token && userData.isOnboarding) {
-    return <Outlet />;
-  }
-
-  // allow authenticated users
-  if (userData.token) {
-    return <Outlet />;
-  }
-
-  return <Navigate to="/" replace />;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

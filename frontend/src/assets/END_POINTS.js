@@ -4,6 +4,7 @@ const END_POINTS = {
   LOGIN: `login`,
   SIGNUP: `signup`,
   GOOGLE_AUTH: 'google-auth',
+  DASHBOARD_ACCESS: `dashboard`,
 
   //Employer's
   JOB_POSTED_BY_EMPLOYER: `jobs/user`,

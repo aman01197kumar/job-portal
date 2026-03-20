@@ -4,6 +4,7 @@ const initialState = {
   username: "",
   profileImage: "",
   user: {},
+  user_token: null,
   user_id: "",
   user_selection: "",
   user_onboarding_credentials: {
@@ -57,10 +58,17 @@ const userInfoSlice = createSlice({
     addResume: (state, action) => {
       state.user_onboarding_credentials.resume = action.payload
     }
+    },
+    setUserToken: (state, action) => {
+      state.user_token = action.payload
+    },
+    removeToken: (state) => {
+      state.user_token = null
+    }
   },
 });
 
-export const { addUsername, addProfileImage, addUser, addUserId, addUserSelection,
+export const { addUsername, addProfileImage, addUser, setUserToken,removeToken, addUserId, addUserSelection,
   addEducationDetails,
   addExperienceAction,
   addResume

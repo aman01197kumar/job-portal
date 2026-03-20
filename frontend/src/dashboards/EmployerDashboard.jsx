@@ -1,8 +1,7 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
-import AdminHeader from "../components/AdminHeader";
+import EmployerHeader from "../layouts/EmployerHeader";
 
-const AdminDashboard = ({ userData }) => {
+const EmployerDashboard = ({ userData }) => {
   const navigate = useNavigate();
 
   const cards = [
@@ -67,7 +66,7 @@ const AdminDashboard = ({ userData }) => {
 
   return (
     <>
-      <AdminHeader />
+      <EmployerHeader />
 
       <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-50 pt-24 flex flex-col items-center">
         <h1 className="text-3xl md:text-4xl font-extrabold text-blue-700 mb-10 tracking-wide">
@@ -98,4 +97,4 @@ const AdminDashboard = ({ userData }) => {
   );
 };
 
-export default AdminDashboard;
+export default EmployerDashboard;

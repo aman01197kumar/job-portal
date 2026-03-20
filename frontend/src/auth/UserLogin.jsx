@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import login from "../assets/imgs/login.jpg";
 import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -8,33 +8,31 @@ import toast, { Toaster } from "react-hot-toast";
 import Loader from "../utilities/components/Loader";
 import { END_POINTS } from "../assets/END_POINTS";
 import { useDispatch } from "react-redux";
-import { addUser } from "../redux/userInfo";
+import { setUserToken } from "../redux/userInfo";
 
 
 const UserLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [loggedBy, setLoggedBy] = useState({ email: "", password: "" });
   const [isLoading, setIsloading] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch()
 
+
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-  const { email, password } = loggedBy;
+  // useEffect(() => {
+  //   google.accounts.id.initialize({
+  //     client_id:
+  //       import.meta.env.VITE_GOOGLE_CLIENT_ID,
+  //     callback: handleCredentialLogin,
+  //   });
 
-  useEffect(() => {
-    google.accounts.id.initialize({
-      client_id:
-        import.meta.env.VITE_GOOGLE_CLIENT_ID,
-      callback: handleCredentialLogin,
-    });
-
-    google.accounts.id.renderButton(
-      document.getElementById("googleSignInDiv"),
-      { theme: "outline", size: "large" }
-    );
-  }, []);
+  //   google.accounts.id.renderButton(
+  //     document.getElementById("googleSignInDiv"),
+  //     { theme: "outline", size: "large" }
+  //   );
+  // }, []);
 
   const handleCredentialLogin = async (response) => {
     const res = await axios.get(`${BASE_URL}/${END_POINTS.GOOGLE_AUTH}`, {
@@ -94,34 +92,15 @@ const UserLogin = () => {
 
       const { data } = response;
 
-      if (data.status === 400 || data.status === 401) {
-        toast.warn(data.message);
-        return;
-      }
-
-      if (data.status === 404) {
-        toast.error(data.message);
-        return;
-      }
-
-      if (data.status === 200) {
-        const userData = JSON.stringify({
-          userId: data.userId,
-          user_type: data.user.toLowerCase(),
-          token: data.token,
-          username: data.username,
-          profileImage: data.profileImage,
-        });
-
-        localStorage.setItem("userData", userData);
-        toast.success("Login successful!");
-        navigate("/");
-        window.location.reload();
-      }
-    } catch (err) {
-      toast.error("Login failed. Please try again.");
-      console.log(err);
-    } finally {
+      localStorage.setItem("token", data?.token)
+      dispatch(setUserToken(data?.token))
+      toast.success(data?.message)
+      navigate('/dashboard')
+    }
+    catch (err) {
+      toast.error(err?.response?.data?.message);
+    }
+    finally {
       setIsloading(false);
     }
   };
@@ -141,7 +120,7 @@ const UserLogin = () => {
           </div>
 
           {/* Form Section */}
-          <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center">
+          <form className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center" onSubmit={userLoginHandler}>
 
 
             {/* Email */}
@@ -151,12 +130,9 @@ const UserLogin = () => {
               </label>
               <input
                 type="email"
+                name="email"
                 placeholder="name@xyz.com"
                 className="w-full p-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                value={email}
-                onChange={(e) =>
-                  setLoggedBy({ ...loggedBy, email: e.target.value })
-                }
               />
             </div>
 
@@ -168,11 +144,9 @@ const UserLogin = () => {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
+                  name="password"
                   placeholder="••••••••"
                   className="w-full p-2 pr-10 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  onChange={(e) =>
-                    setLoggedBy({ ...loggedBy, password: e.target.value })
-                  }
                 />
                 <span
                   className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
@@ -196,8 +170,9 @@ const UserLogin = () => {
 
             {/* Submit */}
             <button
+              type="submit"
               className="bg-blue-700 hover:bg-blue-800 text-white py-2.5 rounded-lg font-medium mb-4"
-              onClick={userLoginHandler}
+
             >
               {isLoading ? <Loader width={5} height={5} /> : "Sign In"}
             </button>
@@ -234,7 +209,7 @@ const UserLogin = () => {
 
 
             </p>
-          </div>
+          </form>
         </div>
       </div>
 

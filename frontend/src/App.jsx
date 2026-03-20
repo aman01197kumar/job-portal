@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import Dashboard from "./screens/Dashboard";
+import DashboardAccess from "./dashboards/DashboardAccess";
 import JobPosting from "./Employer/screens/JobPosting";
 import ViewJobDescription from "./User/screens/ViewJobDescription";
 import JobPosted from "./Employer/screens/JobPosted";
@@ -19,18 +19,10 @@ import { addUsername } from "./redux/userInfo";
 import OnboardingSteps from "./features/OnboardingSteps";
 
 const App = () => {
-  const [userData, setUserData] = useState(null);
-  const dispatch = useDispatch()
-
-  // useEffect(() => {
-  //   const storedUser = localStorage.getItem("userData");
-
-  //   storedUser && setUserData(JSON.parse(storedUser));
-
-  // }, []);
-
-  // userData && dispatch(addUsername(userData.username))
-
+  const { user_token } = useSelector(state => state.userInfo);
+  // Derive token immediately from redux (preferred) or localStorage (fallback).
+  const token = user_token || localStorage.getItem("token");
+  
   return (
     // <BrowserRouter>
     //   <Routes>
@@ -108,9 +100,53 @@ const App = () => {
 
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<UserLogin />} />
-        <Route path="feature-selection" element={<FeatureSelection />} />
-        <Route path="onboarding" element = {<OnboardingSteps/>}/>
+
+        {/* Default Route */}
+        <Route
+          path="/"
+          element={
+            token ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        {/* <Route path="/" element = {<Dashboard/>}/> */}
+        {/* Public Routes */}
+        <Route
+          path="/login"
+          element={token ? <Navigate to="/dashboard" /> : <UserLogin />}
+        />
+
+        <Route
+          path="/signup"
+          element={token ? <Navigate to="/dashboard" /> : <Signup />}
+        />
+
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+
+          <Route path="/dashboard" element={<DashboardAccess token={token} />} />
+          <Route path="/career-advice" element={<CareerAdvice />} />
+          <Route path="/feature-selection" element={<FeatureSelection />} />
+          <Route path="/jobseeker" element={<JobSeekerForm />} />
+          <Route path="/user-profile/:username" element={<ProfilePage />} />
+
+          {/* Admin Only */}
+          <Route element={<AdminProtectedRoute />}>
+            <Route path="/admin/job-posting" element={<JobPosting />} />
+            <Route path="/recruiter/dashboard" element={<JobPosted />} />
+          </Route>
+
+          {/* Job Seeker Only */}
+          <Route element={<JobSeekerProtectedRoute />}>
+            <Route path="/application-sent" element={<ApplicationSent />} />
+            <Route path="/job-details/:id" element={<ViewJobDescription />} />
+          </Route>
+
+        </Route>
+
       </Routes>
     </BrowserRouter>
   );

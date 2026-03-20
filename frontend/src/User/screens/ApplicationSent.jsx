@@ -5,7 +5,7 @@ import {
   Eye,
   IndianRupee,
 } from "lucide-react";
-import { Header } from "../../utilities/components/Header";
+import { JobSeekerHeader } from "../../layouts/JobSeekerHeader";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { END_POINTS } from "../../assets/END_POINTS";
@@ -64,7 +64,7 @@ const ApplicationSent = ({ userid }) => {
   
   return (
     <>
-      <Header />
+      <JobSeekerHeader />
       {isLoading ? (
         <Loader width={10} height={10} />
       ) : appliedJobs.length === 0 ? (
