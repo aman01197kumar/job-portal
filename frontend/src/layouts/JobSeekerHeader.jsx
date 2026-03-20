@@ -77,25 +77,26 @@ export const JobSeekerHeader = ({ setDashboardJobPosted, allJobs }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    dispatch(removeToken())
-    navigate("/");
-    window.location.reload();
+    dispatch(removeToken());
+    navigate("/login", { replace: true });
   };
 
   const searchJobHandler = (e) => {
-    const searchValue = e.target.value.toLowerCase();
+    const searchValue = (e.target.value || "").trim().toLowerCase();
 
     if (!searchValue) {
-      // Reset to full list
       setDashboardJobPosted(allJobs);
       return;
     }
 
-    const filteredJobs = allJobs.filter(
-      (job) =>
-        job.job_profile.toLowerCase().includes(searchValue) ||
-        job.organisation_name.toLowerCase().includes(searchValue) // Optional: search by company too
-    );
+    const filteredJobs = allJobs.filter((job) => {
+      const jobProfile = (job?.job_profile || "").toLowerCase();
+      const organisationName = (job?.organisation_name || "").toLowerCase();
+      return (
+        jobProfile.includes(searchValue) ||
+        organisationName.includes(searchValue) // Optional: search by company too
+      );
+    });
 
     setDashboardJobPosted(filteredJobs);
   };
@@ -330,6 +331,7 @@ export const JobSeekerHeader = ({ setDashboardJobPosted, allJobs }) => {
               type="text"
               placeholder="Search jobs..."
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              onChange={(e) => searchJobHandler(e)}
             />
           </div>
         </div>
@@ -341,19 +343,19 @@ export const JobSeekerHeader = ({ setDashboardJobPosted, allJobs }) => {
           <div className="px-4 pt-4 pb-6 space-y-4">
             {/* Profile Section */}
             <div className="flex items-center space-x-3 pb-4 border-b border-gray-200">
-              {profile_img ? (
+              {profileImage ? (
                 <img
-                  src={`${BASE_URL}/${profile_img}`}
+                  src={`${BASE_URL}/${profileImage}`}
                   alt="Profile"
                   className="h-8 w-8 rounded-full object-cover"
                 />
               ) : (
                 <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-200 ">
-                  {firstCharacters(userInfo)}
+                  {firstCharacters(username)}
                 </div>
               )}
               <div>
-                <p className="text-sm font-medium text-gray-900">{userInfo}</p>
+                <p className="text-sm font-medium text-gray-900">{username}</p>
                 <p className="text-xs text-gray-500">Software Engineer</p>
               </div>
             </div>
@@ -412,7 +414,7 @@ export const JobSeekerHeader = ({ setDashboardJobPosted, allJobs }) => {
             {/* Account Actions */}
             <div className="pt-4 border-t border-gray-200 space-y-2">
               <a
-                href={`/user-profile/${userInfo}`}
+                href={`/user-profile/${username}`}
                 className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
               >
                 <User className="h-5 w-5 mr-3" />

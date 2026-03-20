@@ -14,16 +14,11 @@ import Signup from "./auth/Signup";
 import UserLogin from "./auth/UserLogin";
 import JobSeekerForm from "./forms/JobSeekerForm";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
 
 const App = () => {
-
-  const[token,setToken] = useState(null)
-  const { user_token } = useSelector(state => state.userInfo)
-
-  useEffect(()=>{
-    setToken(user_token || localStorage.getItem('token'))
-  },[])
+  const { user_token } = useSelector(state => state.userInfo);
+  // Derive token immediately from redux (preferred) or localStorage (fallback).
+  const token = user_token || localStorage.getItem("token");
   
   return (
     <BrowserRouter>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import login from "../assets/imgs/login.jpg";
 import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -86,8 +86,7 @@ const UserLogin = () => {
       localStorage.setItem("token", data?.token)
       dispatch(setUserToken(data?.token))
       toast.success(data?.message)
-      navigate('/')
-      window.location.reload();
+      navigate('/dashboard')
     }
     catch (err) {
       toast.error(err?.response?.data?.message);
