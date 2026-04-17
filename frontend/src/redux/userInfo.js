@@ -57,7 +57,6 @@ const userInfoSlice = createSlice({
     },
     addResume: (state, action) => {
       state.user_onboarding_credentials.resume = action.payload
-    }
     },
     setUserToken: (state, action) => {
       state.user_token = action.payload

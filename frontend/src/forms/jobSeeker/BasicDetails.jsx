@@ -18,9 +18,7 @@ const BasicDetails = ({ setActiveStep }) => {
 
     const submitBasicDetails = async (e) => {
         e.preventDefault();
-
         if (isLoading) return;
-
         try {
             setIsloading(true);
 
@@ -115,25 +113,14 @@ const BasicDetails = ({ setActiveStep }) => {
             <div className="flex justify-center space-x-4">
                 <button
                     type='submit'
-                    className="w-fit px-6 py-3 rounded-lg font-semibold text-white bg-slate-900 hover:bg-blue-700 transition"
+                    className="w-fit px-6 py-3 rounded-lg font-semibold text-white bg-slate-900 hover:bg-slate-700 transition"
                 >
                     {
                         isLoading ? <Loader /> : "Save and Next"
                     }
 
                 </button>
-                {
-                    userId &&
-                    <button
-                        type='button'
-                        className="w-fit px-6 py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition"
-                    >
-                        {
-                            isLoading ? <Loader /> : "Edit"
-                        }
 
-                    </button>
-                }
             </div>
             <Toaster />
         </form>

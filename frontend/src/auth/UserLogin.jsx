@@ -188,19 +188,6 @@ const UserLogin = () => {
               <span
                 className="text-blue-600 cursor-pointer font-medium"
                 onClick={() => {
-                  localStorage.setItem(
-                    "userData",
-                    JSON.stringify({
-                      token: null,
-                      isOnboarding: true,
-                      user: {
-                        username: "",
-                        email: "",
-                        picture: "",
-                        user_type: null,
-                      },
-                    })
-                  );
                   navigate("/feature-selection");
                 }}
               >

@@ -12,10 +12,7 @@ import JobSeekerProtectedRoute from "./protectedRoutes/JobseekerProtectedRoutes"
 import FeatureSelection from "./features/FeatureSelection";
 import Signup from "./auth/Signup";
 import UserLogin from "./auth/UserLogin";
-import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux";
-import { addUsername } from "./redux/userInfo";
-// import JobSeekerForm from "./forms/JobSeekerForm";
+import { useSelector } from "react-redux";
 import OnboardingSteps from "./features/OnboardingSteps";
 
 const App = () => {
@@ -24,80 +21,6 @@ const App = () => {
   const token = user_token || localStorage.getItem("token");
   
   return (
-    // <BrowserRouter>
-    //   <Routes>
-    //     {/* Public Routes */}
-    //     <Route
-    //       path="/"
-    //       element={
-    //         !userData?.token ? (
-    //           <UserLogin />
-    //         ) : !userData?.user_type ? (
-    //           <Navigate to="/feature-selection" replace />
-    //         ) : (
-    //           <Navigate to="/dashboard" replace />
-    //         )
-    //       }
-    //     />
-
-    //     <Route
-    //       path="/feature-selection"
-    //       element={!userData?.token ? <FeatureSelection /> : <Navigate to="/dashboard" />}
-    //     />
-
-    //     {/* Shared Protected Routes */}
-    //     <Route element={<ProtectedRoute userData={userData} />}>
-    //       {/* Accessible by Both Roles */}
-    //       <Route
-    //         path="/feature-selection"
-    //         element={<FeatureSelection user={userData?.user} />}
-    //       />
-
-    //       <Route
-    //         path="/jobseeker"
-    //         element={<JobSeekerForm user={userData?.user} />}
-    //       />
-    //       {/* <Route
-    //         path="/recruiter"
-    //         element={<Recruit />}
-    //       /> */}
-    //       <Route
-    //         path="/dashboard"
-    //         element={<Dashboard userData={userData} />}
-    //       />
-    //       <Route path="/career-advice" element={<CareerAdvice />} />
-
-    //       <Route
-    //         path="/user-profile/:username"
-    //         element={
-    //           <ProfilePage token={userData?.token} userId={userData?.userId} />
-    //         }
-    //       />
-
-    //       {/* Admin Only Routes */}
-    //       <Route element={<AdminProtectedRoute userData={userData} />}>
-    //         <Route
-    //           path="/admin/job-posting"
-    //           element={<JobPosting userId={userData?.userId} />}
-    //         />
-    //         <Route
-    //           path="recruiter/dashboard"
-    //           element={<JobPosted userid={userData?.userId} />}
-    //         />
-    //       </Route>
-
-    //       {/* Job Seeker Only Routes */}
-    //       <Route element={<JobSeekerProtectedRoute userData={userData} />}>
-    //         <Route
-    //           path="/application-sent"
-    //           element={<ApplicationSent userid={userData?.userId} />}
-    //         />
-    //         <Route path="/job-details/:id" element={<ViewJobDescription />} />
-    //       </Route>
-    //     </Route>
-    //   </Routes>
-    // </BrowserRouter>
-
     <BrowserRouter>
       <Routes>
 
@@ -112,7 +35,7 @@ const App = () => {
             )
           }
         />
-        {/* <Route path="/" element = {<Dashboard/>}/> */}
+
         {/* Public Routes */}
         <Route
           path="/login"
@@ -124,13 +47,13 @@ const App = () => {
           element={token ? <Navigate to="/dashboard" /> : <Signup />}
         />
 
+          <Route path="/feature-selection" element={<FeatureSelection />} />
+          <Route path="/onboarding" element={<OnboardingSteps />} />
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
 
           <Route path="/dashboard" element={<DashboardAccess token={token} />} />
           <Route path="/career-advice" element={<CareerAdvice />} />
-          <Route path="/feature-selection" element={<FeatureSelection />} />
-          <Route path="/jobseeker" element={<JobSeekerForm />} />
           <Route path="/user-profile/:username" element={<ProfilePage />} />
 
           {/* Admin Only */}

@@ -5,7 +5,7 @@ import { addUserSelection } from "../redux/userInfo";
 const FeatureSelection = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch()
-
+    console.log("FeatureSelection");
 
     const features = [
         {
