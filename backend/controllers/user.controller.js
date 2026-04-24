@@ -27,13 +27,6 @@ const userSignup = async (req, res) => {
       });
     }
 
-    if (phone.length !== 10) {
-      return res.status(422).json({
-        status: 422,
-        message: "Contact Number must be 10 digits",
-      });
-    }
-
     if (password !== confirm_password) {
       return res.status(400).json({
         status: 400,
@@ -63,18 +56,48 @@ const userSignup = async (req, res) => {
       password: hashedPassword,
       feature_selection,
       location,
+      isBasicInfoComplete: true, // ✅ Mark basic info as complete  
     });
 
-    await newUser.save()
+    const token = await jwt.sign(
+      {  user_role:newUser.feature_selection },
+      process.env.SECRET_KEY, { expiresIn: "1hr" }
+    );
+    try {
+      await newUser.save();
+    } catch (validationError) {
+      // Handle Mongoose validation errors
+      if (validationError.name === "ValidationError") {
+        const errors = Object.values(validationError.errors).map(e => e.message);
+        return res.status(422).json({
+          status: 422,
+          message: validationError.message,
+          errors,
+        });
+      }
+      // Handle duplicate key error
+      if (validationError.code === 11000) {
+        return res.status(409).json({
+          status: 409,
+          message: validationError.message,
+        });
+      }
+      // Other errors
+      console.error(validationError);
+      return res.status(500).json({
+        status: 500,
+        message: validationError.message,
+      });
+    }
 
     return res.status(201).json({
       status: 201,
       message: "User registered successfully",
-      user_id: newUser._id,
+      token,
+      isBasicInfoComplete: newUser.isBasicInfoComplete // ✅ Return onboarding status
     });
 
   } catch (error) {
-
     // 🚨 Handle Mongo Duplicate Key Error (important)
     if (error.code === 11000) {
       return res.status(409).json({
@@ -83,18 +106,28 @@ const userSignup = async (req, res) => {
       });
     }
 
+    // Handle Mongoose validation errors
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map(e => e.message);
+      return res.status(422).json({
+        status: 422,
+        message: "Validation failed",
+        errors,
+      });
+    }
+
     console.error(error);
 
     return res.status(500).json({
       status: 500,
-      message: "Internal Server Error",
+      message: error.message,
     });
   }
 };
 
-export const getAllUser = async(req,res)=>{
+export const getAllUser = async (req, res) => {
   const users = await User.find()
-  return res.json({users})
+  return res.json({ users })
 }
 
 export const googleAuth = async (req, res) => {

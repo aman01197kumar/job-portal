@@ -2,6 +2,6 @@
 
 @layer components{
     .inputClass{
-        @apply w-full p-3 rounded-xl border border-gray-200 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20
+        @apply mt-4 w-full p-3 rounded-xl border border-gray-200 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20
     }
 }

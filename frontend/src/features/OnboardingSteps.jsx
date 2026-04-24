@@ -6,6 +6,7 @@ import Education from "../forms/jobSeeker/Education";
 import Stepper from "../components/Stepper";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
+import LandingPageHeader from "../layouts/LandingPageHeader";
 
 const steps = [
     { id: 1, label: "Basic Details" },
@@ -29,6 +30,8 @@ const user_id='12456'
     };  
 
     return (
+        <>
+        <LandingPageHeader/>
         <div>
             <Stepper
                 steps={steps}
@@ -46,6 +49,7 @@ const user_id='12456'
 
             <Toaster />
         </div>
+        </>
     );
 };
 

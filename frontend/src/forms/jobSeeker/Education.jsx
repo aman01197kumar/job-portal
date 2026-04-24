@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useEffect, useState } from "react";
 import NextButton from "../../components/NextButton";
 import { educationData } from "../../assets/data/education";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,14 +8,16 @@ import DateRangePicker from "../../components/Calender";
 
 const Education = ({ setActiveStep }) => {
   const [educationCount, setEducationCount] = useState(1);
+  const [educationArray, setEducationArray] = useState([]);
   const [educationDates, setEducationDates] = useState([
     { from: null, to: null }
   ]);
 
   const dispatch = useDispatch()
-  const {user_onboarding_credentials} = useSelector(state=>state.userInfo)
-  console.log(user_onboarding_credentials,'fniknik')
+  
+  const { user_onboarding_credentials } = useSelector(state => state.userInfo)
 
+console.log(user_onboarding_credentials,'desnjn')
   const addEducation = () => {
     setEducationCount(prev => prev + 1);
 
@@ -26,40 +28,44 @@ const Education = ({ setActiveStep }) => {
   };
 
 
+
   const educationDetailsSubmitHandler = (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
-    const educationArray = [];
+    let hasError = false;
 
     for (let i = 0; i < educationCount; i++) {
-
       const degree = formData.get(`degree-${i}`);
       const institution = formData.get(`institution-${i}`);
       const field = formData.get(`field-${i}`);
       const fromDate = educationDates[i]?.from;
       const toDate = educationDates[i]?.to;
 
-      if (!degree || !institution || !field || !fromDate || !toDate) {
-        toast.error("Please fill all education details");
-        return;
-      }
-
-      educationArray.push({
+      setEducationArray(prev => [...prev, {
         degree,
         institution,
         field,
         startYear: fromDate.toISOString(),
         endYear: toDate.toISOString(),
         isEducationDetailsFilled: true
-      });
+      }])
     }
+
+    if (hasError) return;
+
+    // Store in localStorage
 
     dispatch(addEducationDetails(educationArray));
     setActiveStep(prev => prev + 1);
   };
 
-
+  useEffect(() => {
+    const savedDetails = localStorage.getItem("education");
+    if (savedDetails) {
+      setEducationArray(JSON.parse(savedDetails));
+    }
+  }, []);
 
   return (
     <form onSubmit={educationDetailsSubmitHandler}>
@@ -68,14 +74,29 @@ const Education = ({ setActiveStep }) => {
           Education Details
         </h3>
 
-        {[...Array(educationCount)].map((_, index) => (
-          <div
-            key={index}
-            className="mb-6 rounded-xl border border-gray-100 p-6 shadow-sm"
-          >
-            <div className="grid md:grid-cols-2 gap-4">
 
+        {[...Array(educationCount)].map((_, index) => (
+
+
+
+          <div key={index} className="shadow-md p-4 rounded-lg mb-6 ">
+            <div className="flex justify-end">
+              {educationCount > 1 && (
+                <button
+                  type="button"
+                  className="text-red-500 px-2 py-1 mt-2 w-fit rounded justify-self-end hover:bg-red-50"
+                  onClick={() => {
+                    setEducationCount(prev => prev - 1);
+                    setEducationDates(prev => prev.filter((_, idx) => idx !== index));
+                  }}
+                >
+                  X
+                </button>
+              )}
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
               {/* Degree */}
+
               <select
                 name={`degree-${index}`}
                 className='inputClass'
@@ -129,10 +150,9 @@ const Education = ({ setActiveStep }) => {
                   setEducationDates(updated);
                 }}
               />
-
-
             </div>
           </div>
+
         ))}
 
         <button

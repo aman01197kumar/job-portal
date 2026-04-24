@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addUserSelection } from "../redux/userInfo";
+import LandingPageHeader from "../layouts/LandingPageHeader";
 
 const FeatureSelection = () => {
     const navigate = useNavigate();
@@ -14,7 +15,10 @@ const FeatureSelection = () => {
             description:
                 "Create your profile, showcase your skills, and get hired by top companies.",
             icon: "💼",
-            action: () => navigate("/onboarding"),
+            action: () => {
+                navigate("/job-seeker/onboarding"),
+                localStorage.setItem("user_selection", "Job Seeker")
+            },
             gradient: "from-indigo-500 to-blue-500",
             user_type: "Job Seeker"
         },
@@ -24,7 +28,10 @@ const FeatureSelection = () => {
             description:
                 "Post jobs, review candidates, and hire faster with smart filtering.",
             icon: "🏢",
-            action: () => navigate("/recruiter/dashboard"),
+             action: () => {
+                navigate("/recruiter/onboarding"),
+                localStorage.setItem("user_selection", "recruiter")
+            },
             gradient: "from-emerald-500 to-teal-500",
             user_type: "recruiter"
         },
@@ -34,7 +41,10 @@ const FeatureSelection = () => {
             description:
                 "Connect with startups and teams for freelance, contract, or project-based work.",
             icon: "🤝",
-            action: () => navigate("/collaborate"),
+             action: () => {
+                navigate("/collaborate/onboarding"),
+                localStorage.setItem("user_selection", "collaborator")
+            },
             gradient: "from-purple-500 to-pink-500",
             user_type: "collaborator"
         },
@@ -62,61 +72,64 @@ const FeatureSelection = () => {
 
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-6">
-            <div className="max-w-6xl w-full">
-                {/* Header */}
-                <div className="text-center mb-12">
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-800">
-                        How do you want to get started? 🚀
-                    </h1>
-                    <p className="mt-4 text-gray-500 text-lg">
-                        Choose an option that best describes your goal.
-                    </p>
-                </div>
+        <>
+            <LandingPageHeader />
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-6">
+                <div className="max-w-6xl w-full">
+                    {/* Header */}
+                    <div className="text-center mb-12">
+                        <h1 className="text-4xl md:text-5xl font-bold text-gray-800">
+                            How do you want to get started? 🚀
+                        </h1>
+                        <p className="mt-4 text-gray-500 text-lg">
+                            Choose an option that best describes your goal.
+                        </p>
+                    </div>
 
-                {/* Cards */}
-                <div className="grid gap-8 md:grid-cols-3">
-                    {features.map((item, index) => (
-                        <div
-                            key={index}
-                            onClick={() => featureActionHandler(item)}
-                            className="group cursor-pointer bg-white rounded-2xl shadow-lg p-8 
-                         transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
-                        >
-                            {/* Icon */}
+                    {/* Cards */}
+                    <div className="grid gap-8 md:grid-cols-3">
+                        {features.map((item, index) => (
                             <div
-                                className={`w-16 h-16 flex items-center justify-center text-3xl 
+                                key={index}
+                                onClick={() => featureActionHandler(item)}
+                                className="group cursor-pointer bg-white rounded-2xl shadow-lg p-8 
+                         transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                            >
+                                {/* Icon */}
+                                <div
+                                    className={`w-16 h-16 flex items-center justify-center text-3xl 
                             rounded-xl bg-gradient-to-r ${item.gradient} text-white mb-6`}
-                            >
-                                {item.icon}
-                            </div>
+                                >
+                                    {item.icon}
+                                </div>
 
-                            {/* Text */}
-                            <h2 className="text-2xl font-semibold text-gray-800 mb-1">
-                                {item.title}
-                            </h2>
-                            <p className="text-sm text-indigo-600 font-medium mb-3">
-                                {item.subtitle}
-                            </p>
-                            <p className="text-gray-500 mb-6">
-                                {item.description}
-                            </p>
+                                {/* Text */}
+                                <h2 className="text-2xl font-semibold text-gray-800 mb-1">
+                                    {item.title}
+                                </h2>
+                                <p className="text-sm text-indigo-600 font-medium mb-3">
+                                    {item.subtitle}
+                                </p>
+                                <p className="text-gray-500 mb-6">
+                                    {item.description}
+                                </p>
 
-                            {/* CTA */}
-                            <button
-                                className={`inline-flex items-center gap-2 font-semibold
+                                {/* CTA */}
+                                <button
+                                    className={`inline-flex items-center gap-2 font-semibold
                             text-indigo-600 group-hover:text-indigo-700`}
-                            >
-                                Get Started
-                                <span className="transition-transform group-hover:translate-x-1">
-                                    →
-                                </span>
-                            </button>
-                        </div>
-                    ))}
+                                >
+                                    Get Started
+                                    <span className="transition-transform group-hover:translate-x-1">
+                                        →
+                                    </span>
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

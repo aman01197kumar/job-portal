@@ -9,6 +9,7 @@ import {
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/fileUpload.multer.js";
 import { auth } from "../middlewares/auth.middleware.js";
+import { createUserProfile } from "../controllers/userProfile.controller.js";
 
 export const user_router = express.Router();
 
@@ -18,6 +19,7 @@ user_router.get('/google-auth', googleAuth)
 
 
 //app level middleware
+user_router.post('/create_user_profile/:userId', createUserProfile)
 user_router.use(auth)
 
 user_router.get('/dashboard',getUserDashboard)

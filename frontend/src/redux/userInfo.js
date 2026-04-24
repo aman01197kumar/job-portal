@@ -32,6 +32,17 @@ const userInfoSlice = createSlice({
     addUserSelection: (state, action) => {
       state.user_selection = action.payload;
     },
+    addBasicDetails: (state, action) => {
+      if (!state.user_onboarding_credentials) {
+        state.user_onboarding_credentials = {
+          basic_details: {},
+          education_details: [],
+          experience: [],
+          resume: {}
+        };
+      }
+      state.user_onboarding_credentials.basic_details = action.payload;
+    },
     addEducationDetails: (state, action) => {
       if (!state.user_onboarding_credentials) {
         state.user_onboarding_credentials = {
@@ -71,5 +82,6 @@ export const { addUsername, addProfileImage, addUser, setUserToken,removeToken, 
   addEducationDetails,
   addExperienceAction,
   addResume
+  ,addBasicDetails
 } = userInfoSlice.actions;
 export default userInfoSlice.reducer;

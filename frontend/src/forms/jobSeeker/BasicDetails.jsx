@@ -13,7 +13,7 @@ const BasicDetails = ({ setActiveStep }) => {
     const [userId, setUserId] = useState('1134')
 
     const dispatch = useDispatch()
-    const { user_selection } = useSelector(state => state.userInfo)
+    const user_selection = localStorage.getItem("user_selection")
 
 
     const submitBasicDetails = async (e) => {
@@ -26,6 +26,7 @@ const BasicDetails = ({ setActiveStep }) => {
             const formData = new FormData(e.target);
             const newUser = Object.fromEntries(formData.entries());
 
+            console.log(newUser,'snkn');
             const { data } = await axios.post(
                 `${BASE_URL}/${END_POINTS.SIGNUP}`,
                 newUser
@@ -38,8 +39,7 @@ const BasicDetails = ({ setActiveStep }) => {
 
         } catch (err) {
             toast.error(
-                err?.response?.data?.message ||
-                "Something went wrong"
+                err?.response?.data?.message 
             );
         } finally {
             setIsloading(false);
